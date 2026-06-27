@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 6/1/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Scheduled Query Run Object](https://stripe.com/docs/api/sigma/scheduled_queries/object)
 public struct ScheduledQueryRun: Codable {

@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 7/24/21.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct VerificationReport: Codable {
     /// Unique identifier for the object.

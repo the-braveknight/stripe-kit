@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 1/28/23.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 // MARK: - ACH Credit Transfer
 public struct ChargePaymentMethodDetailsACHCreditTransfer: Codable {

@@ -6,7 +6,11 @@
 //
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Balance Transaction Object](https://stripe.com/docs/api/balance/balance_transaction)
 public struct BalanceTransaction: Codable {

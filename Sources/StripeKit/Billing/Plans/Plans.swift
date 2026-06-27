@@ -6,7 +6,11 @@
 //
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Plan Object](https://stripe.com/docs/api/plans/object).
 public struct Plan: Codable {

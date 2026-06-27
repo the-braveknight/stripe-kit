@@ -4,7 +4,11 @@
 //
 //  Created by Andrew Edwards on 5/4/19.
 //
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Session Object.](https://stripe.com/docs/api/checkout/sessions/object)
 public struct Session: Codable {

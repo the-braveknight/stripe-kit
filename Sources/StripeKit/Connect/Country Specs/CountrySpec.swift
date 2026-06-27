@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 3/23/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 /// Stripe needs to collect certain pieces of information about each account created. These requirements can differ depending on the account's country. The Country Specs API makes these rules available to your integration.
 public struct CountrySpec: Codable {
     /// Unique identifier for the object. Represented as the ISO country code for this country.

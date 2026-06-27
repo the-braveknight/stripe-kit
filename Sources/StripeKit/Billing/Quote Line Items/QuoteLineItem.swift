@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 7/25/21.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct QuoteLineItem: Codable {
     /// Unique identifier for the object.

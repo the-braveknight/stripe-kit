@@ -6,7 +6,11 @@
 //
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Discount Object](https://stripe.com/docs/api/discounts/object)
 public struct Discount: Codable {

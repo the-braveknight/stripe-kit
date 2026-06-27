@@ -7,7 +7,11 @@
 
 import NIO
 import NIOHTTP1
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public protocol PriceRoutes: StripeAPIRoute {
     /// Creates a new price for an existing product. The price can be recurring or one-time.

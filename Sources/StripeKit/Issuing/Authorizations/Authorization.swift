@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/20/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Authorization Object](https://stripe.com/docs/api/issuing/authorizations/object)
 public struct Authorization: Codable {

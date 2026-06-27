@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 3/17/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 /// `Application Fee Refund` objects allow you to refund an application fee that has previously been created but not yet refunded. Funds will be refunded to the Stripe account from which the fee was originally collected.
 public struct ApplicationFeeRefund: Codable {
     /// Unique identifier for the object.

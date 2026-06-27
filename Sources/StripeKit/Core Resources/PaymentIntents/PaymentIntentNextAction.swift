@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 3/9/23.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct PaymentIntentNextActionAlipayHandleRedirect: Codable {
     /// The native data to be used with Alipay SDK you must redirect your customer to in order to authenticate the payment in an Android App.

@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 7/31/23.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct EphemeralKey: Codable {
     /// Unique identifier for the object.

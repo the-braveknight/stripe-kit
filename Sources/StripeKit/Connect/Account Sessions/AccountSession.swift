@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/14/23.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct AccountSession: Codable {
     /// The ID of the account the AccountSession was created for

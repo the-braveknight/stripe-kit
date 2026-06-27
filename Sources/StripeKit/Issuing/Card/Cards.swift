@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/21/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Card Object](https://stripe.com/docs/api/issuing/cards/object)
 public struct IssuingCard: Codable {

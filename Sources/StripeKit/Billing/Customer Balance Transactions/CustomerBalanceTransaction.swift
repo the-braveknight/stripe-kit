@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 11/28/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Customer Balance Transaction Object](https://stripe.com/docs/api/customer_balance_transactions/object) .
 public struct CustomerBalanceTransaction: Codable {

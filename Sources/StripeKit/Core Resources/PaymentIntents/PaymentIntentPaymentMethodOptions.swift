@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 3/9/23.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 // MARK: - ACSS Debit
 public struct PaymentIntentPaymentMethodOptionsAcssDebit: Codable {

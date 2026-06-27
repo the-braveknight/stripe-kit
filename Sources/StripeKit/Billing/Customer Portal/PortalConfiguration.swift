@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 2/25/21.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct PortalConfiguration: Codable {
     /// Unique identifier for the object.

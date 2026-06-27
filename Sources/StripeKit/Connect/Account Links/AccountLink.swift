@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 11/3/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Account Link Object](https://stripe.com/docs/api/account_links/object) .
 public struct AccountLink: Codable {

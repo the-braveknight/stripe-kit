@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 4/29/23.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct SetupIntentPaymentMethodOptions: Codable {
     /// If the SetupIntent’s `payment_method_types` includes `acss_debit`, this hash contains the configurations that will be applied to each setup attempt of that type.

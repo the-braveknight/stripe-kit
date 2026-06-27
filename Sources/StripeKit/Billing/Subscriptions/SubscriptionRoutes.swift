@@ -8,7 +8,11 @@
 
 import NIO
 import NIOHTTP1
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public protocol SubscriptionRoutes: StripeAPIRoute {
     /// Creates a new subscription on an existing customer. Each customer can have up to 500 active or scheduled subscriptions.

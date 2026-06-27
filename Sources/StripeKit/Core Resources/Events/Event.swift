@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 12/8/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 /// The [Event Object](https://stripe.com/docs/api/events/object)
 public struct Event: Codable {
     /// Unique identifier for the object.

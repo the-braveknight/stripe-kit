@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/21/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Cardholder object](https://stripe.com/docs/api/issuing/cardholders/object)
 public struct Cardholder: Codable {

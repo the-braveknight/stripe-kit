@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 6/1/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Connection Token Object](https://stripe.com/docs/api/terminal/connection_tokens/object)
 public struct TerminalConnectionToken: Codable {

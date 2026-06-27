@@ -6,7 +6,11 @@
 //
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Product Object](https://stripe.com/docs/api/products/object) .
 public struct Product: Codable {

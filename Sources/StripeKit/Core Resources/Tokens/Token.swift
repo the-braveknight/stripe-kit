@@ -6,7 +6,11 @@
 //
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Token Object](https://stripe.com/docs/api/tokens/object) .
 public struct Token: Codable {

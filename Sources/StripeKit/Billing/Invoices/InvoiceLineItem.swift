@@ -6,7 +6,11 @@
 //
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Invoice Line Item Object](https://stripe.com/docs/api/invoices/line_item) .
 public struct InvoiceLineItem: Codable {

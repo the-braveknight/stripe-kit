@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 4/2/18.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Transfer Object](https://stripe.com/docs/api/transfers/object) .
 public struct Transfer: Codable {

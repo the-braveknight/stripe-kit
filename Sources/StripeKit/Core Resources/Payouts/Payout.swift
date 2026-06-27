@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 8/20/18.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Payout Object](https://stripe.com/docs/api/payouts/object).
 public struct Payout: Codable {

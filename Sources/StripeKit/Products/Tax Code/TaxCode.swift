@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 12/16/21.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct TaxCode: Codable {
     /// Unique identifier for the object.

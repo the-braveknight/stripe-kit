@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/6/23.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 
 public struct SessionPaymentMethodOptions: Codable {

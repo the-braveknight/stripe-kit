@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/13/23.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct SubscriptionPaymentSettingsPaymentMethodOptions: Codable {
     /// If paying by `acss_debit`, this sub-hash contains details about the Canadian pre-authorized debit payment method options to pass to the invoice’s PaymentIntent.

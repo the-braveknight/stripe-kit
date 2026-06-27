@@ -6,7 +6,11 @@
 //
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Subscription Item Object](https://stripe.com/docs/api/subscription_items/object) .
 public struct SubscriptionItem: Codable {

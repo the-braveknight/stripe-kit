@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 12/3/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Report Type Object](https://stripe.com/docs/api/reporting/report_type/object) .
 public struct ReportType: Codable {

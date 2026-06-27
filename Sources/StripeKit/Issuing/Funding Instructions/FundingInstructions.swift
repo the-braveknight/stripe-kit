@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/16/23.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct FundingInstructions: Codable {
     /// Details to display instructions for initiating a bank transfer

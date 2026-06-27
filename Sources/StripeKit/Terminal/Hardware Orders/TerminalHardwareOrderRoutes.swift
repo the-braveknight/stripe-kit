@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/17/23.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 import NIO
 import NIOHTTP1
 

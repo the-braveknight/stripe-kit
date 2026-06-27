@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/13/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Credit Note Object](https://stripe.com/docs/api/credit_notes/object) .
 public struct CreditNote: Codable {

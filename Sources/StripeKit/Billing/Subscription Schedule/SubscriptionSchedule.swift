@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 1/2/20.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Schedule Object](https://stripe.com/docs/api/subscription_schedules/object)
 public struct SubscriptionSchedule: Codable {

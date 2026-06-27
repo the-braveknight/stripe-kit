@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/1/23.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct CashBalanceTransaction: Codable {
     /// Unique identifier for the object.

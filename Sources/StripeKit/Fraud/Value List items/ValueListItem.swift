@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 3/30/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Value List Item](https://stripe.com/docs/api/radar/value_list_items)
 public struct ValueListItem: Codable {

@@ -8,7 +8,11 @@
 
 import NIO
 import NIOHTTP1
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public protocol CouponRoutes: StripeAPIRoute {
     /// You can create coupons easily via the [coupon management page](https://dashboard.stripe.com/coupons) of the Stripe dashboard. Coupon creation is also accessible via the API if you need to create coupons on the fly.
