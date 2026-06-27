@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 3/7/23.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 // MARK: - ACSSDebit
 public struct MandatePaymentMethodDetailsACSSDebit: Codable {

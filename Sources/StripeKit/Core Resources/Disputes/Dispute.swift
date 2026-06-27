@@ -6,7 +6,11 @@
 //
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Dispute Object](https://stripe.com/docs/api/disputes/object)
 public struct Dispute: Codable {

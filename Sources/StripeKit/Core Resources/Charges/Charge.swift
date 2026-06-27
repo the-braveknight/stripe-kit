@@ -6,7 +6,11 @@
 //
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Charge Object](https://stripe.com/docs/api/charges/object)
 public struct Charge: Codable {

@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/14/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct UsageRecord: Codable {
     /// Unique identifier for the object.

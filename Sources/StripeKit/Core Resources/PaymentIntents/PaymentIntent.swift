@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 4/15/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [PaymentIntent Object](https://stripe.com/docs/api/payment_intents/object)
 public struct PaymentIntent: Codable {

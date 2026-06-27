@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 7/19/20.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Price Object](https://stripe.com/docs/api/prices/object)
 public struct Price: Codable {

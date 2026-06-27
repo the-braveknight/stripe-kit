@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 12/17/21.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct ShippingRate: Codable {
     /// Unique identifier for the object.

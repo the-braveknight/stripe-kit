@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 3/24/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 /// The top-up object [see here](https://stripe.com/docs/api/topups/object)
 public struct TopUp: Codable {
     

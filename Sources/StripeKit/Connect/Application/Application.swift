@@ -5,7 +5,11 @@
 //  Created by Andrew Morris on 26/04/2024.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Application Object](https://stripe.com/docs/api/application/object)
 public struct ConnectApplication: Codable {

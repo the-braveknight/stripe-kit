@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 11/29/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Early Fraud Warning Object](https://stripe.com/docs/api/radar/early_fraud_warnings/object)
 public struct EarlyFraudWarning: Codable {

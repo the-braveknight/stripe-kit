@@ -8,7 +8,11 @@
 
 import NIO
 import NIOHTTP1
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public protocol InvoiceRoutes: StripeAPIRoute {
     /// This endpoint creates a draft invoice for a given customer. The draft invoice created pulls in all pending invoice items on that customer, including prorations.

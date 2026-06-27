@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 4/11/20.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 extension Dictionary where Key == String {
     var queryParameters: String {

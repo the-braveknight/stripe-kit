@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/11/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Tax ID Object](https://stripe.com/docs/api/customer_tax_ids/object) .
 public struct TaxID: Codable {

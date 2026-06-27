@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 12/27/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Webhook Object](https://stripe.com/docs/api/webhook_endpoints)
 public struct Webhook: Codable {

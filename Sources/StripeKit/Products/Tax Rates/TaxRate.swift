@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/12/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Tax Rate Object](https://stripe.com/docs/api/tax_rates/object)
 public struct TaxRate: Codable {

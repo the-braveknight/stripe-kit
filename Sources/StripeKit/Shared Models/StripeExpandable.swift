@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 4/11/20.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 extension KeyedDecodingContainer {
     public func decode<U>(_ type: ExpandableCollection<U>.Type, forKey key: Self.Key) throws -> ExpandableCollection<U> where U: Codable {

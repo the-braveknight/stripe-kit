@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 11/23/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct Mandate: Codable {
     /// Unique identifier for the object.

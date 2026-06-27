@@ -6,7 +6,11 @@
 //
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Refund Object](https://stripe.com/docs/api/refunds/object) .
 public struct Refund: Codable {

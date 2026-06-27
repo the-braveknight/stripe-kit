@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 11/29/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct Capability: Codable {
     /// The identifier for the capability.

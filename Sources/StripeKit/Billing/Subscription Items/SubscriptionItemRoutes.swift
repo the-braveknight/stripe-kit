@@ -8,7 +8,11 @@
 
 import NIO
 import NIOHTTP1
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public protocol SubscriptionItemRoutes: StripeAPIRoute {
     /// Adds a new item to an existing subscription. No existing items will be changed or replaced.

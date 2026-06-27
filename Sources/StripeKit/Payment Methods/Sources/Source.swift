@@ -6,7 +6,11 @@
 //
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Source Object](https://stripe.com/docs/api/sources/object).
 public struct Source: Codable {

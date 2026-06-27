@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 6/1/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Reader Object](https://stripe.com/docs/api/terminal/readers/object)
 public struct TerminalReader: Codable {

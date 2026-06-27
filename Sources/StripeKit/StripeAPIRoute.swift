@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 11/1/22.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 import NIOHTTP1
 
 public protocol StripeAPIRoute {

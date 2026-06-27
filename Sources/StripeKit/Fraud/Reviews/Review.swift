@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 3/26/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Review Object](https://stripe.com/docs/api/radar/reviews/object)
 public struct Review: Codable {

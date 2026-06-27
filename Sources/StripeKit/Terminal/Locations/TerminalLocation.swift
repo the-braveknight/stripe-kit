@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 6/1/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Location Object](https://stripe.com/docs/api/terminal/locations/object)
 public struct TerminalLocation: Codable {

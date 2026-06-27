@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 5/29/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Dispte Object](https://stripe.com/docs/api/issuing/disputes/object)
 public struct IssuingDispute: Codable {

@@ -8,7 +8,11 @@
 
 import NIO
 import NIOHTTP1
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public protocol AccountRoutes: StripeAPIRoute {
     /// With [Connect](https://stripe.com/docs/connect), you can create Stripe accounts for your users. To do this, you’ll first need to [register your platform](https://dashboard.stripe.com/account/applications/settings).

@@ -7,7 +7,11 @@
 
 import NIO
 import NIOHTTP1
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public protocol TaxRateRoutes: StripeAPIRoute {
     /// Creates a new tax rate.

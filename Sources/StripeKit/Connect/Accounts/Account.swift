@@ -6,7 +6,11 @@
 //
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Account Object](https://stripe.com/docs/api/accounts/object)
 public struct ConnectAccount: Codable {

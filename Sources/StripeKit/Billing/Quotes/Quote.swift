@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 7/25/21.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// A Quote is a way to model prices that you'd like to provide to a customer. Once accepted, it will automatically create an invoice, subscription or subscription schedule.
 public struct Quote: Codable {

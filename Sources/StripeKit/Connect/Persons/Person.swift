@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 2/24/19.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [Persons Object](https://stripe.com/docs/api/persons/object)
 public struct Person: Codable {

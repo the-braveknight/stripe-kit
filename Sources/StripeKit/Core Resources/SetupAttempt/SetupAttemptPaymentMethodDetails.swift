@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 4/29/23.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct SetupAttemptPaymentMethodDetails: Codable {
     /// If this is a `acss_debit` payment method, this hash contains confirmation-specific information for the `acss_debit` payment method.

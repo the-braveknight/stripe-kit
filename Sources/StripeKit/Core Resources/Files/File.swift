@@ -5,7 +5,11 @@
 //  Created by Andrew Edwards on 9/15/18.
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The [File Object](https://stripe.com/docs/api/files/object)
 public struct File: Codable {
