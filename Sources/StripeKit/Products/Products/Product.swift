@@ -38,6 +38,8 @@ public struct Product: Codable {
     public var statementDescriptor: String?
     /// A tax code ID.
     @Expandable<TaxCode> public var taxCode: String?
+    /// A tax code ID and a tax performance location for this product.
+    public var taxDetails: ProductTaxDetails?
     /// A label that represents units of this product. When set, this will be included in customers’ receipts, invoices, Checkout, and the customer portal.
     public var unitLabel: String?
     /// Time at which the object was last updated. Measured in seconds since the Unix epoch.
@@ -61,6 +63,7 @@ public struct Product: Codable {
                 shippable: Bool? = nil,
                 statementDescriptor: String? = nil,
                 taxCode: String? = nil,
+                taxDetails: ProductTaxDetails? = nil,
                 unitLabel: String? = nil,
                 updated: Date? = nil,
                 url: String? = nil,
@@ -79,6 +82,7 @@ public struct Product: Codable {
         self.shippable = shippable
         self.statementDescriptor = statementDescriptor
         self._taxCode = Expandable(id: taxCode)
+        self.taxDetails = taxDetails
         self.unitLabel = unitLabel
         self.updated = updated
         self.url = url
@@ -91,6 +95,19 @@ public struct MarketingFeature: Codable {
     
     public init(name: String? = nil) {
         self.name = name
+    }
+}
+
+public struct ProductTaxDetails: Codable {
+    /// A recognized tax code that classifies the product for tax purposes.
+    public var taxCode: String?
+    /// The location where the product is sold or delivered, used to determine the applicable tax.
+    public var performanceLocation: String?
+
+    public init(taxCode: String? = nil,
+                performanceLocation: String? = nil) {
+        self.taxCode = taxCode
+        self.performanceLocation = performanceLocation
     }
 }
 

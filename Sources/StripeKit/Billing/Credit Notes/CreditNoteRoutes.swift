@@ -7,6 +7,7 @@
 
 import NIO
 import NIOHTTP1
+import Foundation
 
 public protocol CreditNoteRoutes: StripeAPIRoute {
     /// Issue a credit note to adjust the amount of a finalized invoice. For a `status=open` invoice, a credit note reduces its `amount_due`. For a `status=paid` invoice, a credit note does not affect its `amount_due`. Instead, it can result in any combination of the following:
@@ -27,9 +28,11 @@ public protocol CreditNoteRoutes: StripeAPIRoute {
     ///   - reason: Reason for issuing this credit note, one of `duplicate`, `fraudulent`, `order_change`, or `product_unsatisfactory`
     ///   - amount: The integer amount in cents representing the total amount of the credit note.
     ///   - creditAmount: The integer amount in cents representing the amount to credit the customer’s balance, which will be automatically applied to their next invoice.
+    ///   - effectiveAt: The date when this credit note is in effect. Same as `created` unless overwritten. When defined, this value replaces the system-generated 'Date of issue' printed on the credit note PDF.
+    ///   - emailType: Type of email to send to the customer, one of `credit_note` or `none` and the default is `credit_note`.
     ///   - outOfBandAmount: The integer amount in `cents` representing the amount that is credited outside of Stripe.
-    ///   - refund: ID of an existing refund to link this credit note to.
     ///   - refundAmount: The integer amount in cents representing the amount to refund. If set, a refund will be created for the charge associated with the invoice.
+    ///   - refunds: Refunds to link to this credit note.
     ///   - shippingCost: When `shipping_cost` contains the `shipping_rate` from the invoice, the `shipping_cost` is included in the credit note.
     ///   - expand: Specifies which fields in the response should be expanded.
     /// - Returns: A `StripeCreditNote`.
@@ -40,9 +43,11 @@ public protocol CreditNoteRoutes: StripeAPIRoute {
                 reason: CreditNoteReason?,
                 amount: Int?,
                 creditAmount: Int?,
+                effectiveAt: Date?,
+                emailType: CreditNoteEmailType?,
                 outOfBandAmount: Int?,
-                refund: String?,
                 refundAmount: Int?,
+                refunds: [[String: Any]]?,
                 shippingCost: [String: Any]?,
                 expand: [String]?) async throws -> CreditNote
     
@@ -55,9 +60,11 @@ public protocol CreditNoteRoutes: StripeAPIRoute {
     ///   - reason: Reason for issuing this credit note, one of `duplicate`, `fraudulent`, `order_change`, or   `product_unsatisfactory`
     ///   - amount: The integer amount in cents representing the total amount of the credit note.
     ///   - creditAmount: The integer amount in cents representing the amount to credit the customer’s balance, which will be automatically applie  to their next invoice.
+    ///   - effectiveAt: The date when this credit note is in effect. Same as `created` unless overwritten.
+    ///   - emailType: Type of email to send to the customer, one of `credit_note` or `none` and the default is `credit_note`.
     ///   - outOfBandAmount: The integer amount in `cents` representing the amount that is credited outside of Stripe.
-    ///   - refund: ID of an existing refund to link this credit note to.
     ///   - refundAmount: The integer amount in cents representing the amount to refund. If set, a refund will be created for the charge associated with the invoice.
+    ///   - refunds: Refunds to link to this credit note.
     ///   - shippingCost: When `shipping_cost` contains the `shipping_rate` from the invoice, the `shipping_cost` is included in the credit note.
     ///   - expand: Specifies which fields in the response should be expanded.
     func preview(invoice: String,
@@ -67,9 +74,11 @@ public protocol CreditNoteRoutes: StripeAPIRoute {
                  reason: CreditNoteReason?,
                  amount: Int?,
                  creditAmount: Int?,
+                 effectiveAt: Date?,
+                 emailType: CreditNoteEmailType?,
                  outOfBandAmount: Int?,
-                 refund: String?,
                  refundAmount: Int?,
+                 refunds: [[String: Any]]?,
                  shippingCost: [String: Any]?,
                  expand: [String]?) async throws -> CreditNote
     
@@ -134,58 +143,68 @@ public struct StripeCreditNoteRoutes: CreditNoteRoutes {
                        reason: CreditNoteReason? = nil,
                        amount: Int? = nil,
                        creditAmount: Int? = nil,
+                       effectiveAt: Date? = nil,
+                       emailType: CreditNoteEmailType? = nil,
                        outOfBandAmount: Int? = nil,
-                       refund: String? = nil,
                        refundAmount: Int? = nil,
+                       refunds: [[String: Any]]? = nil,
                        shippingCost: [String: Any]? = nil,
                        expand: [String]? = nil) async throws -> CreditNote {
-        
+
         var body: [String: Any] = ["invoice": invoice]
-        
+
         if let lines {
             body["lines"] = lines
         }
-        
+
         if let memo {
             body["memo"] = memo
         }
-        
+
         if let metadata {
             metadata.forEach { body["metadata[\($0)]"] = $1 }
         }
-        
+
         if let reason {
             body["reason"] = reason.rawValue
         }
-        
+
         if let amount {
             body["amount"] = amount
         }
-        
+
         if let creditAmount {
             body["credit_amount"] = creditAmount
         }
-        
+
+        if let effectiveAt {
+            body["effective_at"] = Int(effectiveAt.timeIntervalSince1970)
+        }
+
+        if let emailType {
+            body["email_type"] = emailType.rawValue
+        }
+
         if let outOfBandAmount {
             body["out_of_band_amount"] = outOfBandAmount
         }
-        
-        if let refund {
-            body["refund"] = refund
-        }
-        
+
         if let refundAmount {
             body["refund_amount"] = refundAmount
         }
-        
+
+        if let refunds {
+            body["refunds"] = refunds
+        }
+
         if let shippingCost {
             shippingCost.forEach { body["shipping_cost[\($0)]"] = $1 }
         }
-        
+
         if let expand {
             body["expand"] = expand
         }
-        
+
         return try await apiHandler.send(method: .POST, path: creditnotes, body: .string(body.queryParameters), headers: headers)
     }
     
@@ -196,9 +215,11 @@ public struct StripeCreditNoteRoutes: CreditNoteRoutes {
                         reason: CreditNoteReason? = nil,
                         amount: Int? = nil,
                         creditAmount: Int? = nil,
+                        effectiveAt: Date? = nil,
+                        emailType: CreditNoteEmailType? = nil,
                         outOfBandAmount: Int? = nil,
-                        refund: String? = nil,
                         refundAmount: Int? = nil,
+                        refunds: [[String: Any]]? = nil,
                         shippingCost: [String: Any]? = nil,
                         expand: [String]? = nil) async throws -> CreditNote {
         var body: [String: Any] = ["invoice": invoice]
@@ -206,47 +227,55 @@ public struct StripeCreditNoteRoutes: CreditNoteRoutes {
         if let lines {
             body["lines"] = lines
         }
-        
+
         if let memo {
             body["memo"] = memo
         }
-        
+
         if let metadata {
             metadata.forEach { body["metadata[\($0)]"] = $1 }
         }
-        
+
         if let reason {
             body["reason"] = reason.rawValue
         }
-        
+
         if let amount {
             body["amount"] = amount
         }
-        
+
         if let creditAmount {
             body["credit_amount"] = creditAmount
         }
-        
+
+        if let effectiveAt {
+            body["effective_at"] = Int(effectiveAt.timeIntervalSince1970)
+        }
+
+        if let emailType {
+            body["email_type"] = emailType.rawValue
+        }
+
         if let outOfBandAmount {
             body["out_of_band_amount"] = outOfBandAmount
         }
-        
-        if let refund {
-            body["refund"] = refund
-        }
-        
+
         if let refundAmount {
             body["refund_amount"] = refundAmount
         }
-        
+
+        if let refunds {
+            body["refunds"] = refunds
+        }
+
         if let shippingCost {
             shippingCost.forEach { body["shipping_cost[\($0)]"] = $1 }
         }
-        
+
         if let expand {
             body["expand"] = expand
         }
-        
+
         return try await apiHandler.send(method: .POST, path: "\(creditnotes)/preview", body: .string(body.queryParameters), headers: headers)
     }
     

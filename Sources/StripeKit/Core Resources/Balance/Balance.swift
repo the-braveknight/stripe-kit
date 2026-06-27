@@ -22,20 +22,37 @@ public struct Balance: Codable {
     public var livemode: Bool?
     /// Funds that are not yet available in the balance, due to the 7-day rolling pay cycle. The pending balance for each currency, and for each payment type, can be found in the `source_types` property.
     public var pending: [BalanceAmount]?
-    
+    /// Funds that can be spent to cover future refunds, disputes, or negative balance.
+    public var refundAndDisputePrefunding: BalanceRefundAndDisputePrefunding?
+
     public init(object: String,
                 available: [BalanceAmount]? = nil,
                 connectReserved: [BalanceAmount]? = nil,
                 instantAvailable: [BalanceAmount]? = nil,
                 issuing: BalanceIssuing? = nil,
                 livemode: Bool? = nil,
-                pending: [BalanceAmount]? = nil) {
+                pending: [BalanceAmount]? = nil,
+                refundAndDisputePrefunding: BalanceRefundAndDisputePrefunding? = nil) {
         self.object = object
         self.available = available
         self.connectReserved = connectReserved
         self.instantAvailable = instantAvailable
         self.issuing = issuing
         self.livemode = livemode
+        self.pending = pending
+        self.refundAndDisputePrefunding = refundAndDisputePrefunding
+    }
+}
+
+public struct BalanceRefundAndDisputePrefunding: Codable {
+    /// Funds that are available for use.
+    public var available: [BalanceAmount]?
+    /// Funds that are pending.
+    public var pending: [BalanceAmount]?
+
+    public init(available: [BalanceAmount]? = nil,
+                pending: [BalanceAmount]? = nil) {
+        self.available = available
         self.pending = pending
     }
 }
@@ -54,14 +71,35 @@ public struct BalanceAmount: Codable {
     public var amount: Int?
     /// Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies) .
     public var currency: Currency?
+    /// Breakdown of balance by destination. Only set for the `instant_available` balance.
+    public var netAvailable: [BalanceAmountNetAvailable]?
     /// Breakdown of balance by source types.
     public var sourceTypes: BalanceAmountSourceType?
-    
+
     public init(amount: Int? = nil,
                 currency: Currency? = nil,
+                netAvailable: [BalanceAmountNetAvailable]? = nil,
                 sourceTypes: BalanceAmountSourceType? = nil) {
         self.amount = amount
         self.currency = currency
+        self.netAvailable = netAvailable
+        self.sourceTypes = sourceTypes
+    }
+}
+
+public struct BalanceAmountNetAvailable: Codable {
+    /// Net balance amount, subtracting fees from platform-set pricing.
+    public var amount: Int?
+    /// ID of the external account for this net balance (not expandable).
+    public var destination: String?
+    /// Breakdown of balance by source types.
+    public var sourceTypes: BalanceAmountSourceType?
+
+    public init(amount: Int? = nil,
+                destination: String? = nil,
+                sourceTypes: BalanceAmountSourceType? = nil) {
+        self.amount = amount
+        self.destination = destination
         self.sourceTypes = sourceTypes
     }
 }

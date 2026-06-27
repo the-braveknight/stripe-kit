@@ -13,7 +13,7 @@ public struct ValueList: Codable {
     public var id: String
     /// The name of the value list for use in rules.
     public var alias: String?
-    /// The type of items in the value list. One of `card_fingerprint`, `card_bin`, `email`, `ip_address`, `country`, `string`,  `case_sensitive_string` or `customer_id`.
+    /// The type of items in the value list. One of `account`, `card_fingerprint`, `card_bin`, `case_sensitive_string`, `country`, `crypto_fingerprint`, `customer_id`, `email`, `ip_address`, `sepa_debit_fingerprint`, `string`, or `us_bank_account_fingerprint`.
     public var itemType: ValueListItemType?
     /// List of items contained within this value list.
     public var listItems: ValueListItemList?
@@ -54,14 +54,18 @@ public struct ValueList: Codable {
 }
 
 public enum ValueListItemType: String, Codable {
+    case account
     case cardFingerprint = "card_fingerprint"
     case cardBin = "card_bin"
+    case caseSensitiveString = "case_sensitive_string"
+    case country
+    case cryptoFingerprint = "crypto_fingerprint"
+    case customerId = "customer_id"
     case email
     case ipAddress = "ip_address"
-    case country
+    case sepaDebitFingerprint = "sepa_debit_fingerprint"
     case string
-    case caseSensitiveString = "case_sensitive_string"
-    case customerId = "customer_id"
+    case usBankAccountFingerprint = "us_bank_account_fingerprint"
 }
 
 public struct ValueListList: Codable {

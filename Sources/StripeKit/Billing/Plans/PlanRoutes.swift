@@ -24,6 +24,7 @@ public protocol PlanRoutes: StripeAPIRoute {
     ///   - tiers: Each element represents a pricing tier. This parameter requires `billing_scheme` to be set to `tiered`. See also the documentation for `billing_scheme`.
     ///   - tiersMode: Defines if the tiering price should be `graduated` or `volume` based. In `volume`-based tiering, the maximum quantity within a period determines the per unit price, in `graduated` tiering pricing can successively change as the quantity grows.
     ///   - aggregateUsage: Specifies a usage aggregation strategy for plans of `usage_type=metered`. Allowed values are `sum` for summing up all usage during a period, `last_during_period` for picking the last usage record reported within a period, `last_ever` for picking the last usage record ever (across period bounds) or `max` which picks the usage record with the maximum reported usage during a period. Defaults to `sum`.
+    ///   - meter: The meter tracking the usage of a metered price.
     ///   - amountDecimal: Same as amount, but accepts a decimal value with at most 12 decimal places. Only one of amount and amount_decimal can be set.
     ///   - billingScheme: Describes how to compute the price per period. Either `per_unit` or `tiered`. `per_unit` indicates that the fixed amount (specified in `amount`) will be charged per unit in `quantity` (for plans with `usage_type=licensed`), or per unit of total usage (for plans with `usage_type=metered`). `tiered` indicates that the unit pricing will be computed using a tiering strategy as defined using the `tiers` and `tiers_mode` attributes.
     ///   - intervalCount: The number of intervals between subscription billings. For example, `interval=month` and `interval_count=3` bills every 3 months. Maximum of one year interval allowed (1 year, 12 months, or 52 weeks).
@@ -43,6 +44,7 @@ public protocol PlanRoutes: StripeAPIRoute {
                 tiers: [String: Any]?,
                 tiersMode: PlanTiersMode?,
                 aggregateUsage: PlanAggregateUsage?,
+                meter: String?,
                 amountDecimal: Int?,
                 billingScheme: PlanBillingScheme?,
                 intervalCount: Int?,
@@ -112,6 +114,7 @@ public struct StripePlanRoutes: PlanRoutes {
                        tiers: [String: Any]? = nil,
                        tiersMode: PlanTiersMode? = nil,
                        aggregateUsage: PlanAggregateUsage? = nil,
+                       meter: String? = nil,
                        amountDecimal: Int? = nil,
                        billingScheme: PlanBillingScheme? = nil,
                        intervalCount: Int? = nil,
@@ -159,7 +162,11 @@ public struct StripePlanRoutes: PlanRoutes {
         if let aggregateUsage {
             body["aggregate_usage"] = aggregateUsage.rawValue
         }
-        
+
+        if let meter {
+            body["meter"] = meter
+        }
+
         if let amountDecimal {
             body["amount_decimal"] = amountDecimal
         }

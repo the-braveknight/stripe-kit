@@ -83,6 +83,7 @@ public enum BankAccountStatus: String, Codable {
     case validated
     case verified
     case verificationFailed = "verification_failed"
+    case tokenizedAccountNumberDeactivated = "tokenized_account_number_deactivated"
     case errored
 }
 

@@ -14,7 +14,7 @@ public protocol ValueListRoutes: StripeAPIRoute {
     /// - Parameters:
     ///   - alias: The name of the value list for use in rules.
     ///   - name: The human-readable name of the value list.
-    ///   - itemType: Type of the items in the value list. One of `card_fingerprint`, `card_bin`, `email`, `ip_address`, `country`, `string`, or`case_sensitive_string`. Use string if the item type is unknown or mixed.
+    ///   - itemType: Type of the items in the value list. One of `account`, `card_fingerprint`, `card_bin`, `case_sensitive_string`, `country`, `crypto_fingerprint`, `customer_id`, `email`, `ip_address`, `sepa_debit_fingerprint`, `string`, or `us_bank_account_fingerprint`. Use string if the item type is unknown or mixed.
     ///   - metadata: Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
     /// - Returns: Returns a ValueList object if creation succeeds.
     func create(alias: String, name: String, itemType: ValueListItemType?, metadata: [String: String]?) async throws -> ValueList

@@ -73,20 +73,32 @@ public enum FilePurpose: String, Codable {
     case documentProviderIdentityDocument = "document_provider_identity_document"
     /// User-accessible copies of query results from the Reporting dataset.
     case financeReportRun = "finance_report_run"
+    /// A statement for a Treasury financial account.
+    case financialAccountStatement = "financial_account_statement"
     ///A document to verify the identity of an account owner during account provisioning.
     case identityDocument = "identity_document"
     /// Image of a document collected by Stripe Identity.
     case identityDocumentDownloadable = "identity_document_downloadable"
+    /// A document used for Issuing regulatory reporting.
+    case issuingRegulatoryReporting = "issuing_regulatory_reporting"
     /// A self-assessment PCI questionnaire.
     case pciDocument = "pci_document"
+    /// A platform's terms of service document.
+    case platformTermsOfService = "platform_terms_of_service"
     /// Image of a selfie collected by Stripe Identity.
     case selfie
     /// Sigma scheduled query file for export and download.
     case sigmaScheduledQuery = "sigma_scheduled_query"
     /// A user-uploaded tax document.
     case taxDocumentUserUpload = "tax_document_user_upload"
+    /// An Android APK to be installed on Terminal readers.
+    case terminalAndroidApk = "terminal_android_apk"
     /// Splashscreen to be displayed on Terminal readers.
     case terminalReaderSplashscreen = "terminal_reader_splashscreen"
+    /// A WiFi certificate for use with Terminal readers.
+    case terminalWifiCertificate = "terminal_wifi_certificate"
+    /// A WiFi private key for use with Terminal readers.
+    case terminalWifiPrivateKey = "terminal_wifi_private_key"
 }
 
 public enum FileType: String, Codable {

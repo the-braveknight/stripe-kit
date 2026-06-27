@@ -54,7 +54,9 @@ public struct ConnectAccount: Codable {
     public var payoutsEnabled: Bool?
     /// Account options for customizing how the account functions within Stripe.
     public var settings: ConnectAccountSettings?
-    
+    /// The groups associated with the account.
+    public var groups: ConnectAccountGroups?
+
     public init(id: String,
                 businessType: ConnectAccountBusinessType? = nil,
                 capabilities: ConnectAccountCapablities? = nil,
@@ -76,7 +78,8 @@ public struct ConnectAccount: Codable {
                 externalAccounts: ConnectAccountExternalAccountsList? = nil,
                 futureRequirements: ConnectAccountFutureRequirements? = nil,
                 payoutsEnabled: Bool? = nil,
-                settings: ConnectAccountSettings? = nil) {
+                settings: ConnectAccountSettings? = nil,
+                groups: ConnectAccountGroups? = nil) {
         self.id = id
         self.businessType = businessType
         self.capabilities = capabilities
@@ -99,6 +102,16 @@ public struct ConnectAccount: Codable {
         self.futureRequirements = futureRequirements
         self.payoutsEnabled = payoutsEnabled
         self.settings = settings
+        self.groups = groups
+    }
+}
+
+public struct ConnectAccountGroups: Codable {
+    /// The group the account is in to determine their payments pricing, and null if the account is on customized pricing. [See the Platform pricing tool documentation](https://stripe.com/docs/connect/platform-pricing-tools) for details.
+    public var paymentsPricing: String?
+
+    public init(paymentsPricing: String? = nil) {
+        self.paymentsPricing = paymentsPricing
     }
 }
 
@@ -120,8 +133,16 @@ public struct ConnectAccountList: Codable {
 }
 
 public struct ConnectAccountBusinessProfile: Codable {
+    /// The applicant's gross annual revenue for its preceding fiscal year.
+    public var annualRevenue: ConnectAccountBusinessProfileAnnualRevenue?
+    /// An estimated upper bound of employees, contractors, vendors, etc. currently working for the business.
+    public var estimatedWorkerCount: Int?
     /// [The merchant category code for the account](https://stripe.com/docs/connect/setting-mcc). MCCs are used to classify businesses based on the goods or services they provide.
     public var mcc: String?
+    /// Whether the business is a minority-owned, women-owned, and/or LGBTQI+-owned business.
+    public var minorityOwnedBusinessDesignation: [ConnectAccountBusinessProfileMinorityOwnedBusinessDesignation]?
+    /// An estimate of the monthly revenue of the business.
+    public var monthlyEstimatedRevenue: ConnectAccountBusinessProfileMonthlyEstimatedRevenue?
     /// The customer-facing business name.
     public var name: String?
     /// Internal-only description of the product sold or service provided by the business. It’s used by Stripe for risk and underwriting purposes.
@@ -136,8 +157,12 @@ public struct ConnectAccountBusinessProfile: Codable {
     public var supportUrl: String?
     /// The business’s publicly available website.
     public var url: String?
-    
-    public init(mcc: String? = nil,
+
+    public init(annualRevenue: ConnectAccountBusinessProfileAnnualRevenue? = nil,
+                estimatedWorkerCount: Int? = nil,
+                mcc: String? = nil,
+                minorityOwnedBusinessDesignation: [ConnectAccountBusinessProfileMinorityOwnedBusinessDesignation]? = nil,
+                monthlyEstimatedRevenue: ConnectAccountBusinessProfileMonthlyEstimatedRevenue? = nil,
                 name: String? = nil,
                 productDescription: String? = nil,
                 supportAddress: Address? = nil,
@@ -145,7 +170,11 @@ public struct ConnectAccountBusinessProfile: Codable {
                 supportPhone: String? = nil,
                 supportUrl: String? = nil,
                 url: String? = nil) {
+        self.annualRevenue = annualRevenue
+        self.estimatedWorkerCount = estimatedWorkerCount
         self.mcc = mcc
+        self.minorityOwnedBusinessDesignation = minorityOwnedBusinessDesignation
+        self.monthlyEstimatedRevenue = monthlyEstimatedRevenue
         self.name = name
         self.productDescription = productDescription
         self.supportAddress = supportAddress
@@ -154,6 +183,43 @@ public struct ConnectAccountBusinessProfile: Codable {
         self.supportUrl = supportUrl
         self.url = url
     }
+}
+
+public struct ConnectAccountBusinessProfileAnnualRevenue: Codable {
+    /// A non-negative integer representing the amount in the smallest currency unit.
+    public var amount: Int?
+    /// Three-letter ISO currency code, in lowercase.
+    public var currency: Currency?
+    /// The close-out date of the preceding fiscal year in ISO 8601 format. E.g. 2023-12-31 for the 31st of December, 2023.
+    public var fiscalYearEnd: String?
+
+    public init(amount: Int? = nil,
+                currency: Currency? = nil,
+                fiscalYearEnd: String? = nil) {
+        self.amount = amount
+        self.currency = currency
+        self.fiscalYearEnd = fiscalYearEnd
+    }
+}
+
+public struct ConnectAccountBusinessProfileMonthlyEstimatedRevenue: Codable {
+    /// A non-negative integer representing how much to charge in the smallest currency unit.
+    public var amount: Int?
+    /// Three-letter ISO currency code, in lowercase.
+    public var currency: Currency?
+
+    public init(amount: Int? = nil, currency: Currency? = nil) {
+        self.amount = amount
+        self.currency = currency
+    }
+}
+
+public enum ConnectAccountBusinessProfileMinorityOwnedBusinessDesignation: String, Codable {
+    case lgbtqiOwnedBusiness = "lgbtqi_owned_business"
+    case minorityOwnedBusiness = "minority_owned_business"
+    case noneOfTheseApply = "none_of_these_apply"
+    case preferNotToAnswer = "prefer_not_to_answer"
+    case womenOwnedBusiness = "women_owned_business"
 }
 
 public enum ConnectAccountBusinessType: String, Codable {
@@ -312,15 +378,82 @@ public enum ConnectAccountCapabilitiesStatus: String, Codable {
 }
 
 public struct ConnectAccountController: Codable {
+    /// A hash of configuration describing the fee charges, payments, or other behavior that this controller has over the account.
+    public var fees: ConnectAccountControllerFees?
     /// `true` if the Connect application retrieving the resource controls the account and can therefore exercise platform controls. Otherwise, this field is null.
     public var isController: Bool?
+    /// A hash of configuration describing how losses are handled for this account.
+    public var losses: ConnectAccountControllerLosses?
+    /// A value indicating responsibility for collecting requirements on this account. Only returned when the Connect application retrieving the resource controls the account.
+    public var requirementCollection: ConnectAccountControllerRequirementCollection?
+    /// A hash of configuration for Stripe-hosted dashboards.
+    public var stripeDashboard: ConnectAccountControllerStripeDashboard?
     /// The controller type. Can be `application`, if a Connect application controls the account, or `account`, if the account controls itself.
     public var type: ConnectAccountControllerType?
-    
-    public init(isController: Bool? = nil, type: ConnectAccountControllerType? = nil) {
+
+    public init(fees: ConnectAccountControllerFees? = nil,
+                isController: Bool? = nil,
+                losses: ConnectAccountControllerLosses? = nil,
+                requirementCollection: ConnectAccountControllerRequirementCollection? = nil,
+                stripeDashboard: ConnectAccountControllerStripeDashboard? = nil,
+                type: ConnectAccountControllerType? = nil) {
+        self.fees = fees
         self.isController = isController
+        self.losses = losses
+        self.requirementCollection = requirementCollection
+        self.stripeDashboard = stripeDashboard
         self.type = type
     }
+}
+
+public struct ConnectAccountControllerFees: Codable {
+    /// A value indicating the responsible payer of a bundle of Stripe fees for pricing-control eligible products on this account.
+    public var payer: ConnectAccountControllerFeesPayer?
+
+    public init(payer: ConnectAccountControllerFeesPayer? = nil) {
+        self.payer = payer
+    }
+}
+
+public enum ConnectAccountControllerFeesPayer: String, Codable {
+    case account
+    case application
+    case applicationCustom = "application_custom"
+    case applicationExpress = "application_express"
+}
+
+public struct ConnectAccountControllerLosses: Codable {
+    /// A value indicating who is liable when this account can't pay back negative balances from payments.
+    public var payments: ConnectAccountControllerLossesPayments?
+
+    public init(payments: ConnectAccountControllerLossesPayments? = nil) {
+        self.payments = payments
+    }
+}
+
+public enum ConnectAccountControllerLossesPayments: String, Codable {
+    case application
+    case stripe
+}
+
+public enum ConnectAccountControllerRequirementCollection: String, Codable {
+    case application
+    case stripe
+}
+
+public struct ConnectAccountControllerStripeDashboard: Codable {
+    /// A value indicating the Stripe dashboard this account has access to independent of the Connect application.
+    public var type: ConnectAccountControllerStripeDashboardType?
+
+    public init(type: ConnectAccountControllerStripeDashboardType? = nil) {
+        self.type = type
+    }
+}
+
+public enum ConnectAccountControllerStripeDashboardType: String, Codable {
+    case express
+    case full
+    case none
 }
 
 public enum ConnectAccountControllerType: String, Codable {
@@ -337,6 +470,8 @@ public struct ConnectAccountCompany: Codable {
     public var addressKanji: AddressKanji?
     /// Whether the company’s directors have been provided. This Boolean will be `true` if you’ve manually indicated that all directors are provided via the `directors_provided` parameter.
     public var directorsProvided: Bool?
+    /// This hash is used to attest that the directors information provided to Stripe is both current and correct.
+    public var directorshipDeclaration: ConnectAccountCompanyDirectorshipDeclaration?
     /// Whether the company’s executives have been provided. This Boolean will be `true` if you’ve manually indicated that all executives are provided via the `executives_provided` parameter, or if Stripe determined that sufficient executives were provided.
     public var executivesProvided: Bool?
     /// The export license ID number of the company, also referred as Import Export Code (India only).
@@ -353,8 +488,12 @@ public struct ConnectAccountCompany: Codable {
     public var ownersProvided: Bool?
     /// This hash is used to attest that the beneficial owner information provided to Stripe is both current and correct.
     public var ownershipDeclaration: ConnectAccountCompanyOwnershipDeclaration?
+    /// This value is used to determine if a business is exempt from providing ultimate beneficial owners. See [this support article](https://support.stripe.com/questions/exemption-from-providing-ownership-details) and [changelog](https://docs.stripe.com/changelog/acacia/2025-01-27/ownership-exemption-reason-accounts-api) for more details.
+    public var ownershipExemptionReason: ConnectAccountCompanyOwnershipExemptionReason?
     /// The company’s phone number (used for verification).
     public var phone: String?
+    /// This hash is used to attest that the representative information provided to Stripe is both current and correct.
+    public var representativeDeclaration: ConnectAccountCompanyRepresentativeDeclaration?
     /// The category identifying the legal structure of the company or legal entity.
     public var structure: ConnectAccountCompanyStructure?
     /// Whether the company’s business ID number was provided.
@@ -370,6 +509,7 @@ public struct ConnectAccountCompany: Codable {
                 addressKana: AddressKana? = nil,
                 addressKanji: AddressKanji? = nil,
                 directorsProvided: Bool? = nil,
+                directorshipDeclaration: ConnectAccountCompanyDirectorshipDeclaration? = nil,
                 executivesProvided: Bool? = nil,
                 exportLicenseId: String? = nil,
                 exportPurposeCode: String? = nil,
@@ -378,7 +518,9 @@ public struct ConnectAccountCompany: Codable {
                 nameKanji: String? = nil,
                 ownersProvided: Bool? = nil,
                 ownershipDeclaration: ConnectAccountCompanyOwnershipDeclaration? = nil,
+                ownershipExemptionReason: ConnectAccountCompanyOwnershipExemptionReason? = nil,
                 phone: String? = nil,
+                representativeDeclaration: ConnectAccountCompanyRepresentativeDeclaration? = nil,
                 structure: ConnectAccountCompanyStructure? = nil,
                 taxIdProvided: Bool? = nil,
                 taxIdRegistrar: String? = nil,
@@ -388,6 +530,7 @@ public struct ConnectAccountCompany: Codable {
         self.addressKana = addressKana
         self.addressKanji = addressKanji
         self.directorsProvided = directorsProvided
+        self.directorshipDeclaration = directorshipDeclaration
         self.executivesProvided = executivesProvided
         self.exportLicenseId = exportLicenseId
         self.exportPurposeCode = exportPurposeCode
@@ -396,13 +539,54 @@ public struct ConnectAccountCompany: Codable {
         self.nameKanji = nameKanji
         self.ownersProvided = ownersProvided
         self.ownershipDeclaration = ownershipDeclaration
+        self.ownershipExemptionReason = ownershipExemptionReason
         self.phone = phone
+        self.representativeDeclaration = representativeDeclaration
         self.structure = structure
         self.taxIdProvided = taxIdProvided
         self.taxIdRegistrar = taxIdRegistrar
         self.vatIdProvided = vatIdProvided
         self.verification = verification
     }
+}
+
+public struct ConnectAccountCompanyDirectorshipDeclaration: Codable {
+    /// The Unix timestamp marking when the directorship declaration attestation was made.
+    public var date: Date?
+    /// The IP address from which the directorship declaration attestation was made.
+    public var ip: String?
+    /// The user-agent string from the browser where the directorship declaration attestation was made.
+    public var userAgent: String?
+
+    public init(date: Date? = nil,
+                ip: String? = nil,
+                userAgent: String? = nil) {
+        self.date = date
+        self.ip = ip
+        self.userAgent = userAgent
+    }
+}
+
+public struct ConnectAccountCompanyRepresentativeDeclaration: Codable {
+    /// The Unix timestamp marking when the representative declaration attestation was made.
+    public var date: Date?
+    /// The IP address from which the representative declaration attestation was made.
+    public var ip: String?
+    /// The user-agent string from the browser where the representative declaration attestation was made.
+    public var userAgent: String?
+
+    public init(date: Date? = nil,
+                ip: String? = nil,
+                userAgent: String? = nil) {
+        self.date = date
+        self.ip = ip
+        self.userAgent = userAgent
+    }
+}
+
+public enum ConnectAccountCompanyOwnershipExemptionReason: String, Codable {
+    case qualifiedEntityExceedsOwnershipThreshold = "qualified_entity_exceeds_ownership_threshold"
+    case qualifiesAsFinancialInstitution = "qualifies_as_financial_institution"
 }
 
 public struct ConnectAccountCompanyOwnershipDeclaration: Codable {
@@ -542,12 +726,17 @@ public struct ConnectAccountRequirementsAlternative: Codable {
 }
 
 public enum ConnectAccountRequirementsDisabledReason: String, Codable {
+    case actionRequiredRequestedCapabilities = "action_required.requested_capabilities"
     case requirementsPastDue = "requirements.past_due"
     case requirementsPendingVerification = "requirements.pending_verification"
     case listed
     case platformPaused = "platform_paused"
     case rejectedFraud = "rejected.fraud"
+    case rejectedIncompleteVerification = "rejected.incomplete_verification"
     case rejectedListed = "rejected.listed"
+    case rejectedPlatformFraud = "rejected.platform_fraud"
+    case rejectedPlatformOther = "rejected.platform_other"
+    case rejectedPlatformTermsOfService = "rejected.platform_terms_of_service"
     case rejectedTermsOfService = "rejected.terms_of_service"
     case rejectedOther = "rejected.other"
     case underReview = "under_review"
@@ -764,18 +953,21 @@ public struct ConnectAccountSettings: Codable {
     public var cardPayments: ConnectAccountSettingsCardPayments?
     /// Settings used to configure the account within the Stripe dashboard.
     public var dashboard: ConnectAccountSettingsDashboard?
+    /// Settings specific to the account’s use of Invoices.
+    public var invoices: ConnectAccountSettingsInvoices?
     /// Settings that apply across payment methods for charging on the account.
     public var payments: ConnectAccountSettingsPayments?
     /// Settings specific to the account’s payouts.
     public var payouts: ConnectAccountSettingsPayouts?
     /// Settings specific to SEPA Direct Debit on the account.
     public var sepaDebitPayments: ConnectAccountSettingsSepaDebitPayments?
-    
+
     public init(bacsDebitPayments: ConnectAccountSettingsBacsDebitPayments? = nil,
                 branding: ConnectAccountSettingsBranding? = nil,
                 cardIssuing: ConnectAccountSettingsCardIssuing? = nil,
                 cardPayments: ConnectAccountSettingsCardPayments? = nil,
                 dashboard: ConnectAccountSettingsDashboard? = nil,
+                invoices: ConnectAccountSettingsInvoices? = nil,
                 payments: ConnectAccountSettingsPayments? = nil,
                 payouts: ConnectAccountSettingsPayouts? = nil,
                 sepaDebitPayments: ConnectAccountSettingsSepaDebitPayments? = nil) {
@@ -784,18 +976,32 @@ public struct ConnectAccountSettings: Codable {
         self.cardIssuing = cardIssuing
         self.cardPayments = cardPayments
         self.dashboard = dashboard
+        self.invoices = invoices
         self.payments = payments
         self.payouts = payouts
         self.sepaDebitPayments = sepaDebitPayments
     }
 }
 
+public struct ConnectAccountSettingsInvoices: Codable {
+    /// The list of default Account Tax IDs to automatically include on invoices. Account Tax IDs get added when an invoice is finalized.
+    public var defaultAccountTaxIds: [String]?
+
+    public init(defaultAccountTaxIds: [String]? = nil) {
+        self.defaultAccountTaxIds = defaultAccountTaxIds
+    }
+}
+
 public struct ConnectAccountSettingsBacsDebitPayments: Codable {
-    /// The Bacs Direct Debit Display Name for this account. For payments made with Bacs Direct Debit, this will appear on the mandate, and as the statement descriptor.
+    /// The Bacs Direct Debit display name for this account. For payments made with Bacs Direct Debit, this name appears on the mandate as the statement descriptor.
     public var displayName: String?
-    
-    public init(displayName: String? = nil) {
+    /// The Bacs Direct Debit Service user number for this account. For payments made with Bacs Direct Debit, this number is a unique identifier of the account with our banking partners.
+    public var serviceUserNumber: String?
+
+    public init(displayName: String? = nil,
+                serviceUserNumber: String? = nil) {
         self.displayName = displayName
+        self.serviceUserNumber = serviceUserNumber
     }
 }
 
@@ -988,6 +1194,7 @@ public enum ConnectAccountType: String, Codable {
     case standard
     case express
     case custom
+    case none
 }
 
 public struct ConnectAccountLoginLink: Codable {

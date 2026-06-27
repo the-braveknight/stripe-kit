@@ -70,18 +70,26 @@ public enum FundingInstructionsBankTransferFinancialAddressType: String, Codable
 public struct FundingInstructionsBankTransferFinancialAddressIban: Codable {
     /// The name of the person or business that owns the bank account
     public var accountHolderName: String?
+    /// The account holder’s address.
+    public var accountHolderAddress: Address?
+    /// The bank’s address.
+    public var bankAddress: Address?
     /// The BIC/SWIFT code of the account.
     public var bic: String?
     /// Two-letter country code (ISO 3166-1 alpha-2).
     public var country: String?
     /// The IBAN of the account.
     public var iban: String?
-    
+
     public init(accountHolderName: String? = nil,
+                accountHolderAddress: Address? = nil,
+                bankAddress: Address? = nil,
                 bic: String? = nil,
                 country: String? = nil,
                 iban: String? = nil) {
         self.accountHolderName = accountHolderName
+        self.accountHolderAddress = accountHolderAddress
+        self.bankAddress = bankAddress
         self.bic = bic
         self.country = country
         self.iban = iban
@@ -91,16 +99,24 @@ public struct FundingInstructionsBankTransferFinancialAddressIban: Codable {
 public struct FundingInstructionsBankTransferFinancialAddressSortCode: Codable {
     /// The name of the person or business that owns the bank account
     public var accountHolderName: String?
+    /// The account holder’s address.
+    public var accountHolderAddress: Address?
     /// The account number
     public var accountNumber: String?
+    /// The bank’s address.
+    public var bankAddress: Address?
     /// The six-digit sort code
     public var sortCode: String?
-    
+
     public init(accountHolderName: String? = nil,
+                accountHolderAddress: Address? = nil,
                 accountNumber: String? = nil,
+                bankAddress: Address? = nil,
                 sortCode: String? = nil) {
         self.accountHolderName = accountHolderName
+        self.accountHolderAddress = accountHolderAddress
         self.accountNumber = accountNumber
+        self.bankAddress = bankAddress
         self.sortCode = sortCode
     }
 }

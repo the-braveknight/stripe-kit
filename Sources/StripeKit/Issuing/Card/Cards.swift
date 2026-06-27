@@ -41,19 +41,23 @@ public struct IssuingCard: Codable {
     public var livemode: Bool?
     /// The full unredacted card number. For security reasons, this is only available for virtual cards, and will be omitted unless you explicitly request it with the expand parameter. Additionally, it’s only available via the “Retrieve a card” endpoint, not via “List all cards” or any other endpoint.
     public var number: String?
+    /// The ID of the personalization design object belonging to this card.
+    public var personalizationDesign: String?
     /// The latest card that replaces this card, if any.
     @Expandable<IssuingCard> public var replacedBy: String?
     /// The card this card replaces, if any.
     @Expandable<IssuingCard> public var replacementFor: String?
     /// Why the card that this card replaces (if any) needed to be replaced. One of damage, expiration, loss, or theft.
     public var replacementReason: IssuingCardReplacementReason?
+    /// The second line to print on the card. Max 24 characters.
+    public var secondLine: String?
     /// Where and how the card will be shipped.
     public var shipping: IssuingCardShipping?
     /// Spending rules that give you some control over how this card can be used. Refer to our authorizations documentation for more details.
     public var spendingControls: IssuingCardSpendingControls?
     /// Information relating to digital wallets (like Apple Pay and Google Pay).
     public var wallets: IssuingCardWallets?
-    
+
     public init(id: String,
                 cencellationReason: IssuingCardCancellationReason? = nil,
                 cardholder: Cardholder? = nil,
@@ -70,9 +74,11 @@ public struct IssuingCard: Codable {
                 cvc: String? = nil,
                 livemode: Bool? = nil,
                 number: String? = nil,
+                personalizationDesign: String? = nil,
                 replacedBy: String? = nil,
                 replacementFor: String? = nil,
                 replacementReason: IssuingCardReplacementReason? = nil,
+                secondLine: String? = nil,
                 shipping: IssuingCardShipping? = nil,
                 spendingControls: IssuingCardSpendingControls? = nil,
                 wallets: IssuingCardWallets? = nil) {
@@ -92,9 +98,11 @@ public struct IssuingCard: Codable {
         self.cvc = cvc
         self.livemode = livemode
         self.number = number
+        self.personalizationDesign = personalizationDesign
         self._replacedBy = Expandable(id: replacedBy)
         self._replacementFor = Expandable(id: replacementFor)
         self.replacementReason = replacementReason
+        self.secondLine = secondLine
         self.shipping = shipping
         self.spendingControls = spendingControls
         self.wallets = wallets
@@ -119,21 +127,37 @@ public struct IssuingCardList: Codable {
 }
 
 public struct IssuingCardSpendingControls: Codable {
+    /// Array of strings containing representing card presence types of authorizations permitted on this card. Possible values are `present` and `not_present`.
+    public var allowedCardPresences: [String]?
     /// Array of strings containing categories of authorizations permitted on this card.
     public var allowedCategories: [String]?
+    /// Array of strings containing representing countries of authorizations permitted on this card (counts in ISO 3166-1 alpha-2 format).
+    public var allowedMerchantCountries: [String]?
+    /// Array of strings containing representing card presence types of authorizations to always decline on this card. Possible values are `present` and `not_present`.
+    public var blockedCardPresences: [String]?
     /// Array of strings containing categories of authorizations to always decline on this card.
     public var blockedCategories: [String]?
+    /// Array of strings containing representing countries of authorizations to always decline on this card (counts in ISO 3166-1 alpha-2 format).
+    public var blockedMerchantCountries: [String]?
     /// Limit the spending with rules based on time intervals and categories.
     public var spendingLimits: [CardholderSpendingControlSpendingLimit]?
     /// Currency for the amounts within `spending_limits`. Locked to the currency of the card.
     public var spendingLimitsCurrency: Currency?
-    
-    public init(allowedCategories: [String]? = nil,
+
+    public init(allowedCardPresences: [String]? = nil,
+                allowedCategories: [String]? = nil,
+                allowedMerchantCountries: [String]? = nil,
+                blockedCardPresences: [String]? = nil,
                 blockedCategories: [String]? = nil,
+                blockedMerchantCountries: [String]? = nil,
                 spendingLimits: [CardholderSpendingControlSpendingLimit]? = nil,
                 spendingLimitsCurrency: Currency? = nil) {
+        self.allowedCardPresences = allowedCardPresences
         self.allowedCategories = allowedCategories
+        self.allowedMerchantCountries = allowedMerchantCountries
+        self.blockedCardPresences = blockedCardPresences
         self.blockedCategories = blockedCategories
+        self.blockedMerchantCountries = blockedMerchantCountries
         self.spendingLimits = spendingLimits
         self.spendingLimitsCurrency = spendingLimitsCurrency
     }
@@ -148,11 +172,15 @@ public enum IssuingCardReplacementReason: String, Codable {
     case damaged
     /// The expiration date has passed or is imminent.
     case expired
+    /// There was an error with the physical card fulfillment.
+    case fulfillmentError = "fulfillment_error"
 }
 
 public struct IssuingCardShipping: Codable {
     /// Shipping address.
     public var address: Address?
+    /// Address validation details for the shipment.
+    public var addressValidation: IssuingCardShippingAddressValidation?
     /// The delivery company that shipped a card.
     public var carrier: IssuingCardShippingCarrier?
     /// Additional information that may be required for clearing customs.
@@ -177,6 +205,7 @@ public struct IssuingCardShipping: Codable {
     public var type: IssuingCardShippingType?
     
     public init(address: Address? = nil,
+                addressValidation: IssuingCardShippingAddressValidation? = nil,
                 carrier: IssuingCardShippingCarrier? = nil,
                 customs: [IssuingCardShippingCustom]? = nil,
                 eta: Date? = nil,
@@ -189,6 +218,7 @@ public struct IssuingCardShipping: Codable {
                 trackingUrl: String? = nil,
                 type: IssuingCardShippingType? = nil) {
         self.address = address
+        self.addressValidation = addressValidation
         self.carrier = carrier
         self.customs = customs
         self.eta = eta
@@ -210,6 +240,35 @@ public struct IssuingCardShippingCustom: Codable {
     public init(eoriNumber: String? = nil) {
         self.eoriNumber = eoriNumber
     }
+}
+
+public struct IssuingCardShippingAddressValidation: Codable {
+    /// The address validation capabilities to use.
+    public var mode: IssuingCardShippingAddressValidationMode?
+    /// The normalized shipping address.
+    public var normalizedAddress: Address?
+    /// The validation result for the shipping address.
+    public var result: IssuingCardShippingAddressValidationResult?
+
+    public init(mode: IssuingCardShippingAddressValidationMode? = nil,
+                normalizedAddress: Address? = nil,
+                result: IssuingCardShippingAddressValidationResult? = nil) {
+        self.mode = mode
+        self.normalizedAddress = normalizedAddress
+        self.result = result
+    }
+}
+
+public enum IssuingCardShippingAddressValidationMode: String, Codable {
+    case disabled
+    case normalizationOnly = "normalization_only"
+    case validationAndNormalization = "validation_and_normalization"
+}
+
+public enum IssuingCardShippingAddressValidationResult: String, Codable {
+    case indeterminate
+    case likelyDeliverable = "likely_deliverable"
+    case likelyUndeliverable = "likely_undeliverable"
 }
 
 public enum IssuingCardShippingCarrier: String, Codable {
@@ -235,6 +294,8 @@ public enum IssuingCardShippingService: String, Codable {
 public enum IssuingCardShippingStatus: String, Codable {
     /// The card is being prepared and has not yet shipped.
     case pending
+    /// The card creation request has been submitted to the card production partner.
+    case submitted
     /// The card has been shipped. If the card’s shipping carrier does not support tracking, this will be the card’s final status.
     case shipped
     /// The card has been delivered to its destination.
@@ -277,6 +338,8 @@ public enum IssuingCardCancellationReason: String, Codable {
     case stolen
     /// The design of this card was rejected by Stripe for violating our partner guidelines.
     case designRejected = "design_rejected"
+    /// Stripe could not deliver the card and was unable to redeliver it.
+    case fulfillmentError = "fulfillment_error"
 }
 
 public struct IssuingCardWallets: Codable {
@@ -310,8 +373,8 @@ public struct IssuingCardWalletsApplePay: Codable {
 }
 
 public enum IssuingCardWalletsApplePayIneligibleReason: String, Codable {
-    /// Apple Pay is not supported in the cardholder’s country.
-    case unsupportedReason = "unsupported_reason"
+    /// Apple Pay is not supported in the cardholder’s region.
+    case unsupportedRegion = "unsupported_region"
     /// Apple Pay is not enabled for your account.
     case missingAgreement = "missing_agreement"
     /// Cardholder phone number or email required.
@@ -332,8 +395,8 @@ public struct IssuingCardWalletsGooglePay: Codable {
 }
 
 public enum IssuingCardWalletsGooglePayIneligibleReason: String, Codable {
-    /// Google Pay is not supported in the cardholder’s country.
-    case unsupportedReason = "unsupported_reason"
+    /// Google Pay is not supported in the cardholder’s region.
+    case unsupportedRegion = "unsupported_region"
     /// Google Pay is not enabled for your account.
     case missingAgreement = "missing_agreement"
     /// Cardholder phone number or email required.

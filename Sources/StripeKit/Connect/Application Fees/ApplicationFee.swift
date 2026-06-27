@@ -36,9 +36,9 @@ public struct ApplicationFee: Codable {
     @DynamicExpandable<Charge, Transfer> public var originatingTransaction: String?
     /// A list of refunds that have been applied to the fee.
     public var refunds: ApplicationFeeRefundList?
-    ///
-    public var source: ApplicationFeeSource?
-    
+    /// Polymorphic source of the application fee. Includes the ID of the object the application fee was created from.
+    public var feeSource: ApplicationFeeSource?
+
     public init(id: String,
                 account: String? = nil,
                 amount: Int? = nil,
@@ -53,7 +53,7 @@ public struct ApplicationFee: Codable {
                 livemode: Bool,
                 originatingTransaction: String? = nil,
                 refunds: ApplicationFeeRefundList? = nil,
-                source: ApplicationFeeSource? = nil) {
+                feeSource: ApplicationFeeSource? = nil) {
         self.id = id
         self._account = Expandable(id: account)
         self.amount = amount
@@ -68,32 +68,30 @@ public struct ApplicationFee: Codable {
         self.livemode = livemode
         self._originatingTransaction = DynamicExpandable(id: originatingTransaction)
         self.refunds = refunds
-        self.source = source
+        self.feeSource = feeSource
     }
 }
 
 public struct ApplicationFeeSource: Codable {
-    public var feeType: String?
-    public var resource: ApplicationFeeSourceResource?
-    
-    public init(feeType: String? = nil, resource: ApplicationFeeSourceResource? = nil) {
-        self.feeType = feeType
-        self.resource = resource
-    }
-}
-
-public struct ApplicationFeeSourceResource: Codable {
+    /// Charge ID that created this application fee.
     public var charge: String?
+    /// Payout ID that created this application fee.
     public var payout: String?
-    public var type: String?
-    
+    /// Type of object that created the application fee.
+    public var type: ApplicationFeeSourceType?
+
     public init(charge: String? = nil,
                 payout: String? = nil,
-                type: String? = nil) {
+                type: ApplicationFeeSourceType? = nil) {
         self.charge = charge
         self.payout = payout
         self.type = type
     }
+}
+
+public enum ApplicationFeeSourceType: String, Codable {
+    case charge
+    case payout
 }
 
 public struct ApplicationFeeList: Codable {

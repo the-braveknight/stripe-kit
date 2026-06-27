@@ -233,6 +233,10 @@ public struct ChargePaymentMethodDetailsBoleto: Codable {
 
 // MARK: - Card
 public struct ChargePaymentMethodDetailsCard: Codable {
+    /// The authorized amount.
+    public var amountAuthorized: Int?
+    /// Authorization code on the charge.
+    public var authorizationCode: String?
     /// Card brand. Can be `amex`, `diners`, `discover`, `jcb`, `mastercard`, `unionpay`, `visa`, or `unknown`.
     public var brand: PaymentMethodDetailsCardBrand?
     /// When using manual capture, a future timestamp after which the charge will be automatically refunded if uncaptured.
@@ -245,48 +249,150 @@ public struct ChargePaymentMethodDetailsCard: Codable {
     public var expMonth: Int?
     /// Four-digit number representing the card’s expiration year.
     public var expYear: Int?
+    /// Whether this payment was authorized using an extended authorization, and if so, the related details.
+    public var extendedAuthorization: ChargePaymentMethodDetailsCardExtendedAuthorization?
     /// Uniquely identifies this particular card number. You can use this attribute to check whether two customers who’ve signed up with you are using the same card number, for example. For payment methods that tokenize card information (Apple Pay, Google Pay), the tokenized number might be provided instead of the underlying card number.
     public var fingerprint: String?
     /// Card funding type. Can be `credit`, `debit`, `prepaid`, or `unknown`.
     public var funding: CardFundingType?
+    /// Whether this payment is eligible for incremental authorization, and if so, the related details.
+    public var incrementalAuthorization: ChargePaymentMethodDetailsCardIncrementalAuthorization?
     /// Installment details for this payment (Mexico only). For more information, see the [installments integration guide.](https://stripe.com/docs/payments/installments)
     public var installments: ChargePaymentMethodDetailsCardInstallments?
     /// The last four digits of the card.
     public var last4: String?
+    /// ID of the mandate used to make this payment or created by it.
+    public var mandate: String?
+    /// Whether this payment is eligible for multicapture, and if so, the related details.
+    public var multicapture: ChargePaymentMethodDetailsCardMulticapture?
     /// Identifies which network this charge was processed on. Can be `amex`, `diners`, `discover`, `interac`, `jcb`, `mastercard`, `unionpay`, `visa`, or `unknown`.
     public var network: PaymentMethodCardNetwork?
+    /// If this card has network token credentials, this contains the details of the network token credentials.
+    public var networkToken: ChargePaymentMethodDetailsCardNetworkToken?
+    /// This is used by the financial networks to identify a transaction. Visa calls this the Transaction ID, Mastercard calls this the Trace ID, and American Express calls this the Acquirer Reference Data. The first three digits of the Trace ID is the Financial Network Code, the next 6 digits is the Banknet Reference Number, and the last 4 digits represent the date (MM/DD). This field will be available for successful Visa, Mastercard, or American Express transactions and always null for other card brands.
+    public var networkTransactionId: String?
+    /// Whether this payment was made with overcapture enabled, and if so, the related details.
+    public var overcapture: ChargePaymentMethodDetailsCardOvercapture?
+    /// Status of a card based on the card issuer.
+    public var regulatedStatus: ChargePaymentMethodDetailsCardRegulatedStatus?
     /// Populated if this transaction used 3D Secure authentication.
     public var threeDSecure: ChargePaymentMethodDetailsCardThreeDSecure?
     /// If this Card is part of a card wallet, this contains the details of the card wallet.
     public var wallet: ChargePaymentMethodDetailsCardWallet?
-    
-    public init(brand: PaymentMethodDetailsCardBrand? = nil,
+
+    public init(amountAuthorized: Int? = nil,
+                authorizationCode: String? = nil,
+                brand: PaymentMethodDetailsCardBrand? = nil,
                 captureBefore: Date? = nil,
                 checks: PaymentMethodDetailsCardChecks? = nil,
                 country: String? = nil,
                 expMonth: Int? = nil,
                 expYear: Int? = nil,
+                extendedAuthorization: ChargePaymentMethodDetailsCardExtendedAuthorization? = nil,
                 fingerprint: String? = nil,
                 funding: CardFundingType? = nil,
+                incrementalAuthorization: ChargePaymentMethodDetailsCardIncrementalAuthorization? = nil,
                 installments: ChargePaymentMethodDetailsCardInstallments? = nil,
                 last4: String? = nil,
+                mandate: String? = nil,
+                multicapture: ChargePaymentMethodDetailsCardMulticapture? = nil,
                 network: PaymentMethodCardNetwork? = nil,
+                networkToken: ChargePaymentMethodDetailsCardNetworkToken? = nil,
+                networkTransactionId: String? = nil,
+                overcapture: ChargePaymentMethodDetailsCardOvercapture? = nil,
+                regulatedStatus: ChargePaymentMethodDetailsCardRegulatedStatus? = nil,
                 threeDSecure: ChargePaymentMethodDetailsCardThreeDSecure? = nil,
                 wallet: ChargePaymentMethodDetailsCardWallet? = nil) {
+        self.amountAuthorized = amountAuthorized
+        self.authorizationCode = authorizationCode
         self.brand = brand
         self.captureBefore = captureBefore
         self.checks = checks
         self.country = country
         self.expMonth = expMonth
         self.expYear = expYear
+        self.extendedAuthorization = extendedAuthorization
         self.fingerprint = fingerprint
         self.funding = funding
+        self.incrementalAuthorization = incrementalAuthorization
         self.installments = installments
         self.last4 = last4
+        self.mandate = mandate
+        self.multicapture = multicapture
         self.network = network
+        self.networkToken = networkToken
+        self.networkTransactionId = networkTransactionId
+        self.overcapture = overcapture
+        self.regulatedStatus = regulatedStatus
         self.threeDSecure = threeDSecure
         self.wallet = wallet
     }
+}
+
+public struct ChargePaymentMethodDetailsCardExtendedAuthorization: Codable {
+    /// Indicates whether or not the capture window is extended beyond the standard authorization.
+    public var status: ChargePaymentMethodDetailsCardExtendedAuthorizationStatus?
+
+    public init(status: ChargePaymentMethodDetailsCardExtendedAuthorizationStatus? = nil) {
+        self.status = status
+    }
+}
+
+public enum ChargePaymentMethodDetailsCardExtendedAuthorizationStatus: String, Codable {
+    case disabled
+    case enabled
+}
+
+public struct ChargePaymentMethodDetailsCardIncrementalAuthorization: Codable {
+    /// Indicates whether or not the incremental authorization feature is supported.
+    public var status: ChargePaymentMethodDetailsCardAuthorizationStatus?
+
+    public init(status: ChargePaymentMethodDetailsCardAuthorizationStatus? = nil) {
+        self.status = status
+    }
+}
+
+public struct ChargePaymentMethodDetailsCardMulticapture: Codable {
+    /// Indicates whether or not multiple captures are supported.
+    public var status: ChargePaymentMethodDetailsCardAuthorizationStatus?
+
+    public init(status: ChargePaymentMethodDetailsCardAuthorizationStatus? = nil) {
+        self.status = status
+    }
+}
+
+public struct ChargePaymentMethodDetailsCardOvercapture: Codable {
+    /// The maximum amount that can be captured.
+    public var maximumAmountCapturable: Int?
+    /// Indicates whether or not the authorized amount can be over-captured.
+    public var status: ChargePaymentMethodDetailsCardAuthorizationStatus?
+
+    public init(maximumAmountCapturable: Int? = nil,
+                status: ChargePaymentMethodDetailsCardAuthorizationStatus? = nil) {
+        self.maximumAmountCapturable = maximumAmountCapturable
+        self.status = status
+    }
+}
+
+public enum ChargePaymentMethodDetailsCardAuthorizationStatus: String, Codable {
+    case available
+    case unavailable
+}
+
+public struct ChargePaymentMethodDetailsCardNetworkToken: Codable {
+    /// Indicates if Stripe used a network token, either user provided or Stripe managed when processing the transaction.
+    public var used: Bool?
+
+    public init(used: Bool? = nil) {
+        self.used = used
+    }
+}
+
+public enum ChargePaymentMethodDetailsCardRegulatedStatus: String, Codable {
+    /// The card falls under a regulated account range.
+    case regulated
+    /// The card does not fall under a regulated account range.
+    case unregulated
 }
 
 public struct ChargePaymentMethodDetailsCardInstallments: Codable {
@@ -1312,4 +1418,443 @@ public struct ChargePaymentMethodDetailsWechatPay: Codable {
 // MARK: - Zip
 public struct ChargePaymentMethodDetailsZip: Codable {
     public init() {}
+}
+
+// MARK: - Alma
+public struct ChargePaymentMethodDetailsAlma: Codable {
+    /// Installment details for this payment.
+    public var installments: ChargePaymentMethodDetailsAlmaInstallments?
+    /// The Alma transaction ID associated with this payment.
+    public var transactionId: String?
+
+    public init(installments: ChargePaymentMethodDetailsAlmaInstallments? = nil,
+                transactionId: String? = nil) {
+        self.installments = installments
+        self.transactionId = transactionId
+    }
+}
+
+public struct ChargePaymentMethodDetailsAlmaInstallments: Codable {
+    /// The number of installments.
+    public var count: Int?
+
+    public init(count: Int? = nil) {
+        self.count = count
+    }
+}
+
+// MARK: - Amazon Pay
+public struct ChargePaymentMethodDetailsAmazonPay: Codable {
+    /// The funding source of the payment method.
+    public var funding: ChargePaymentMethodDetailsWalletFunding?
+    /// The Amazon Pay transaction ID associated with this payment.
+    public var transactionId: String?
+
+    public init(funding: ChargePaymentMethodDetailsWalletFunding? = nil,
+                transactionId: String? = nil) {
+        self.funding = funding
+        self.transactionId = transactionId
+    }
+}
+
+/// Shared funding details used by wallet payment methods such as Amazon Pay and Revolut Pay.
+public struct ChargePaymentMethodDetailsWalletFunding: Codable {
+    /// Details about the card used to fund the wallet payment.
+    public var card: ChargePaymentMethodDetailsWalletFundingCard?
+    /// The funding type of the underlying payment method.
+    public var type: String?
+
+    public init(card: ChargePaymentMethodDetailsWalletFundingCard? = nil,
+                type: String? = nil) {
+        self.card = card
+        self.type = type
+    }
+}
+
+public struct ChargePaymentMethodDetailsWalletFundingCard: Codable {
+    /// Card brand.
+    public var brand: String?
+    /// Two-letter ISO code representing the country of the card.
+    public var country: String?
+    /// Two-digit number representing the card’s expiration month.
+    public var expMonth: Int?
+    /// Four-digit number representing the card’s expiration year.
+    public var expYear: Int?
+    /// Card funding type. Can be `credit`, `debit`, `prepaid`, or `unknown`.
+    public var funding: String?
+    /// The last four digits of the card.
+    public var last4: String?
+
+    public init(brand: String? = nil,
+                country: String? = nil,
+                expMonth: Int? = nil,
+                expYear: Int? = nil,
+                funding: String? = nil,
+                last4: String? = nil) {
+        self.brand = brand
+        self.country = country
+        self.expMonth = expMonth
+        self.expYear = expYear
+        self.funding = funding
+        self.last4 = last4
+    }
+}
+
+// MARK: - Billie
+public struct ChargePaymentMethodDetailsBillie: Codable {
+    /// The Billie transaction ID associated with this payment.
+    public var transactionId: String?
+
+    public init(transactionId: String? = nil) {
+        self.transactionId = transactionId
+    }
+}
+
+// MARK: - Bizum
+public struct ChargePaymentMethodDetailsBizum: Codable {
+    /// A unique and immutable identifier of payments assigned by Bizum.
+    public var buyerId: String?
+    /// The Bizum transaction ID associated with this payment.
+    public var transactionId: String?
+
+    public init(buyerId: String? = nil,
+                transactionId: String? = nil) {
+        self.buyerId = buyerId
+        self.transactionId = transactionId
+    }
+}
+
+// MARK: - Crypto
+public struct ChargePaymentMethodDetailsCrypto: Codable {
+    /// The wallet address of the customer.
+    public var buyerAddress: String?
+    /// Uniquely identifies this particular wallet address. You can use this attribute to check whether two payments were made with the same wallet address.
+    public var fingerprint: String?
+    /// The blockchain network that the transaction was sent on.
+    public var network: ChargePaymentMethodDetailsCryptoNetwork?
+    /// The token currency that the transaction was sent with.
+    public var tokenCurrency: ChargePaymentMethodDetailsCryptoTokenCurrency?
+    /// The blockchain transaction hash of the crypto payment.
+    public var transactionHash: String?
+
+    public init(buyerAddress: String? = nil,
+                fingerprint: String? = nil,
+                network: ChargePaymentMethodDetailsCryptoNetwork? = nil,
+                tokenCurrency: ChargePaymentMethodDetailsCryptoTokenCurrency? = nil,
+                transactionHash: String? = nil) {
+        self.buyerAddress = buyerAddress
+        self.fingerprint = fingerprint
+        self.network = network
+        self.tokenCurrency = tokenCurrency
+        self.transactionHash = transactionHash
+    }
+}
+
+public enum ChargePaymentMethodDetailsCryptoNetwork: String, Codable {
+    case base
+    case ethereum
+    case polygon
+    case solana
+    case sui
+    case tempo
+}
+
+public enum ChargePaymentMethodDetailsCryptoTokenCurrency: String, Codable {
+    case phantomCash = "phantom_cash"
+    case usdc
+    case usdg
+    case usdp
+    case usdsui
+    case usdt
+}
+
+// MARK: - Kakao Pay
+public struct ChargePaymentMethodDetailsKakaoPay: Codable {
+    /// A unique identifier for the buyer as determined by the local payment processor.
+    public var buyerId: String?
+    /// The Kakao Pay transaction ID associated with this payment.
+    public var transactionId: String?
+
+    public init(buyerId: String? = nil,
+                transactionId: String? = nil) {
+        self.buyerId = buyerId
+        self.transactionId = transactionId
+    }
+}
+
+// MARK: - KR Card
+public struct ChargePaymentMethodDetailsKrCard: Codable {
+    /// The local credit or debit card brand.
+    public var brand: ChargePaymentMethodDetailsKrCardBrand?
+    /// A unique identifier for the buyer as determined by the local payment processor.
+    public var buyerId: String?
+    /// The last four digits of the card. This may not be present for American Express cards.
+    public var last4: String?
+    /// The Korean Card transaction ID associated with this payment.
+    public var transactionId: String?
+
+    public init(brand: ChargePaymentMethodDetailsKrCardBrand? = nil,
+                buyerId: String? = nil,
+                last4: String? = nil,
+                transactionId: String? = nil) {
+        self.brand = brand
+        self.buyerId = buyerId
+        self.last4 = last4
+        self.transactionId = transactionId
+    }
+}
+
+public enum ChargePaymentMethodDetailsKrCardBrand: String, Codable {
+    case bc
+    case citi
+    case hana
+    case hyundai
+    case jeju
+    case jeonbuk
+    case kakaobank
+    case kbank
+    case kdbbank
+    case kookmin
+    case kwangju
+    case lotte
+    case mg
+    case nh
+    case post
+    case samsung
+    case savingsbank
+    case shinhan
+    case shinhyup
+    case suhyup
+    case tossbank
+    case woori
+}
+
+// MARK: - MB Way
+public struct ChargePaymentMethodDetailsMbWay: Codable {
+    public init() {}
+}
+
+// MARK: - MobilePay
+public struct ChargePaymentMethodDetailsMobilepay: Codable {
+    /// Internal card details.
+    public var card: ChargePaymentMethodDetailsMobilepayCard?
+
+    public init(card: ChargePaymentMethodDetailsMobilepayCard? = nil) {
+        self.card = card
+    }
+}
+
+public struct ChargePaymentMethodDetailsMobilepayCard: Codable {
+    /// Brand of the card used in the transaction.
+    public var brand: String?
+    /// Two-letter ISO code representing the country of the card.
+    public var country: String?
+    /// Two-digit number representing the card’s expiration month.
+    public var expMonth: Int?
+    /// Four-digit number representing the card’s expiration year.
+    public var expYear: Int?
+    /// The last four digits of the card.
+    public var last4: String?
+
+    public init(brand: String? = nil,
+                country: String? = nil,
+                expMonth: Int? = nil,
+                expYear: Int? = nil,
+                last4: String? = nil) {
+        self.brand = brand
+        self.country = country
+        self.expMonth = expMonth
+        self.expYear = expYear
+        self.last4 = last4
+    }
+}
+
+// MARK: - Naver Pay
+public struct ChargePaymentMethodDetailsNaverPay: Codable {
+    /// A unique identifier for the buyer as determined by the local payment processor.
+    public var buyerId: String?
+    /// The Naver Pay transaction ID associated with this payment.
+    public var transactionId: String?
+
+    public init(buyerId: String? = nil,
+                transactionId: String? = nil) {
+        self.buyerId = buyerId
+        self.transactionId = transactionId
+    }
+}
+
+// MARK: - NZ Bank Account
+public struct ChargePaymentMethodDetailsNZBankAccount: Codable {
+    /// The name on the bank account. Only present if the account holder name is different from the name of the authorized signatory collected in the PaymentMethod’s billing details.
+    public var accountHolderName: String?
+    /// The numeric code for the bank account’s bank.
+    public var bankCode: String?
+    /// The name of the bank.
+    public var bankName: String?
+    /// The numeric code for the bank account’s bank branch.
+    public var branchCode: String?
+    /// The date on which the funds are expected to be debited.
+    public var expectedDebitDate: String?
+    /// Last four digits of the bank account number.
+    public var last4: String?
+    /// The suffix of the bank account number.
+    public var suffix: String?
+
+    public init(accountHolderName: String? = nil,
+                bankCode: String? = nil,
+                bankName: String? = nil,
+                branchCode: String? = nil,
+                expectedDebitDate: String? = nil,
+                last4: String? = nil,
+                suffix: String? = nil) {
+        self.accountHolderName = accountHolderName
+        self.bankCode = bankCode
+        self.bankName = bankName
+        self.branchCode = branchCode
+        self.expectedDebitDate = expectedDebitDate
+        self.last4 = last4
+        self.suffix = suffix
+    }
+}
+
+// MARK: - Pay By Bank
+public struct ChargePaymentMethodDetailsPayByBank: Codable {
+    public init() {}
+}
+
+// MARK: - Payco
+public struct ChargePaymentMethodDetailsPayco: Codable {
+    /// A unique identifier for the buyer as determined by the local payment processor.
+    public var buyerId: String?
+    /// The Payco transaction ID associated with this payment.
+    public var transactionId: String?
+
+    public init(buyerId: String? = nil,
+                transactionId: String? = nil) {
+        self.buyerId = buyerId
+        self.transactionId = transactionId
+    }
+}
+
+// MARK: - PayPay
+public struct ChargePaymentMethodDetailsPaypay: Codable {
+    public init() {}
+}
+
+// MARK: - PayTo
+public struct ChargePaymentMethodDetailsPayto: Codable {
+    /// Bank-State-Branch number of the bank account.
+    public var bsbNumber: String?
+    /// Last four digits of the bank account number.
+    public var last4: String?
+    /// ID of the mandate used to make this payment.
+    public var mandate: String?
+    /// The PayID alias for the bank account.
+    public var payId: String?
+
+    public init(bsbNumber: String? = nil,
+                last4: String? = nil,
+                mandate: String? = nil,
+                payId: String? = nil) {
+        self.bsbNumber = bsbNumber
+        self.last4 = last4
+        self.mandate = mandate
+        self.payId = payId
+    }
+}
+
+// MARK: - Revolut Pay
+public struct ChargePaymentMethodDetailsRevolutPay: Codable {
+    /// The funding source of the payment method.
+    public var funding: ChargePaymentMethodDetailsWalletFunding?
+    /// The Revolut Pay transaction ID associated with this payment.
+    public var transactionId: String?
+
+    public init(funding: ChargePaymentMethodDetailsWalletFunding? = nil,
+                transactionId: String? = nil) {
+        self.funding = funding
+        self.transactionId = transactionId
+    }
+}
+
+// MARK: - Samsung Pay
+public struct ChargePaymentMethodDetailsSamsungPayPaymentMethod: Codable {
+    /// A unique identifier for the buyer as determined by the local payment processor.
+    public var buyerId: String?
+    /// The Samsung Pay transaction ID associated with this payment.
+    public var transactionId: String?
+
+    public init(buyerId: String? = nil,
+                transactionId: String? = nil) {
+        self.buyerId = buyerId
+        self.transactionId = transactionId
+    }
+}
+
+// MARK: - Satispay
+public struct ChargePaymentMethodDetailsSatispay: Codable {
+    /// The Satispay transaction ID associated with this payment.
+    public var transactionId: String?
+
+    public init(transactionId: String? = nil) {
+        self.transactionId = transactionId
+    }
+}
+
+// MARK: - Scalapay
+public struct ChargePaymentMethodDetailsScalapay: Codable {
+    /// The Scalapay transaction ID associated with this payment.
+    public var transactionId: String?
+
+    public init(transactionId: String? = nil) {
+        self.transactionId = transactionId
+    }
+}
+
+// MARK: - Sunbit
+public struct ChargePaymentMethodDetailsSunbit: Codable {
+    /// The Sunbit transaction ID associated with this payment.
+    public var transactionId: String?
+
+    public init(transactionId: String? = nil) {
+        self.transactionId = transactionId
+    }
+}
+
+// MARK: - Swish
+public struct ChargePaymentMethodDetailsSwish: Codable {
+    /// Uniquely identifies the payer’s Swish account. You can use this attribute to check whether two Swish transactions were paid for by the same payer.
+    public var fingerprint: String?
+    /// Payer bank reference number for the payment.
+    public var paymentReference: String?
+    /// The last four digits of the Swish account phone number.
+    public var verifiedPhoneLast4: String?
+
+    public init(fingerprint: String? = nil,
+                paymentReference: String? = nil,
+                verifiedPhoneLast4: String? = nil) {
+        self.fingerprint = fingerprint
+        self.paymentReference = paymentReference
+        self.verifiedPhoneLast4 = verifiedPhoneLast4
+    }
+}
+
+// MARK: - TWINT
+public struct ChargePaymentMethodDetailsTwint: Codable {
+    /// ID of the mandate used to make this payment.
+    public var mandate: String?
+
+    public init(mandate: String? = nil) {
+        self.mandate = mandate
+    }
+}
+
+// MARK: - UPI
+public struct ChargePaymentMethodDetailsUPI: Codable {
+    /// The UPI Virtual Payment Address (VPA) of the payer.
+    public var vpa: String?
+
+    public init(vpa: String? = nil) {
+        self.vpa = vpa
+    }
 }

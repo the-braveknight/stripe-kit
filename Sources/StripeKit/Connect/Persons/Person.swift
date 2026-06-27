@@ -67,7 +67,13 @@ public struct Person: Codable {
     public var ssnLast4Provided: Bool?
     /// The persons’s verification status.
     public var verification: PersonVerification?
-    
+    /// Details on the legal guardian's or authorizer's acceptance of the required Stripe agreements.
+    public var additionalTosAcceptances: PersonAdditionalTosAcceptances?
+    /// A list of alternate names or aliases that the person is known by.
+    public var fullNameAliases: [String]?
+    /// Demographic data related to the person.
+    public var usCfpbData: PersonUSCFPBData?
+
     public init(id: String,
                 account: String? = nil,
                 address: Address? = nil,
@@ -96,7 +102,10 @@ public struct Person: Codable {
                 politicalExposure: PersonPoliticalExposure? = nil,
                 registeredAddres: Address? = nil,
                 ssnLast4Provided: Bool? = nil,
-                verification: PersonVerification? = nil) {
+                verification: PersonVerification? = nil,
+                additionalTosAcceptances: PersonAdditionalTosAcceptances? = nil,
+                fullNameAliases: [String]? = nil,
+                usCfpbData: PersonUSCFPBData? = nil) {
         self.id = id
         self.account = account
         self.address = address
@@ -126,6 +135,9 @@ public struct Person: Codable {
         self.registeredAddres = registeredAddres
         self.ssnLast4Provided = ssnLast4Provided
         self.verification = verification
+        self.additionalTosAcceptances = additionalTosAcceptances
+        self.fullNameAliases = fullNameAliases
+        self.usCfpbData = usCfpbData
     }
 }
 
@@ -149,6 +161,7 @@ public struct PersonDOB: Codable {
 public enum PersonGender: String, Codable {
     case male
     case female
+    case other
 }
 
 public enum PersonPoliticalExposure: String, Codable {
@@ -159,10 +172,14 @@ public enum PersonPoliticalExposure: String, Codable {
 }
 
 public struct PersonRelationship: Codable {
+    /// Whether the person is the authorizer of the account’s representative.
+    public var authorizer: Bool?
     /// Whether the person is a director of the account’s legal entity. Currently only required for accounts in the EU. Directors are typically members of the governing board of the company, or responsible for ensuring the company meets its regulatory obligations.
     public var director: Bool?
     /// Whether the person has significant responsibility to control, manage, or direct the organization.
     public var executive: Bool?
+    /// Whether the person is the legal guardian of the account’s representative.
+    public var legalGuardian: Bool?
     /// Whether the person is an owner of the account’s legal entity.
     public var owner: Bool?
     /// The percent owned by the person of the account’s legal entity.
@@ -171,15 +188,19 @@ public struct PersonRelationship: Codable {
     public var representative: Bool?
     /// The person’s title (e.g., CEO, Support Engineer).
     public var title: String?
-    
-    public init(director: Bool? = nil,
+
+    public init(authorizer: Bool? = nil,
+                director: Bool? = nil,
                 executive: Bool? = nil,
+                legalGuardian: Bool? = nil,
                 owner: Bool? = nil,
                 percentOwnership: Decimal? = nil,
                 representative: Bool? = nil,
                 title: String? = nil) {
+        self.authorizer = authorizer
         self.director = director
         self.executive = executive
+        self.legalGuardian = legalGuardian
         self.owner = owner
         self.percentOwnership = percentOwnership
         self.representative = representative
@@ -231,9 +252,17 @@ public struct PersonRequirementsAlternative: Codable {
 public struct PersonRequirementsError: Codable {
     /// The code for the type of error.
     public var code: PersonRequirementsErrorCode?
-    
-    public init(code: PersonRequirementsErrorCode? = nil) {
+    /// An informative message that indicates the error type and provides additional details about the error.
+    public var reason: String?
+    /// The specific user onboarding requirement field (in the requirements hash) that needs to be resolved.
+    public var requirement: String?
+
+    public init(code: PersonRequirementsErrorCode? = nil,
+                reason: String? = nil,
+                requirement: String? = nil) {
         self.code = code
+        self.reason = reason
+        self.requirement = requirement
     }
 }
 
@@ -449,6 +478,75 @@ public enum PersonVerificationStatus: String, Codable {
     case unverified
     case pending
     case verified
+}
+
+public struct PersonAdditionalTosAcceptances: Codable {
+    /// Details on the legal guardian's acceptance of the main Stripe service agreement.
+    public var account: PersonAdditionalTosAcceptancesAccount?
+
+    public init(account: PersonAdditionalTosAcceptancesAccount? = nil) {
+        self.account = account
+    }
+}
+
+public struct PersonAdditionalTosAcceptancesAccount: Codable {
+    /// The Unix timestamp marking when the legal guardian accepted the service agreement.
+    public var date: Date?
+    /// The IP address from which the legal guardian accepted the service agreement.
+    public var ip: String?
+    /// The user agent of the browser from which the legal guardian accepted the service agreement.
+    public var userAgent: String?
+
+    public init(date: Date? = nil,
+                ip: String? = nil,
+                userAgent: String? = nil) {
+        self.date = date
+        self.ip = ip
+        self.userAgent = userAgent
+    }
+}
+
+public struct PersonUSCFPBData: Codable {
+    /// The persons ethnicity details.
+    public var ethnicityDetails: PersonUSCFPBDataEthnicityDetails?
+    /// The persons race details.
+    public var raceDetails: PersonUSCFPBDataRaceDetails?
+    /// The persons self-identified gender.
+    public var selfIdentifiedGender: String?
+
+    public init(ethnicityDetails: PersonUSCFPBDataEthnicityDetails? = nil,
+                raceDetails: PersonUSCFPBDataRaceDetails? = nil,
+                selfIdentifiedGender: String? = nil) {
+        self.ethnicityDetails = ethnicityDetails
+        self.raceDetails = raceDetails
+        self.selfIdentifiedGender = selfIdentifiedGender
+    }
+}
+
+public struct PersonUSCFPBDataEthnicityDetails: Codable {
+    /// The persons ethnicity.
+    public var ethnicity: [String]?
+    /// Please specify your origin, when other is selected.
+    public var ethnicityOther: String?
+
+    public init(ethnicity: [String]? = nil,
+                ethnicityOther: String? = nil) {
+        self.ethnicity = ethnicity
+        self.ethnicityOther = ethnicityOther
+    }
+}
+
+public struct PersonUSCFPBDataRaceDetails: Codable {
+    /// The persons race.
+    public var race: [String]?
+    /// Please specify your race, when other is selected.
+    public var raceOther: String?
+
+    public init(race: [String]? = nil,
+                raceOther: String? = nil) {
+        self.race = race
+        self.raceOther = raceOther
+    }
 }
 
 public struct PersonsList: Codable {

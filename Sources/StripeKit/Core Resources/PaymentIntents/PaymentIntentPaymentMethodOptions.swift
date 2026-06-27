@@ -425,6 +425,68 @@ public enum PaymentIntentPaymentMethodOptionsCardPresentRoutingRequestedPriority
     case international
 }
 
+// MARK: - CashApp
+public struct PaymentIntentPaymentMethodOptionsCashApp: Codable {
+    /// Controls when the funds will be captured from the customer’s account.
+    public var captureMethod: PaymentIntentPaymentMethodOptionsCashAppCaptureMethod?
+    /// Indicates that you intend to make future payments with this PaymentIntent’s payment method.
+    public var setupFutureUsage: PaymentIntentPaymentMethodOptionsCashAppSetupFutureUsage?
+
+    public init(captureMethod: PaymentIntentPaymentMethodOptionsCashAppCaptureMethod? = nil,
+                setupFutureUsage: PaymentIntentPaymentMethodOptionsCashAppSetupFutureUsage? = nil) {
+        self.captureMethod = captureMethod
+        self.setupFutureUsage = setupFutureUsage
+    }
+}
+
+public enum PaymentIntentPaymentMethodOptionsCashAppCaptureMethod: String, Codable {
+    /// Use manual if you intend to place the funds on hold and want to override the top-level `capture_method` value for this payment method.
+    case manual
+}
+
+public enum PaymentIntentPaymentMethodOptionsCashAppSetupFutureUsage: String, Codable {
+    /// Use `on_session` if you intend to only reuse the payment method when your customer is present in your checkout flow.
+    case onSession = "on_session"
+    /// Use `off_session` if your customer may or may not be present in your checkout flow.
+    case offSession = "off_session"
+    /// Use `none` if you do not intend to reuse this payment method and want to override the top-level `setup_future_usage` value for this payment method.
+    case `none`
+}
+
+// MARK: - Paypal
+public struct PaymentIntentPaymentMethodOptionsPaypal: Codable {
+    /// Controls when the funds will be captured from the customer’s account.
+    public var captureMethod: PaymentIntentPaymentMethodOptionsPaypalCaptureMethod?
+    /// Preferred locale of the PayPal checkout page that the customer is redirected to.
+    public var preferredLocale: String?
+    /// A reference of the PayPal transaction visible to customer which is mapped to PayPal’s invoice ID.
+    public var reference: String?
+    /// Indicates that you intend to make future payments with this PaymentIntent’s payment method.
+    public var setupFutureUsage: PaymentIntentPaymentMethodOptionsPaypalSetupFutureUsage?
+
+    public init(captureMethod: PaymentIntentPaymentMethodOptionsPaypalCaptureMethod? = nil,
+                preferredLocale: String? = nil,
+                reference: String? = nil,
+                setupFutureUsage: PaymentIntentPaymentMethodOptionsPaypalSetupFutureUsage? = nil) {
+        self.captureMethod = captureMethod
+        self.preferredLocale = preferredLocale
+        self.reference = reference
+        self.setupFutureUsage = setupFutureUsage
+    }
+}
+
+public enum PaymentIntentPaymentMethodOptionsPaypalCaptureMethod: String, Codable {
+    /// Use manual if you intend to place the funds on hold and want to override the top-level `capture_method` value for this payment method.
+    case manual
+}
+
+public enum PaymentIntentPaymentMethodOptionsPaypalSetupFutureUsage: String, Codable {
+    /// Use `off_session` if your customer may or may not be present in your checkout flow.
+    case offSession = "off_session"
+    /// Use `none` if you do not intend to reuse this payment method and want to override the top-level `setup_future_usage` value for this payment method.
+    case `none`
+}
+
 // MARK: - Customer Balance
 public struct PaymentIntentPaymentMethodOptionsCustomerBalance: Codable {
     /// Configuration for the bank transfer funding type, if the `funding_type` is set to `bank_transfer`.

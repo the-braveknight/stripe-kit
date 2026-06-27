@@ -32,9 +32,11 @@ public struct PortalConfiguration: Codable {
     public var loginPage: PortalConfigurationLoginPage?
     /// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
     public var metadata: [String: String]?
+    /// The name of the configuration.
+    public var name: String?
     /// Time at which the object was last updated. Measured in seconds since the Unix epoch.
     public var updated: Date?
-    
+
     public init(id: String,
                 object: String,
                 active: Bool? = nil,
@@ -47,6 +49,7 @@ public struct PortalConfiguration: Codable {
                 livemode: Bool? = nil,
                 loginPage: PortalConfigurationLoginPage? = nil,
                 metadata: [String : String]? = nil,
+                name: String? = nil,
                 updated: Date? = nil) {
         self.id = id
         self.object = object
@@ -60,6 +63,7 @@ public struct PortalConfiguration: Codable {
         self.livemode = livemode
         self.loginPage = loginPage
         self.metadata = metadata
+        self.name = name
         self.updated = updated
     }
 }
@@ -113,9 +117,13 @@ public struct PortalConfigurationFeatures: Codable {
 public struct PortalConfigurationFeaturesCustomerUpdate: Codable {
     /// The types of customer updates that are supported. When empty, customers are not updateable.
     public var allowedUpdates: [PortalConfigurationFeaturesCustomerUpdateAllowedUpdate]?
-    
-    public init(allowedUpdates: [PortalConfigurationFeaturesCustomerUpdateAllowedUpdate]? = nil) {
+    /// Whether the feature is enabled.
+    public var enabled: Bool?
+
+    public init(allowedUpdates: [PortalConfigurationFeaturesCustomerUpdateAllowedUpdate]? = nil,
+                enabled: Bool? = nil) {
         self.allowedUpdates = allowedUpdates
+        self.enabled = enabled
     }
 }
 
@@ -130,6 +138,8 @@ public enum PortalConfigurationFeaturesCustomerUpdateAllowedUpdate: String, Coda
     case phone
     /// Allow updating tax IDs.
     case taxId = "tax_id"
+    /// Allow updating names.
+    case name
 }
 
 public struct PortalConfigurationFeaturesInvoiceHistory: Codable {
@@ -144,7 +154,7 @@ public struct PortalConfigurationFeaturesInvoiceHistory: Codable {
 public struct PortalConfigurationFeaturesPaymentMethodUpdate: Codable {
     /// Whether the feature is enabled.
     public var enabled: Bool?
-    
+
     public init(enabled: Bool? = nil) {
         self.enabled = enabled
     }
@@ -220,6 +230,8 @@ public struct PortalConfigurationFeaturesSubscriptionPause: Codable {
 }
 
 public struct PortalConfigurationFeaturesSubscriptionUpdate: Codable {
+    /// The default value for the subscription's billing cycle anchor when a customer updates their subscription.
+    public var billingCycleAnchor: PortalConfigurationFeaturesSubscriptionUpdateBillingCycleAnchor?
     /// The types of subscription updates that are supported for items listed in the products attribute. When empty, subscriptions are not updateable.
     public var defaultAllowedUpdates: [PortalConfigurationFeaturesSubscriptionUpdateDefaultAllowedUpdate]?
     /// Whether the feature is enabled.
@@ -229,16 +241,65 @@ public struct PortalConfigurationFeaturesSubscriptionUpdate: Codable {
     public var products: [PortalConfigurationFeaturesSubscriptionUpdateProduct]?
     /// Determines how to handle prorations resulting from subscription updates. Valid values are `none`, `create_prorations`, and `always_invoice`.
     public var prorationBehavior: String?
-    
-    public init(defaultAllowedUpdates: [PortalConfigurationFeaturesSubscriptionUpdateDefaultAllowedUpdate]? = nil,
+    /// Configures how a subscription schedule is updated when it is created from a portal flow.
+    public var scheduleAtPeriodEnd: PortalConfigurationFeaturesSubscriptionUpdateScheduleAtPeriodEnd?
+    /// Determines how handle updates to trialing subscriptions. Valid values are `end_trial` and `continue_trial`.
+    public var trialUpdateBehavior: PortalConfigurationFeaturesSubscriptionUpdateTrialUpdateBehavior?
+
+    public init(billingCycleAnchor: PortalConfigurationFeaturesSubscriptionUpdateBillingCycleAnchor? = nil,
+                defaultAllowedUpdates: [PortalConfigurationFeaturesSubscriptionUpdateDefaultAllowedUpdate]? = nil,
                 enabled: Bool? = nil,
                 products: [PortalConfigurationFeaturesSubscriptionUpdateProduct]? = nil,
-                prorationBehavior: String? = nil) {
+                prorationBehavior: String? = nil,
+                scheduleAtPeriodEnd: PortalConfigurationFeaturesSubscriptionUpdateScheduleAtPeriodEnd? = nil,
+                trialUpdateBehavior: PortalConfigurationFeaturesSubscriptionUpdateTrialUpdateBehavior? = nil) {
+        self.billingCycleAnchor = billingCycleAnchor
         self.defaultAllowedUpdates = defaultAllowedUpdates
         self.enabled = enabled
         self.products = products
         self.prorationBehavior = prorationBehavior
+        self.scheduleAtPeriodEnd = scheduleAtPeriodEnd
+        self.trialUpdateBehavior = trialUpdateBehavior
     }
+}
+
+public enum PortalConfigurationFeaturesSubscriptionUpdateBillingCycleAnchor: String, Codable {
+    /// Reset the billing cycle anchor to the time of the update.
+    case now
+    /// Leave the billing cycle anchor unchanged.
+    case unchanged
+}
+
+public enum PortalConfigurationFeaturesSubscriptionUpdateTrialUpdateBehavior: String, Codable {
+    /// Continue the existing trial when the subscription is updated.
+    case continueTrial = "continue_trial"
+    /// End the trial when the subscription is updated.
+    case endTrial = "end_trial"
+}
+
+public struct PortalConfigurationFeaturesSubscriptionUpdateScheduleAtPeriodEnd: Codable {
+    /// List of conditions. When any condition is true, an update will be scheduled at the end of the current period.
+    public var conditions: [PortalConfigurationFeaturesSubscriptionUpdateScheduleAtPeriodEndCondition]?
+
+    public init(conditions: [PortalConfigurationFeaturesSubscriptionUpdateScheduleAtPeriodEndCondition]? = nil) {
+        self.conditions = conditions
+    }
+}
+
+public struct PortalConfigurationFeaturesSubscriptionUpdateScheduleAtPeriodEndCondition: Codable {
+    /// The type of condition.
+    public var type: PortalConfigurationFeaturesSubscriptionUpdateScheduleAtPeriodEndConditionType?
+
+    public init(type: PortalConfigurationFeaturesSubscriptionUpdateScheduleAtPeriodEndConditionType? = nil) {
+        self.type = type
+    }
+}
+
+public enum PortalConfigurationFeaturesSubscriptionUpdateScheduleAtPeriodEndConditionType: String, Codable {
+    /// Schedule the update at period end if the amount of the item decreases.
+    case decreasingItemAmount = "decreasing_item_amount"
+    /// Schedule the update at period end if the billing interval is shortened.
+    case shorteningInterval = "shortening_interval"
 }
 
 public enum PortalConfigurationFeaturesSubscriptionUpdateDefaultAllowedUpdate: String, Codable {
@@ -251,14 +312,34 @@ public enum PortalConfigurationFeaturesSubscriptionUpdateDefaultAllowedUpdate: S
 }
 
 public struct PortalConfigurationFeaturesSubscriptionUpdateProduct: Codable {
+    /// Control whether the quantity of the product can be adjusted.
+    public var adjustableQuantity: PortalConfigurationFeaturesSubscriptionUpdateProductAdjustableQuantity?
     /// The list of price IDs which, when subscribed to, a subscription can be updated.
     public var prices: [String]?
     /// The product ID.
     public var product: String?
-    
-    public init(prices: [String]? = nil, product: String? = nil) {
+
+    public init(adjustableQuantity: PortalConfigurationFeaturesSubscriptionUpdateProductAdjustableQuantity? = nil,
+                prices: [String]? = nil,
+                product: String? = nil) {
+        self.adjustableQuantity = adjustableQuantity
         self.prices = prices
         self.product = product
+    }
+}
+
+public struct PortalConfigurationFeaturesSubscriptionUpdateProductAdjustableQuantity: Codable {
+    /// If true, the quantity can be adjusted to any non-negative integer.
+    public var enabled: Bool?
+    /// The maximum quantity that can be set for the product.
+    public var maximum: Int?
+    /// The minimum quantity that can be set for the product.
+    public var minimum: Int?
+
+    public init(enabled: Bool? = nil, maximum: Int? = nil, minimum: Int? = nil) {
+        self.enabled = enabled
+        self.maximum = maximum
+        self.minimum = minimum
     }
 }
 

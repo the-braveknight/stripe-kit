@@ -14,6 +14,8 @@ public struct Source: Codable {
     public var id: String
     /// String representing the object’s type. Objects of the same type share the same value.
     public var object: String
+    /// This field indicates whether this payment method can be shown again to its customer in a checkout flow. Stripe products such as Checkout and Elements use this field to determine whether a payment method can be shown as a saved payment method in a checkout flow.
+    public var allowRedisplay: StripeSourceAllowRedisplay?
     /// A positive integer in the smallest currency unit (that is, 100 cents for $1.00, or 1 for ¥1, Japanese Yen being a zero-decimal currency) representing the total amount associated with the source. This is the amount for which the source will be chargeable once ready. Required for `single_use` sources.
     public var amount: Int?
     /// The client secret of the source. Used for client-side retrieval using a publishable key.
@@ -38,6 +40,8 @@ public struct Source: Codable {
     public var receiver: StripeSourceReceiver?
     /// Information related to the redirect flow. Present if the source is authenticated by a redirect (`flow` is `redirect`).
     public var redirect: StripeSourceRedirect?
+    /// Information about the items and shipping associated with the source. Required for transactional credit (for example Klarna) sources before you can charge it.
+    public var sourceOrder: StripeSourceOrder?
     /// Extra information about a source. This will appear on your customer’s statement every time you charge the source.
     public var statementDescriptor: String?
     /// The status of the source, one of `canceled`, `chargeable`, `consumed`, `failed`, or `pending`. Only `chargeable` sources can be used to create a charge.
@@ -56,12 +60,22 @@ public struct Source: Codable {
     public var eps: StripeSourceEPS?
     public var giropay: StripeSourceGiropay?
     public var ideal: StripeSourceIDEAL?
+    public var klarna: StripeSourceKlarna?
     public var multibanco: StripeSourceMultibanco?
     public var p24: StripeSourceP24?
     public var sepaDebit: StripeSourceSepaDebit?
     public var sofort: StripeSourceSofort?
     public var threeDSecure: StripeSourceThreeDSecure?
     public var wechat: StripeSourceWechat?
+}
+
+public enum StripeSourceAllowRedisplay: String, Codable {
+    /// Use `always` to indicate that this payment method can always be shown to a customer in a checkout flow.
+    case always
+    /// Use `limited` to indicate that this payment method can't always be shown to a customer in a checkout flow.
+    case limited
+    /// This is the default value for payment methods where `allow_redisplay` wasn't set.
+    case unspecified
 }
 
 public struct StripeSourceCodeVerification: Codable {
@@ -155,6 +169,53 @@ public enum StripeSourceRedirectReason: String, Codable {
     case failed
 }
 
+public struct StripeSourceOrder: Codable {
+    /// A positive integer in the smallest currency unit (that is, 100 cents for $1.00, or 1 for ¥1, Japanese Yen being a zero-decimal currency) representing the total amount for the order.
+    public var amount: Int?
+    /// Three-letter ISO currency code, in lowercase. Must be a supported currency.
+    public var currency: Currency?
+    /// The email address of the customer placing the order.
+    public var email: String?
+    /// List of items constituting the order.
+    public var items: [StripeSourceOrderItem]?
+    /// The shipping address for the order. Present if the order is for goods to be shipped.
+    public var shipping: StripeSourceOrderShipping?
+}
+
+public struct StripeSourceOrderItem: Codable {
+    /// The amount (price) for this order item.
+    public var amount: Int?
+    /// This currency of this order item. Required when `amount` is present.
+    public var currency: Currency?
+    /// Human-readable description for this order item.
+    public var description: String?
+    /// The ID of the associated object for this line item. Expandable if not null (for example, expandable to a SKU).
+    public var parent: String?
+    /// The quantity of this order item. When type is `sku`, this is the number of instances of the SKU to be ordered.
+    public var quantity: Int?
+    /// The type of this order item. Must be `sku`, `tax`, or `shipping`.
+    public var type: StripeSourceOrderItemType?
+}
+
+public enum StripeSourceOrderItemType: String, Codable {
+    case sku
+    case tax
+    case shipping
+}
+
+public struct StripeSourceOrderShipping: Codable {
+    /// Shipping address.
+    public var address: Address?
+    /// The delivery service that shipped a physical product, such as Fedex, UPS, USPS, etc.
+    public var carrier: String?
+    /// Recipient name.
+    public var name: String?
+    /// Recipient phone (including extension).
+    public var phone: String?
+    /// The tracking number for a physical product, obtained from the delivery service. If multiple tracking numbers were generated for this purchase, please separate them with commas.
+    public var trackingNumber: String?
+}
+
 public enum StripeSourceStatus: String, Codable {
     case canceled
     case chargeable
@@ -173,6 +234,7 @@ public enum StripeSourceType: String, Codable {
     case eps
     case giropay
     case ideal
+    case klarna
     case multibanco
     case p24
     case sepaDebit = "sepa_debit"
@@ -275,6 +337,35 @@ public struct StripeSourceIDEAL: Codable {
     public var bank: String?
     public var bic: String?
     public var ibanLast4: String?
+}
+
+public struct StripeSourceKlarna: Codable {
+    public var backgroundImageUrl: String?
+    public var clientToken: String?
+    public var firstName: String?
+    public var lastName: String?
+    public var locale: String?
+    public var logoUrl: String?
+    public var pageTitle: String?
+    public var payLaterAssetUrlsDescriptive: String?
+    public var payLaterAssetUrlsStandard: String?
+    public var payLaterName: String?
+    public var payLaterRedirectUrl: String?
+    public var payNowAssetUrlsDescriptive: String?
+    public var payNowAssetUrlsStandard: String?
+    public var payNowName: String?
+    public var payNowRedirectUrl: String?
+    public var payOverTimeAssetUrlsDescriptive: String?
+    public var payOverTimeAssetUrlsStandard: String?
+    public var payOverTimeName: String?
+    public var payOverTimeRedirectUrl: String?
+    public var paymentMethodCategories: String?
+    public var purchaseCountry: String?
+    public var purchaseType: String?
+    public var redirectUrl: String?
+    public var shippingDelay: Int?
+    public var shippingFirstName: String?
+    public var shippingLastName: String?
 }
 
 public struct StripeSourceMultibanco: Codable {

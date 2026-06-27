@@ -61,7 +61,23 @@ public struct SessionPaymentMethodOptions: Codable {
     public var sofort: SessionPaymentMethodOptionsSofort?
     /// If the Checkout Session’s `payment_method_types` includes `us_bank_account`, this hash contains the configurations that will be applied to each payment attempt of that type.
     public var usBankAccount: SessionPaymentMethodOptionsUSBankAccount?
-    
+    /// If the Checkout Session’s `payment_method_types` includes `amazon_pay`, this hash contains the configurations that will be applied to each payment attempt of that type.
+    public var amazonPay: SessionPaymentMethodOptionsAmazonPay?
+    /// If the Checkout Session’s `payment_method_types` includes `paypal`, this hash contains the configurations that will be applied to each payment attempt of that type.
+    public var paypal: SessionPaymentMethodOptionsPaypal?
+    /// If the Checkout Session’s `payment_method_types` includes `revolut_pay`, this hash contains the configurations that will be applied to each payment attempt of that type.
+    public var revolutPay: SessionPaymentMethodOptionsRevolutPay?
+    /// If the Checkout Session’s `payment_method_types` includes `swish`, this hash contains the configurations that will be applied to each payment attempt of that type.
+    public var swish: SessionPaymentMethodOptionsSwish?
+    /// If the Checkout Session’s `payment_method_types` includes `mobilepay`, this hash contains the configurations that will be applied to each payment attempt of that type.
+    public var mobilepay: SessionPaymentMethodOptionsMobilepay?
+    /// If the Checkout Session’s `payment_method_types` includes `multibanco`, this hash contains the configurations that will be applied to each payment attempt of that type.
+    public var multibanco: SessionPaymentMethodOptionsMultibanco?
+    /// If the Checkout Session’s `payment_method_types` includes `twint`, this hash contains the configurations that will be applied to each payment attempt of that type.
+    public var twint: SessionPaymentMethodOptionsTwint?
+    /// If the Checkout Session’s `payment_method_types` includes `pay_by_bank`, this hash contains the configurations that will be applied to each payment attempt of that type.
+    public var payByBank: SessionPaymentMethodOptionsPayByBank?
+
     public init(acssDebit: SessionPaymentMethodOptionsAcssDebit? = nil,
                 affirm: SessionPaymentMethodAffirm? = nil,
                 afterpayClearpay: SessionPaymentMethodAfterpayClearpay? = nil,
@@ -87,7 +103,15 @@ public struct SessionPaymentMethodOptions: Codable {
                 pix: SessionPaymentMethodOptionsPix? = nil,
                 sepaDebit: SessionPaymentMethodOptionsSepaDebit? = nil,
                 sofort: SessionPaymentMethodOptionsSofort? = nil,
-                usBankAccount: SessionPaymentMethodOptionsUSBankAccount? = nil) {
+                usBankAccount: SessionPaymentMethodOptionsUSBankAccount? = nil,
+                amazonPay: SessionPaymentMethodOptionsAmazonPay? = nil,
+                paypal: SessionPaymentMethodOptionsPaypal? = nil,
+                revolutPay: SessionPaymentMethodOptionsRevolutPay? = nil,
+                swish: SessionPaymentMethodOptionsSwish? = nil,
+                mobilepay: SessionPaymentMethodOptionsMobilepay? = nil,
+                multibanco: SessionPaymentMethodOptionsMultibanco? = nil,
+                twint: SessionPaymentMethodOptionsTwint? = nil,
+                payByBank: SessionPaymentMethodOptionsPayByBank? = nil) {
         self.acssDebit = acssDebit
         self.affirm = affirm
         self.afterpayClearpay = afterpayClearpay
@@ -114,6 +138,14 @@ public struct SessionPaymentMethodOptions: Codable {
         self.sepaDebit = sepaDebit
         self.sofort = sofort
         self.usBankAccount = usBankAccount
+        self.amazonPay = amazonPay
+        self.paypal = paypal
+        self.revolutPay = revolutPay
+        self.swish = swish
+        self.mobilepay = mobilepay
+        self.multibanco = multibanco
+        self.twint = twint
+        self.payByBank = payByBank
     }
 }
 
@@ -826,4 +858,127 @@ public enum SessionPaymentMethodOptionsUSBankAccountVerificationMethod: String, 
     case automatic
     /// Instant verification only.
     case instant
+}
+
+// MARK: Amazon Pay
+public struct SessionPaymentMethodOptionsAmazonPay: Codable {
+    /// Indicates that you intend to make future payments with this PaymentIntent’s payment method.
+    public var setupFutureUsage: SessionPaymentMethodOptionsAmazonPaySetupFutureUsage?
+
+    public init(setupFutureUsage: SessionPaymentMethodOptionsAmazonPaySetupFutureUsage? = nil) {
+        self.setupFutureUsage = setupFutureUsage
+    }
+}
+
+public enum SessionPaymentMethodOptionsAmazonPaySetupFutureUsage: String, Codable {
+    /// Use `off_session` if your customer may or may not be present in your checkout flow.
+    case offSession = "off_session"
+    /// Use `none` if you do not intend to reuse this payment method and want to override the top-level `setup_future_usage` value for this payment method.
+    case `none`
+}
+
+// MARK: PayPal
+public struct SessionPaymentMethodOptionsPaypal: Codable {
+    /// Controls when the funds will be captured from the customer’s account.
+    public var captureMethod: String?
+    /// Preferred locale of the PayPal checkout page that the customer is redirected to.
+    public var preferredLocale: String?
+    /// A reference of the PayPal transaction visible to customer which is mapped to PayPal’s invoice ID.
+    public var reference: String?
+    /// Indicates that you intend to make future payments with this PaymentIntent’s payment method.
+    public var setupFutureUsage: SessionPaymentMethodOptionsPaypalSetupFutureUsage?
+
+    public init(captureMethod: String? = nil,
+                preferredLocale: String? = nil,
+                reference: String? = nil,
+                setupFutureUsage: SessionPaymentMethodOptionsPaypalSetupFutureUsage? = nil) {
+        self.captureMethod = captureMethod
+        self.preferredLocale = preferredLocale
+        self.reference = reference
+        self.setupFutureUsage = setupFutureUsage
+    }
+}
+
+public enum SessionPaymentMethodOptionsPaypalSetupFutureUsage: String, Codable {
+    /// Use `off_session` if your customer may or may not be present in your checkout flow.
+    case offSession = "off_session"
+    /// Use `none` if you do not intend to reuse this payment method and want to override the top-level `setup_future_usage` value for this payment method.
+    case `none`
+}
+
+// MARK: Revolut Pay
+public struct SessionPaymentMethodOptionsRevolutPay: Codable {
+    /// Indicates that you intend to make future payments with this PaymentIntent’s payment method.
+    public var setupFutureUsage: SessionPaymentMethodOptionsRevolutPaySetupFutureUsage?
+
+    public init(setupFutureUsage: SessionPaymentMethodOptionsRevolutPaySetupFutureUsage? = nil) {
+        self.setupFutureUsage = setupFutureUsage
+    }
+}
+
+public enum SessionPaymentMethodOptionsRevolutPaySetupFutureUsage: String, Codable {
+    /// Use `off_session` if your customer may or may not be present in your checkout flow.
+    case offSession = "off_session"
+    /// Use `none` if you do not intend to reuse this payment method and want to override the top-level `setup_future_usage` value for this payment method.
+    case `none`
+}
+
+// MARK: Swish
+public struct SessionPaymentMethodOptionsSwish: Codable {
+    /// The order reference that will be displayed to customers in the Swish application. Defaults to the `id` of the Payment Intent.
+    public var reference: String?
+
+    public init(reference: String? = nil) {
+        self.reference = reference
+    }
+}
+
+// MARK: MobilePay
+public struct SessionPaymentMethodOptionsMobilepay: Codable {
+    /// Indicates that you intend to make future payments with this PaymentIntent’s payment method.
+    public var setupFutureUsage: SessionPaymentMethodOptionsMobilepaySetupFutureUsage?
+
+    public init(setupFutureUsage: SessionPaymentMethodOptionsMobilepaySetupFutureUsage? = nil) {
+        self.setupFutureUsage = setupFutureUsage
+    }
+}
+
+public enum SessionPaymentMethodOptionsMobilepaySetupFutureUsage: String, Codable {
+    /// Use `none` if you do not intend to reuse this payment method and want to override the top-level `setup_future_usage` value for this payment method.
+    case `none`
+}
+
+// MARK: Multibanco
+public struct SessionPaymentMethodOptionsMultibanco: Codable {
+    /// Indicates that you intend to make future payments with this PaymentIntent’s payment method.
+    public var setupFutureUsage: SessionPaymentMethodOptionsMultibancoSetupFutureUsage?
+
+    public init(setupFutureUsage: SessionPaymentMethodOptionsMultibancoSetupFutureUsage? = nil) {
+        self.setupFutureUsage = setupFutureUsage
+    }
+}
+
+public enum SessionPaymentMethodOptionsMultibancoSetupFutureUsage: String, Codable {
+    /// Use `none` if you do not intend to reuse this payment method and want to override the top-level `setup_future_usage` value for this payment method.
+    case `none`
+}
+
+// MARK: TWINT
+public struct SessionPaymentMethodOptionsTwint: Codable {
+    /// Indicates that you intend to make future payments with this PaymentIntent’s payment method.
+    public var setupFutureUsage: SessionPaymentMethodOptionsTwintSetupFutureUsage?
+
+    public init(setupFutureUsage: SessionPaymentMethodOptionsTwintSetupFutureUsage? = nil) {
+        self.setupFutureUsage = setupFutureUsage
+    }
+}
+
+public enum SessionPaymentMethodOptionsTwintSetupFutureUsage: String, Codable {
+    /// Use `none` if you do not intend to reuse this payment method and want to override the top-level `setup_future_usage` value for this payment method.
+    case `none`
+}
+
+// MARK: Pay By Bank
+public struct SessionPaymentMethodOptionsPayByBank: Codable {
+    public init() {}
 }

@@ -15,8 +15,12 @@ public struct SetupIntent: Codable {
     public var clientSecret: String?
     /// ID of the Customer this SetupIntent belongs to, if one exists. If present, payment methods used with this SetupIntent can only be attached to this Customer, and payment methods attached to other Customers cannot be used with this SetupIntent.
     @Expandable<Customer> public var customer: String?
+    /// ID of the Account this SetupIntent belongs to, if one exists. If present, the SetupIntent's payment method will be attached to the Account on successful setup. Payment methods attached to other Accounts cannot be used with this SetupIntent.
+    public var customerAccount: String?
     /// An arbitrary string attached to the object. Often useful for displaying to users.
     public var description: String?
+    /// The list of payment method types to exclude from use with this SetupIntent.
+    public var excludedPaymentMethodTypes: [String]?
     /// The error encountered in the previous SetupIntent confirmation.
     public var lastSetupError: StripeError?
     /// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
@@ -64,7 +68,9 @@ public struct SetupIntent: Codable {
     public init(id: String,
                 clientSecret: String? = nil,
                 customer: String? = nil,
+                customerAccount: String? = nil,
                 description: String? = nil,
+                excludedPaymentMethodTypes: [String]? = nil,
                 lastSetupError: StripeError? = nil,
                 metadata: [String : String]? = nil,
                 nextAction: SetupIntentNextAction? = nil,
@@ -88,7 +94,9 @@ public struct SetupIntent: Codable {
         self.id = id
         self.clientSecret = clientSecret
         self._customer = Expandable(id: customer)
+        self.customerAccount = customerAccount
         self.description = description
+        self.excludedPaymentMethodTypes = excludedPaymentMethodTypes
         self.lastSetupError = lastSetupError
         self.metadata = metadata
         self.nextAction = nextAction
@@ -121,21 +129,84 @@ public enum SetupIntentCancellationReason: String, Codable {
 public struct SetupIntentNextAction: Codable {
     /// The field that contains Cash App Pay QR code info
     public var cashappHandleRedirectOrDisplayQrCode: SetupIntentNextActionCashappHandleRedirectOrDisplayQrCode?
+    /// The field that contains Pix QR code info
+    public var pixDisplayQrCode: SetupIntentNextActionPixDisplayQrCode?
     /// Contains instructions for authenticating by redirecting your customer to another page or application.
     public var redirectToUrl: SetupIntentNextActionRedirectToUrl?
     /// Type of the next action to perform, one of `redirect_to_url`, `use_stripe_sdk`, `alipay_handle_redirect`, `oxxo_display_details`, or `verify_with_microdeposits`.
     public var type: SetupIntentNextActionType?
+    /// The field that contains UPI QR code and intent info
+    public var upiHandleRedirectOrDisplayQrCode: SetupIntentNextActionUpiHandleRedirectOrDisplayQrCode?
     /// Contains details describing microdeposits verification flow.
     public var verifyWithMicrodeposits: SetupIntentNextActionVerifyMicroDeposits?
-    
+
     public init(cashappHandleRedirectOrDisplayQrCode: SetupIntentNextActionCashappHandleRedirectOrDisplayQrCode? = nil,
+                pixDisplayQrCode: SetupIntentNextActionPixDisplayQrCode? = nil,
                 redirectToUrl: SetupIntentNextActionRedirectToUrl? = nil,
                 type: SetupIntentNextActionType? = nil,
+                upiHandleRedirectOrDisplayQrCode: SetupIntentNextActionUpiHandleRedirectOrDisplayQrCode? = nil,
                 verifyWithMicrodeposits: SetupIntentNextActionVerifyMicroDeposits? = nil) {
         self.cashappHandleRedirectOrDisplayQrCode = cashappHandleRedirectOrDisplayQrCode
+        self.pixDisplayQrCode = pixDisplayQrCode
         self.redirectToUrl = redirectToUrl
         self.type = type
+        self.upiHandleRedirectOrDisplayQrCode = upiHandleRedirectOrDisplayQrCode
         self.verifyWithMicrodeposits = verifyWithMicrodeposits
+    }
+}
+
+public struct SetupIntentNextActionPixDisplayQrCode: Codable {
+    /// The raw data string used to generate QR code, it should be used together with QR code library.
+    public var data: String?
+    /// The date (unix timestamp) when the QR code expires.
+    public var expiresAt: Date?
+    /// The URL to the hosted pix instructions page, which allows customers to view the pix QR code.
+    public var hostedInstructionsUrl: String?
+    /// The image_url_png string used to render QR code.
+    public var imageUrlPng: String?
+    /// The image_url_svg string used to render QR code.
+    public var imageUrlSvg: String?
+
+    public init(data: String? = nil,
+                expiresAt: Date? = nil,
+                hostedInstructionsUrl: String? = nil,
+                imageUrlPng: String? = nil,
+                imageUrlSvg: String? = nil) {
+        self.data = data
+        self.expiresAt = expiresAt
+        self.hostedInstructionsUrl = hostedInstructionsUrl
+        self.imageUrlPng = imageUrlPng
+        self.imageUrlSvg = imageUrlSvg
+    }
+}
+
+public struct SetupIntentNextActionUpiHandleRedirectOrDisplayQrCode: Codable {
+    /// The URL to the hosted UPI instructions page, which allows customers to view the QR code.
+    public var hostedInstructionsUrl: String?
+    /// The field that contains UPI QR code info
+    public var qrCode: SetupIntentNextActionUpiQrCode?
+
+    public init(hostedInstructionsUrl: String? = nil,
+                qrCode: SetupIntentNextActionUpiQrCode? = nil) {
+        self.hostedInstructionsUrl = hostedInstructionsUrl
+        self.qrCode = qrCode
+    }
+}
+
+public struct SetupIntentNextActionUpiQrCode: Codable {
+    /// The date (unix timestamp) when the QR code expires.
+    public var expiresAt: Date?
+    /// The image_url_png string used to render QR code.
+    public var imageUrlPng: String?
+    /// The image_url_svg string used to render QR code.
+    public var imageUrlSvg: String?
+
+    public init(expiresAt: Date? = nil,
+                imageUrlPng: String? = nil,
+                imageUrlSvg: String? = nil) {
+        self.expiresAt = expiresAt
+        self.imageUrlPng = imageUrlPng
+        self.imageUrlSvg = imageUrlSvg
     }
 }
 
@@ -191,6 +262,10 @@ public enum SetupIntentNextActionType: String, Codable {
     case alipayHandleRedirect = "alipay_handle_redirect"
     case oxxoDisplayDetails = "oxxo_display_details"
     case verifyWithMicrodeposits = "verify_with_microdeposits"
+    case blikAuthorize = "blik_authorize"
+    case cashappHandleRedirectOrDisplayQrCode = "cashapp_handle_redirect_or_display_qr_code"
+    case pixDisplayQrCode = "pix_display_qr_code"
+    case upiHandleRedirectOrDisplayQrCode = "upi_handle_redirect_or_display_qr_code"
 }
 
 public struct SetupIntentNextActionVerifyMicroDeposits: Codable {
@@ -216,12 +291,23 @@ public enum SetupIntentNextActionVerifyMicroDepositType: String, Codable {
 }
 
 public struct SetupIntentAutomaticPaymentMethods: Codable {
+    /// Controls whether this SetupIntent will accept redirect-based payment methods.
+    public var allowRedirects: SetupIntentAutomaticPaymentMethodsAllowRedirects?
     /// Automatically calculates compatible payment methods
     public var enabled: Bool?
-    
-    public init(enabled: Bool? = nil) {
+
+    public init(allowRedirects: SetupIntentAutomaticPaymentMethodsAllowRedirects? = nil,
+                enabled: Bool? = nil) {
+        self.allowRedirects = allowRedirects
         self.enabled = enabled
     }
+}
+
+public enum SetupIntentAutomaticPaymentMethodsAllowRedirects: String, Codable {
+    /// This SetupIntent will allow redirect-based payment methods.
+    case always
+    /// This SetupIntent will not allow redirect-based payment methods.
+    case never
 }
 
 public enum SetupIntentStatus: String, Codable {

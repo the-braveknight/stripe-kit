@@ -27,6 +27,10 @@ public struct Payout: Codable {
     public var status: PayoutStatus?
     /// String representing the object’s type. Objects of the same type share the same value.
     public var object: String
+    /// The application fee (if any) for the payout. See the Connect documentation for details.
+    @Expandable<ApplicationFee> public var applicationFee: String?
+    /// The amount of the application fee (if any) requested for the payout. See the Connect documentation for details.
+    public var applicationFeeAmount: Int?
     /// Returns `true` if the payout was created by an automated payout schedule, and false if it was requested manually.
     public var automatic: Bool?
     /// ID of the balance transaction that describes the impact of this payout on your account balance.
@@ -47,15 +51,19 @@ public struct Payout: Codable {
     public var method: PayoutMethod?
     /// If the payout reverses another, this is the ID of the original payout.
     @Expandable<Payout> public var originalPayout: String?
+    /// ID of the v2 FinancialAccount the funds are sent to.
+    public var payoutMethod: String?
     /// If completed, the Balance Transactions API may be used to list all Balance Transactions that were paid out in this payout.
     public var reconciliationStatus: PayoutReconciliationStatus?
     /// If the payout was reversed, this is the ID of the payout that reverses this payout.
     @Expandable<Payout> public var reversedBy: String?
     /// The source balance this payout came from. One of `card`, `fpx`, or `bank_account`.
     public var sourceType: PayoutSourceType?
+    /// A value that generates from the beneficiary's bank that allows users to track payouts with their bank. Banks might call this a "reference number" or something similar.
+    public var traceId: PayoutTraceId?
     /// Can be `bank_account` or `card`.
     public var type: PayoutType?
-    
+
     public init(id: String,
                 amount: Int? = nil,
                 arrivalDate: Date? = nil,
@@ -65,6 +73,8 @@ public struct Payout: Codable {
                 statementDescriptor: String? = nil,
                 status: PayoutStatus? = nil,
                 object: String,
+                applicationFee: String? = nil,
+                applicationFeeAmount: Int? = nil,
                 automatic: Bool? = nil,
                 balanceTransaction: String? = nil,
                 created: Date,
@@ -75,9 +85,11 @@ public struct Payout: Codable {
                 livemode: Bool? = nil,
                 method: PayoutMethod? = nil,
                 originalPayout: String? = nil,
+                payoutMethod: String? = nil,
                 reconciliationStatus: PayoutReconciliationStatus? = nil,
                 reversedBy: String? = nil,
                 sourceType: PayoutSourceType? = nil,
+                traceId: PayoutTraceId? = nil,
                 type: PayoutType? = nil) {
         self.id = id
         self.amount = amount
@@ -88,6 +100,8 @@ public struct Payout: Codable {
         self.statementDescriptor = statementDescriptor
         self.status = status
         self.object = object
+        self._applicationFee = Expandable(id: applicationFee)
+        self.applicationFeeAmount = applicationFeeAmount
         self.automatic = automatic
         self._balanceTransaction = Expandable(id: balanceTransaction)
         self.created = created
@@ -98,9 +112,11 @@ public struct Payout: Codable {
         self.livemode = livemode
         self.method = method
         self._originalPayout = Expandable(id: originalPayout)
+        self.payoutMethod = payoutMethod
         self.reconciliationStatus = reconciliationStatus
         self._reversedBy = Expandable(id: reversedBy)
         self.sourceType = sourceType
+        self.traceId = traceId
         self.type = type
     }
 }
@@ -112,6 +128,8 @@ public enum PayoutFailureCode: String, Codable {
     case accountFrozen = "account_frozen"
     /// The bank account has restrictions on either the type, or the number, of payouts allowed. This normally indicates that the bank account is a savings or other non-checking account.
     case bankAccountRestricted = "bank_account_restricted"
+    /// The bank account is unusable for payouts.
+    case bankAccountUnusable = "bank_account_unusable"
     /// The destination bank account is no longer valid because its branch has changed ownership.
     case bankOwnershipChanged = "bank_ownership_changed"
     /// The bank could not process this payout.
@@ -130,6 +148,10 @@ public enum PayoutFailureCode: String, Codable {
     case incorrectAccountHolderAddress = "incorrect_account_holder_address"
     /// Your bank notified us that the bank account holder tax ID on file is incorrect.
     case incorrectAccountHolderTaxId = "incorrect_account_holder_tax_id"
+    /// The bank account type is incorrect for this payout.
+    case incorrectAccountType = "incorrect_account_type"
+    /// The account number provided is invalid.
+    case invalidAccountNumberLength = "invalid_account_number_length"
     /// The bank was unable to process this payout because of its currency. This is probably because the bank account cannot accept payments in that currency.
     case invalidCurrency = "invalid_currency"
     /// The bank account details on file are probably incorrect. No bank account could be located with those details.
@@ -166,6 +188,25 @@ public enum PayoutStatus: String, Codable {
 public enum PayoutType: String, Codable {
     case bankAccount = "bank_account"
     case card
+}
+
+public struct PayoutTraceId: Codable {
+    /// Possible values are `pending`, `supported`, and `unsupported`. When `payout.status` is `pending` or `in_transit`, this will be `pending`. When the payout transitions to `paid`, `failed`, or `canceled`, this status will become `supported` or `unsupported` shortly after in most cases. In some cases, this may appear as `pending` for up to 10 days after `arrival_date` until transitioning to `supported` or `unsupported`.
+    public var status: PayoutTraceIdStatus?
+    /// The trace ID value if `trace_id.status` is `supported`, otherwise `nil`.
+    public var value: String?
+
+    public init(status: PayoutTraceIdStatus? = nil,
+                value: String? = nil) {
+        self.status = status
+        self.value = value
+    }
+}
+
+public enum PayoutTraceIdStatus: String, Codable {
+    case pending
+    case supported
+    case unsupported
 }
 
 public struct PayoutsList: Codable {

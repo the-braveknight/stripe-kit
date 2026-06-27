@@ -15,10 +15,13 @@ public protocol PaymentMethodRoutes: StripeAPIRoute {
     ///   - type: The type of the PaymentMethod. An additional hash is included on the PaymentMethod with a name matching this value. It contains additional information specific to the PaymentMethod type. Required unless `payment_method` is specified (see the Shared PaymentMethods guide)
     ///   - billingDetails: Billing information associated with the PaymentMethod that may be used or required by particular types of payment methods.
     ///   - metadata: Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
+    ///   - allowRedisplay: This field indicates whether this payment method can be shown again to its customer in a checkout flow. Stripe products such as Checkout and Elements use this field to determine whether a payment method can be shown as a saved payment method in a checkout flow. One of `always`, `limited`, or `unspecified`.
     ///   - acssDebit: If this is an `acss_debit` PaymentMethod, this hash contains details about the ACSS Debit payment method.
     ///   - affirm: If this is an `affirm` PaymentMethod, this hash contains details about the Affirm payment method.
     ///   - afterpayClearpay: If this is an AfterpayClearpay PaymentMethod, this hash contains details about the AfterpayClearpay payment method.
     ///   - alipay: If this is an Alipay PaymentMethod, this hash contains details about the Alipay payment method.
+    ///   - alma: If this is an `alma` PaymentMethod, this hash contains details about the Alma payment method.
+    ///   - amazonPay: If this is an `amazon_pay` PaymentMethod, this hash contains details about the Amazon Pay payment method.
     ///   - auBecsDebit: If this is an `au_becs_debit` PaymentMethod, this hash contains details about the bank account.
     ///   - bacsDebit: If this is a `bacs_debit` PaymentMethod, this hash contains details about the Bacs Direct Debit bank account.
     ///   - bancontact: If this is a `bancontact` PaymentMethod, this hash contains details about the Bancontact payment method.
@@ -39,22 +42,30 @@ public protocol PaymentMethodRoutes: StripeAPIRoute {
     ///   - oxxo: If this is an oxxo PaymentMethod, this hash contains details about the OXXO payment method.
     ///   - p24: If this is an `p24` PaymentMethod, this hash contains details about the P24 payment method.
     ///   - paynow: If this is a paynow PaymentMethod, this hash contains details about the PayNow payment method.
+    ///   - paypal: If this is a `paypal` PaymentMethod, this hash contains details about the PayPal payment method.
     ///   - pix: If this is a pix PaymentMethod, this hash contains details about the Pix payment method.
     ///   - promptpay: If this is a promptpay PaymentMethod, this hash contains details about the PromptPay payment method.
     ///   - radarOptions: Options to configure Radar. See Radar Session for more information.
+    ///   - revolutPay: If this is a `revolut_pay` PaymentMethod, this hash contains details about the Revolut Pay payment method.
     ///   - sepaDebit: If this is a `sepa_debit` PaymentMethod, this hash contains details about the SEPA debit bank account.
     ///   - sofort: If this is a sofort PaymentMethod, this hash contains details about the SOFORT payment method.
+    ///   - swish: If this is a `swish` PaymentMethod, this hash contains details about the Swish payment method.
+    ///   - twint: If this is a `twint` PaymentMethod, this hash contains details about the TWINT payment method.
     ///   - usBankAccount: If this is an `us_bank_account` PaymentMethod, this hash contains details about the US bank account payment method.
     ///   - wechatPay: If this is a `wechat_pay` PaymentMethod, this hash contains details about the `wechat_pay` payment method.
+    ///   - zip: If this is a `zip` PaymentMethod, this hash contains details about the Zip payment method.
     ///   - expand: Specifies which fields in the response should be expanded.
     /// - Returns: A `StripePaymentMethod`.
     func create(type: PaymentMethodType,
                 billingDetails: [String: Any]?,
                 metadata: [String: String]?,
+                allowRedisplay: PaymentMethodAllowRedisplay?,
                 acssDebit: [String: Any]?,
                 affirm: [String: Any]?,
                 afterpayClearpay: [String: Any]?,
                 alipay: [String: Any]?,
+                alma: [String: Any]?,
+                amazonPay: [String: Any]?,
                 auBecsDebit: [String: Any]?,
                 bacsDebit: [String: Any]?,
                 bancontact: [String: Any]?,
@@ -72,16 +83,22 @@ public protocol PaymentMethodRoutes: StripeAPIRoute {
                 klarna: [String: Any]?,
                 konbini: [String: Any]?,
                 link: [String: Any]?,
+                mobilepay: [String: Any]?,
                 oxxo: [String: Any]?,
                 p24: [String: Any]?,
                 paynow: [String: Any]?,
+                paypal: [String: Any]?,
                 pix: [String: Any]?,
                 promptpay: [String: Any]?,
                 radarOptions: [String: Any]?,
+                revolutPay: [String: Any]?,
                 sepaDebit: [String: Any]?,
                 sofort: [String: Any]?,
+                swish: [String: Any]?,
+                twint: [String: Any]?,
                 usBankAccount: [String: Any]?,
                 wechatPay: [String: Any]?,
+                zip: [String: Any]?,
                 expand: [String]?) async throws -> PaymentMethod
         
     /// Retrieves a PaymentMethod object.
@@ -98,6 +115,7 @@ public protocol PaymentMethodRoutes: StripeAPIRoute {
     ///   - paymentMethod: The ID of the PaymentMethod to be updated.
     ///   - billingDetails: Billing information associated with the PaymentMethod that may be used or required by particular types of payment methods.
     ///   - metadata: Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
+    ///   - allowRedisplay: This field indicates whether this payment method can be shown again to its customer in a checkout flow. One of `always`, `limited`, or `unspecified`.
     ///   - card: If this is a `card` PaymentMethod, this hash contains the user’s card details.
     ///   - link: If this is a `link` PaymentMethod, this hash contains details about the Link payment method.
     ///   - usBankAccount: If this is an `us_bank_account` PaymentMethod, this hash contains details about the US bank account payment method.
@@ -106,6 +124,7 @@ public protocol PaymentMethodRoutes: StripeAPIRoute {
     func update(paymentMethod: String,
                 billingDetails: [String: Any]?,
                 metadata: [String: String]?,
+                allowRedisplay: PaymentMethodAllowRedisplay?,
                 card: [String: Any]?,
                 link: [String: Any]?,
                 usBankAccount: [String: Any]?,
@@ -156,10 +175,13 @@ public struct StripePaymentMethodRoutes: PaymentMethodRoutes {
     public func create(type: PaymentMethodType,
                        billingDetails: [String: Any]? = nil,
                        metadata: [String: String]? = nil,
+                       allowRedisplay: PaymentMethodAllowRedisplay? = nil,
                        acssDebit: [String: Any]? = nil,
                        affirm: [String: Any]? = nil,
                        afterpayClearpay: [String: Any]? = nil,
                        alipay: [String: Any]? = nil,
+                       alma: [String: Any]? = nil,
+                       amazonPay: [String: Any]? = nil,
                        auBecsDebit: [String: Any]? = nil,
                        bacsDebit: [String: Any]? = nil,
                        bancontact: [String: Any]? = nil,
@@ -177,43 +199,61 @@ public struct StripePaymentMethodRoutes: PaymentMethodRoutes {
                        klarna: [String: Any]? = nil,
                        konbini: [String: Any]? = nil,
                        link: [String: Any]? = nil,
+                       mobilepay: [String: Any]? = nil,
                        oxxo: [String: Any]? = nil,
                        p24: [String: Any]? = nil,
                        paynow: [String: Any]? = nil,
+                       paypal: [String: Any]? = nil,
                        pix: [String: Any]? = nil,
                        promptpay: [String: Any]? = nil,
                        radarOptions: [String: Any]? = nil,
+                       revolutPay: [String: Any]? = nil,
                        sepaDebit: [String: Any]? = nil,
                        sofort: [String: Any]? = nil,
+                       swish: [String: Any]? = nil,
+                       twint: [String: Any]? = nil,
                        usBankAccount: [String: Any]? = nil,
                        wechatPay: [String: Any]? = nil,
+                       zip: [String: Any]? = nil,
                        expand: [String]? = nil) async throws -> PaymentMethod {
         var body: [String: Any] = ["type": type.rawValue]
-        
+
         if let billingDetails {
             billingDetails.forEach { body["billing_details[\($0)]"] = $1 }
         }
-        
+
         if let metadata {
             metadata.forEach { body["metadata[\($0)]"] = $1 }
         }
-        
+
+        if let allowRedisplay {
+            body["allow_redisplay"] = allowRedisplay.rawValue
+        }
+
         if let acssDebit {
             acssDebit.forEach { body["acss_debit[\($0)]"] = $1 }
         }
-        
+
         if let affirm {
             affirm.forEach { body["affirm[\($0)]"] = $1 }
         }
-        
+
         if let afterpayClearpay {
             afterpayClearpay.forEach { body["afterpay_clearpay[\($0)]"] = $1 }
         }
-        
+
         if let alipay {
             alipay.forEach { body["alipay[\($0)]"] = $1 }
         }
-        
+
+        if let alma {
+            alma.forEach { body["alma[\($0)]"] = $1 }
+        }
+
+        if let amazonPay {
+            amazonPay.forEach { body["amazon_pay[\($0)]"] = $1 }
+        }
+
         if let auBecsDebit {
             auBecsDebit.forEach { body["au_becs_debit[\($0)]"] = $1 }
         }
@@ -281,7 +321,11 @@ public struct StripePaymentMethodRoutes: PaymentMethodRoutes {
         if let link {
             link.forEach { body["link[\($0)]"] = $1 }
         }
-        
+
+        if let mobilepay {
+            mobilepay.forEach { body["mobilepay[\($0)]"] = $1 }
+        }
+
         if let oxxo {
             oxxo.forEach { body["oxxo[\($0)]"] = $1 }
         }
@@ -293,7 +337,11 @@ public struct StripePaymentMethodRoutes: PaymentMethodRoutes {
         if let paynow {
             paynow.forEach { body["paynow[\($0)]"] = $1 }
         }
-        
+
+        if let paypal {
+            paypal.forEach { body["paypal[\($0)]"] = $1 }
+        }
+
         if let pix {
             pix.forEach { body["pix[\($0)]"] = $1 }
         }
@@ -305,23 +353,39 @@ public struct StripePaymentMethodRoutes: PaymentMethodRoutes {
         if let radarOptions {
             radarOptions.forEach { body["radar_options[\($0)]"] = $1 }
         }
-        
+
+        if let revolutPay {
+            revolutPay.forEach { body["revolut_pay[\($0)]"] = $1 }
+        }
+
         if let sepaDebit {
             sepaDebit.forEach { body["sepa_debit[\($0)]"] = $1 }
         }
-        
+
         if let sofort {
             sofort.forEach { body["sofort[\($0)]"] = $1 }
         }
-        
+
+        if let swish {
+            swish.forEach { body["swish[\($0)]"] = $1 }
+        }
+
+        if let twint {
+            twint.forEach { body["twint[\($0)]"] = $1 }
+        }
+
         if let usBankAccount {
             usBankAccount.forEach { body["us_bank_account[\($0)]"] = $1 }
         }
-        
+
         if let wechatPay {
             wechatPay.forEach { body["wechat_pay[\($0)]"] = $1 }
         }
-        
+
+        if let zip {
+            zip.forEach { body["zip[\($0)]"] = $1 }
+        }
+
         if let expand {
             body["expand"] = expand
         }
@@ -341,21 +405,26 @@ public struct StripePaymentMethodRoutes: PaymentMethodRoutes {
     public func update(paymentMethod: String,
                        billingDetails: [String: Any]? = nil,
                        metadata: [String: String]? = nil,
+                       allowRedisplay: PaymentMethodAllowRedisplay? = nil,
                        card: [String: Any]? = nil,
                        link: [String: Any]? = nil,
                        usBankAccount: [String: Any]? = nil,
                        expand: [String]? = nil) async throws -> PaymentMethod {
-        
+
         var body: [String: Any] = [:]
-        
+
         if let billingDetails {
             billingDetails.forEach { body["billing_details[\($0)]"] = $1 }
         }
-        
+
         if let metadata {
             metadata.forEach { body["metadata[\($0)]"] = $1 }
         }
-        
+
+        if let allowRedisplay {
+            body["allow_redisplay"] = allowRedisplay.rawValue
+        }
+
         if let card {
             card.forEach { body["card[\($0)]"] = $1 }
         }

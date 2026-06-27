@@ -18,22 +18,48 @@ public struct InvoicePaymentSettingsPaymentMethodOptions: Codable {
     public var customerBalance: InvoicePaymentSettingsPaymentMethodOptionsCustomerBalance?
     /// If paying by `konbini`, this sub-hash contains details about the Konbini payment method options to pass to the invoice’s PaymentIntent.
     public var konbini: InvoicePaymentSettingsPaymentMethodOptionsKonbini?
+    /// If paying by `pix`, this sub-hash contains details about the Pix payment method options to pass to the invoice’s PaymentIntent.
+    public var pix: InvoicePaymentSettingsPaymentMethodOptionsPix?
+    /// If paying by `sepa_debit`, this sub-hash contains details about the SEPA Direct Debit payment method options to pass to the invoice’s PaymentIntent.
+    public var sepaDebit: InvoicePaymentSettingsPaymentMethodOptionsSepaDebit?
     /// If paying by `us_bank_account`, this sub-hash contains details about the ACH direct debit payment method options to pass to the invoice’s PaymentIntent.
     public var usBankAccount: InvoicePaymentSettingsPaymentMethodOptionsUSBankAccount?
-    
+
     public init(acssDebit: InvoicePaymentSettingsPaymentMethodOptionsAcssDebit? = nil,
                 bancontact: InvoicePaymentSettingsPaymentMethodOptionsBancontact? = nil,
                 card: InvoicePaymentSettingsPaymentMethodOptionsCard? = nil,
                 customerBalance: InvoicePaymentSettingsPaymentMethodOptionsCustomerBalance? = nil,
                 konbini: InvoicePaymentSettingsPaymentMethodOptionsKonbini? = nil,
+                pix: InvoicePaymentSettingsPaymentMethodOptionsPix? = nil,
+                sepaDebit: InvoicePaymentSettingsPaymentMethodOptionsSepaDebit? = nil,
                 usBankAccount: InvoicePaymentSettingsPaymentMethodOptionsUSBankAccount? = nil) {
         self.acssDebit = acssDebit
         self.bancontact = bancontact
         self.card = card
         self.customerBalance = customerBalance
         self.konbini = konbini
+        self.pix = pix
+        self.sepaDebit = sepaDebit
         self.usBankAccount = usBankAccount
     }
+}
+
+// MARK: Pix
+public struct InvoicePaymentSettingsPaymentMethodOptionsPix: Codable {
+    /// Determines if the amount includes the IOF tax. One of `always` or `never`.
+    public var amountIncludesIof: String?
+    /// The number of seconds (between 10 and 1209600) after which Pix payment will expire.
+    public var expiresAfterSeconds: Int?
+
+    public init(amountIncludesIof: String? = nil, expiresAfterSeconds: Int? = nil) {
+        self.amountIncludesIof = amountIncludesIof
+        self.expiresAfterSeconds = expiresAfterSeconds
+    }
+}
+
+// MARK: SEPA Debit
+public struct InvoicePaymentSettingsPaymentMethodOptionsSepaDebit: Codable {
+    public init() {}
 }
 
 // MARK: ACSS Debit
@@ -114,6 +140,8 @@ public enum InvoicePaymentSettingsPaymentMethodOptionsCardRequestThreedSecure: S
     case automatic
     /// Requires 3D Secure authentication if it is available.
     case any
+    /// Requests that the customer complete the 3D Secure authentication challenge.
+    case challenge
 }
 
 // MARK: Customer Balance
@@ -157,6 +185,7 @@ public enum InvoicePaymentSettingsPaymentMethodOptionsCustomerBalanceBankTransfe
     case gbBankTransfer = "gb_bank_transfer"
     case jpBankTransfer = "jp_bank_transfer"
     case mxBankTransfer = "mx_bank_transfer"
+    case usBankTransfer = "us_bank_transfer"
 }
 
 public enum InvoicePaymentSettingsPaymentMethodOptionsCustomerBalanceFundingType: String, Codable {
@@ -183,11 +212,28 @@ public struct InvoicePaymentSettingsPaymentMethodOptionsUSBankAccount: Codable {
 }
 
 public struct InvoicePaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnections: Codable {
+    /// Provide filters for the linked accounts that the customer can select for the payment method.
+    public var filters: InvoicePaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFilters?
     /// The list of permissions to request. The `payment_method` permission must be included.
     public var permissions: [InvoicePaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPermission]?
-    
-    public init(permissions: [InvoicePaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPermission]? = nil) {
+    /// Data features requested to be retrieved upon account creation.
+    public var prefetch: [InvoicePaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPrefetch]?
+
+    public init(filters: InvoicePaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFilters? = nil,
+                permissions: [InvoicePaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPermission]? = nil,
+                prefetch: [InvoicePaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPrefetch]? = nil) {
+        self.filters = filters
         self.permissions = permissions
+        self.prefetch = prefetch
+    }
+}
+
+public struct InvoicePaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFilters: Codable {
+    /// The account subcategories to use to filter for selectable accounts. Valid subcategories are `checking` and `savings`.
+    public var accountSubcategories: [String]?
+
+    public init(accountSubcategories: [String]? = nil) {
+        self.accountSubcategories = accountSubcategories
     }
 }
 
@@ -196,7 +242,18 @@ public enum InvoicePaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConn
     case paymentMethod = "payment_method"
     /// Allows accessing balance data from the account.
     case balances
+    /// Allows accessing ownership data from the account.
+    case ownership
     /// Allows accessing transactions data from the account.
+    case transactions
+}
+
+public enum InvoicePaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPrefetch: String, Codable {
+    /// Requests to prefetch balance data on accounts collected in this session.
+    case balances
+    /// Requests to prefetch ownership data on accounts collected in this session.
+    case ownership
+    /// Requests to prefetch transaction data on accounts collected in this session.
     case transactions
 }
 

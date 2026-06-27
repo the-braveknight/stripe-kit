@@ -23,6 +23,8 @@ public struct SetupAttempt: Codable {
     public var created: Date?
     /// The value of customer on the SetupIntent at the time of this confirmation.
     @Expandable<Customer> public var customer: String?
+    /// The value of `customer_account` on the SetupIntent at the time of this confirmation.
+    public var customerAccount: String?
     /// Indicates the directions of money movement for which this payment method is intended to be used.
     /// Include inbound if you intend to use the payment method as the origin to pull funds from. Include outbound if you intend to use the payment method as the destination to send funds to. You can include both if you intend to use the payment method for both purposes.
     public var flowDirections: [String]?
@@ -49,6 +51,7 @@ public struct SetupAttempt: Codable {
                 attachToSelf: Bool? = nil,
                 created: Date? = nil,
                 customer: String? = nil,
+                customerAccount: String? = nil,
                 flowDirections: [String]? = nil,
                 livemode: Bool? = nil,
                 onBehalfOf: String? = nil,
@@ -64,6 +67,7 @@ public struct SetupAttempt: Codable {
         self.attachToSelf = attachToSelf
         self.created = created
         self._customer = Expandable(id: customer)
+        self.customerAccount = customerAccount
         self.flowDirections = flowDirections
         self.livemode = livemode
         self._onBehalfOf = Expandable(id: onBehalfOf)

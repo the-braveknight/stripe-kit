@@ -56,15 +56,19 @@ public struct TransferReversal: Codable {
 public struct TransferReversalList: Codable {
     public var object: String
     public var hasMore: Bool?
+    /// The total number of items available. This value is not included by default, but you can request it by specifying `total_count` in the `expand` array.
+    public var totalCount: Int?
     public var url: String?
     public var data: [TransferReversal]?
-    
+
     public init(object: String,
                 hasMore: Bool? = nil,
+                totalCount: Int? = nil,
                 url: String? = nil,
                 data: [TransferReversal]? = nil) {
         self.object = object
         self.hasMore = hasMore
+        self.totalCount = totalCount
         self.url = url
         self.data = data
     }

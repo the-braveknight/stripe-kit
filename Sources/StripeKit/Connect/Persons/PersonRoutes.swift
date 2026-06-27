@@ -39,6 +39,8 @@ public protocol PersonRoutes: StripeAPIRoute {
     ///   - politicalExposure: Indicates if the person or any of their representatives, family members, or other closely related persons, declares that they hold or have held an important public job or function, in any jurisdiction.
     ///   - registeredAddress: The person’s registered address.
     ///   - verification: The person’s verification status.
+    ///   - additionalTosAcceptances: Details on the legal guardian's or authorizer's acceptance of the required Stripe agreements.
+    ///   - usCfpbData: Demographic data related to the person.
     ///   - expand: Specifies which fields in the response should be expanded.
     /// - Returns: Returns a person object.
     func create(account: String,
@@ -68,6 +70,8 @@ public protocol PersonRoutes: StripeAPIRoute {
                 politicalExposure: PersonPoliticalExposure?,
                 registeredAddress: [String: Any]?,
                 verification: [String: Any]?,
+                additionalTosAcceptances: [String: Any]?,
+                usCfpbData: [String: Any]?,
                 expand: [String]?) async throws -> Person
     
     /// Retrieves an existing person.
@@ -109,6 +113,9 @@ public protocol PersonRoutes: StripeAPIRoute {
     ///   - politicalExposure: Indicates if the person or any of their representatives, family members, or other closely related persons, declares that they hold or have held an important public job or function, in any jurisdiction.
     ///   - registeredAddress: The person’s registered address.
     ///   - verification: The person’s verification status.
+    ///   - fullNameAliases: A list of alternate names or aliases that the person is known by.
+    ///   - additionalTosAcceptances: Details on the legal guardian's or authorizer's acceptance of the required Stripe agreements.
+    ///   - usCfpbData: Demographic data related to the person.
     ///   - expand: Specifies which fields in the response should be expanded.
     /// - Returns: Returns a person object.
     func update(account: String,
@@ -128,6 +135,7 @@ public protocol PersonRoutes: StripeAPIRoute {
                 documents: [String: Any]?,
                 firstNameKana: String?,
                 firstNameKanji: String?,
+                fullNameAliases: [String]?,
                 gender: PersonGender?,
                 idNumberSecondary: String?,
                 lastNameKana: String?,
@@ -138,6 +146,8 @@ public protocol PersonRoutes: StripeAPIRoute {
                 politicalExposure: PersonPoliticalExposure?,
                 registeredAddress: [String: Any]?,
                 verification: [String: Any]?,
+                additionalTosAcceptances: [String: Any]?,
+                usCfpbData: [String: Any]?,
                 expand: [String]?) async throws -> Person
     
     /// Deletes an existing person’s relationship to the account’s legal entity. Any person with a relationship for an account can be deleted through the API, except if the person is the `account_opener`. If your integration is using the `executive` parameter, you cannot delete the only verified `executive` on file.
@@ -195,113 +205,127 @@ public struct StripePersonRoutes: PersonRoutes {
                        politicalExposure: PersonPoliticalExposure? = nil,
                        registeredAddress: [String: Any]? = nil,
                        verification: [String: Any]? = nil,
+                       additionalTosAcceptances: [String: Any]? = nil,
+                       usCfpbData: [String: Any]? = nil,
                        expand: [String]? = nil) async throws -> Person {
         var body: [String: Any] = [:]
-        
+
         if let address {
             address.forEach { body["address[\($0)]"] = $1 }
         }
-        
+
         if let dob {
             dob.forEach { body["dob[\($0)]"] = $1 }
         }
-        
+
         if let email {
             body["email"] = email
         }
-        
+
         if let firstName {
             body["first_name"] = firstName
         }
-        
+
         if let idNumber {
             body["id_number"] = idNumber
         }
-        
+
         if let lastName {
             body["last_name"] = lastName
         }
-        
+
         if let metadata {
             metadata.forEach { body["metadata[\($0)]"] = $1 }
         }
-        
+
         if let phone {
             body["phone"] = phone
         }
-                                                                                            
+
         if let relationship {
             relationship.forEach { body["relationship[\($0)]"] = $1 }
         }
-        
+
         if let ssnLast4 {
             body["ssn_last_4"] = ssnLast4
         }
-        
+
         if let addressKana {
             addressKana.forEach { body["address_kana[\($0)]"] = $1 }
         }
-        
+
         if let addressKanji {
             addressKanji.forEach { body["address_kanji[\($0)]"] = $1 }
         }
-        
+
         if let documents {
             documents.forEach { body["documents[\($0)]"] = $1 }
         }
-        
+
         if let firstNameKana {
             body["first_name_kana"] = firstNameKana
         }
-        
+
         if let firstNameKanji {
             body["first_name_kanji"] = firstNameKanji
         }
-        
+
+        if let fullNameAliases {
+            body["full_name_aliases"] = fullNameAliases
+        }
+
         if let gender {
             body["gender"] = gender.rawValue
         }
-        
+
         if let idNumberSecondary {
             body["id_number_secondary"] = idNumberSecondary
         }
-        
+
         if let lastNameKana {
             body["last_name_kana"] = lastNameKana
         }
-        
+
         if let lastNameKanji {
             body["last_name_kanji"] = lastNameKanji
         }
-        
+
         if let maidenName {
             body["maiden_name"] = maidenName
         }
-        
+
         if let nationality {
             body["nationality"] = nationality
         }
-        
+
         if let personToken {
             body["person_token"] = personToken
         }
-        
+
         if let politicalExposure {
             body["political_exposure"] = politicalExposure.rawValue
         }
-        
+
         if let registeredAddress {
             registeredAddress.forEach { body["registered_address[\($0)]"] = $1 }
         }
-       
+
         if let verification {
             verification.forEach { body["verification[\($0)]"] = $1 }
         }
-        
+
+        if let additionalTosAcceptances {
+            additionalTosAcceptances.forEach { body["additional_tos_acceptances[\($0)]"] = $1 }
+        }
+
+        if let usCfpbData {
+            usCfpbData.forEach { body["us_cfpb_data[\($0)]"] = $1 }
+        }
+
         if let expand {
             body["expand"] = expand
         }
-        
+
         return try await apiHandler.send(method: .POST, path: "\(persons)/\(account)/persons", body: .string(body.queryParameters), headers: headers)
     }
     
@@ -332,6 +356,7 @@ public struct StripePersonRoutes: PersonRoutes {
                        documents: [String: Any]? = nil,
                        firstNameKana: String? = nil,
                        firstNameKanji: String? = nil,
+                       fullNameAliases: [String]? = nil,
                        gender: PersonGender? = nil,
                        idNumberSecondary: String? = nil,
                        lastNameKana: String? = nil,
@@ -342,113 +367,127 @@ public struct StripePersonRoutes: PersonRoutes {
                        politicalExposure: PersonPoliticalExposure? = nil,
                        registeredAddress: [String: Any]? = nil,
                        verification: [String: Any]? = nil,
+                       additionalTosAcceptances: [String: Any]? = nil,
+                       usCfpbData: [String: Any]? = nil,
                        expand: [String]? = nil) async throws -> Person {
         var body: [String: Any] = [:]
-        
+
         if let address {
             address.forEach { body["address[\($0)]"] = $1 }
         }
-        
+
         if let dob {
             dob.forEach { body["dob[\($0)]"] = $1 }
         }
-        
+
         if let email {
             body["email"] = email
         }
-        
+
         if let firstName {
             body["first_name"] = firstName
         }
-        
+
         if let idNumber {
             body["id_number"] = idNumber
         }
-        
+
         if let lastName {
             body["last_name"] = lastName
         }
-        
+
         if let metadata {
             metadata.forEach { body["metadata[\($0)]"] = $1 }
         }
-        
+
         if let phone {
             body["phone"] = phone
         }
-                                                                                            
+
         if let relationship {
             relationship.forEach { body["relationship[\($0)]"] = $1 }
         }
-        
+
         if let ssnLast4 {
             body["ssn_last_4"] = ssnLast4
         }
-        
+
         if let addressKana {
             addressKana.forEach { body["address_kana[\($0)]"] = $1 }
         }
-        
+
         if let addressKanji {
             addressKanji.forEach { body["address_kanji[\($0)]"] = $1 }
         }
-        
+
         if let documents {
             documents.forEach { body["documents[\($0)]"] = $1 }
         }
-        
+
         if let firstNameKana {
             body["first_name_kana"] = firstNameKana
         }
-        
+
         if let firstNameKanji {
             body["first_name_kanji"] = firstNameKanji
         }
-        
+
+        if let fullNameAliases {
+            body["full_name_aliases"] = fullNameAliases
+        }
+
         if let gender {
             body["gender"] = gender.rawValue
         }
-        
+
         if let idNumberSecondary {
             body["id_number_secondary"] = idNumberSecondary
         }
-        
+
         if let lastNameKana {
             body["last_name_kana"] = lastNameKana
         }
-        
+
         if let lastNameKanji {
             body["last_name_kanji"] = lastNameKanji
         }
-        
+
         if let maidenName {
             body["maiden_name"] = maidenName
         }
-        
+
         if let nationality {
             body["nationality"] = nationality
         }
-        
+
         if let personToken {
             body["person_token"] = personToken
         }
-        
+
         if let politicalExposure {
             body["political_exposure"] = politicalExposure.rawValue
         }
-        
+
         if let registeredAddress {
             registeredAddress.forEach { body["registered_address[\($0)]"] = $1 }
         }
-       
+
         if let verification {
             verification.forEach { body["verification[\($0)]"] = $1 }
         }
-        
+
+        if let additionalTosAcceptances {
+            additionalTosAcceptances.forEach { body["additional_tos_acceptances[\($0)]"] = $1 }
+        }
+
+        if let usCfpbData {
+            usCfpbData.forEach { body["us_cfpb_data[\($0)]"] = $1 }
+        }
+
         if let expand {
             body["expand"] = expand
         }
-        
+
         return try await apiHandler.send(method: .POST, path: "\(persons)/\(account)/persons/\(person)", body: .string(body.queryParameters), headers: headers)
     }
     

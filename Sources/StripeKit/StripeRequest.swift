@@ -44,7 +44,7 @@ struct StripeAPIHandler {
                           body: HTTPClientRequest.Body = .bytes(.init(string: "")),
                           headers: HTTPHeaders) async throws -> T {
                 
-        var _headers: HTTPHeaders = ["Stripe-Version": "2022-11-15",
+        var _headers: HTTPHeaders = ["Stripe-Version": "2026-06-24.dahlia",
                                      "Authorization": "Bearer \(apiKey)",
                                      "Content-Type": "application/x-www-form-urlencoded"]
         headers.forEach { _headers.replaceOrAdd(name: $0.name, value: $0.value) }

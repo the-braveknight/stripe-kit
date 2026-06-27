@@ -21,6 +21,7 @@ public protocol SubscriptionItemRoutes: StripeAPIRoute {
     ///   - prorationBehavior: Determines how to handle prorations when the billing cycle changes (e.g., when switching plans, resetting `billing_cycle_anchor=now`, or starting a trial), or if an item’s `quantity` changes. Valid values are `create_prorations`, `none`, or `always_invoice`. Passing `create_prorations` will cause proration invoice items to be created when applicable. These proration items will only be invoiced immediately under certain conditions. In order to always invoice immediately for prorations, pass `always_invoice`. Prorations can be disabled by passing `none`.
     ///   - quantity: The quantity you’d like to apply to the subscription item you’re creating.
     ///   - billingThresholds: Define thresholds at which an invoice will be sent, and the subscription advanced to a new billing period
+    ///   - discounts: The coupons to redeem into discounts for the subscription item.
     ///   - priceData: Data used to generate a new price object inline.
     ///   - prorationDate: If set, the proration will be calculated as though the subscription was updated at the given time. This can be used to apply the same proration that was previewed with the upcoming invoice endpoint.
     ///   - taxRates: The tax rates which apply to this `subscription_item`. When set, the `default_tax_rates` on the subscription do not apply to this `subscription_item`.
@@ -32,6 +33,7 @@ public protocol SubscriptionItemRoutes: StripeAPIRoute {
                 prorationBehavior: SubscriptionItemProrationBehavior?,
                 quantity: Int?,
                 billingThresholds: [String: Any]?,
+                discounts: [[String: Any]]?,
                 priceData: [String: Any]?,
                 prorationDate: Date?,
                 taxRates: [String]?) async throws -> SubscriptionItem
@@ -52,6 +54,7 @@ public protocol SubscriptionItemRoutes: StripeAPIRoute {
     ///   - prorationBehavior:Determines how to handle prorations when the billing cycle changes (e.g., when switching plans, resetting `billing_cycle_anchor=now`, or starting a trial), or if an item’s `quantity` changes. Valid values are `create_prorations`, `none`, or `always_invoice`. Passing `create_prorations` will cause proration invoice items to be created when applicable. These proration items will only be invoiced immediately under certain conditions. In order to always invoice immediately for prorations, pass `always_invoice`. Prorations can be disabled by passing `none`.
     ///   - quantity: The quantity you’d like to apply to the subscription item you’re creating.
     ///   - billingThresholds: Define thresholds at which an invoice will be sent, and the subscription advanced to a new billing period. When updating, pass an empty string to remove previously-defined thresholds.
+    ///   - discounts: The coupons to redeem into discounts for the subscription item.
     ///   - offSession: Indicates if a customer is on or off-session while an invoice payment is attempted.
     ///   - priceData: Data used to generate a new price object inline.
     ///   - prorationDate: If set, the proration will be calculated as though the subscription was updated at the given time. This can be used to apply the same proration that was previewed with the upcoming invoice endpoint.
@@ -64,6 +67,7 @@ public protocol SubscriptionItemRoutes: StripeAPIRoute {
                 prorationBehavior: SubscriptionItemProrationBehavior?,
                 quantity: Int?,
                 billingThresholds: [String: Any]?,
+                discounts: [[String: Any]]?,
                 offSession: Bool?,
                 priceData: [String: Any]?,
                 prorationDate: Date?,
@@ -108,6 +112,7 @@ public struct StripeSubscriptionItemRoutes: SubscriptionItemRoutes {
                        prorationBehavior: SubscriptionItemProrationBehavior? = nil,
                        quantity: Int? = nil,
                        billingThresholds: [String: Any]? = nil,
+                       discounts: [[String: Any]]? = nil,
                        priceData: [String: Any]? = nil,
                        prorationDate: Date? = nil,
                        taxRates: [String]? = nil) async throws -> SubscriptionItem {
@@ -136,11 +141,15 @@ public struct StripeSubscriptionItemRoutes: SubscriptionItemRoutes {
         if let billingThresholds {
             billingThresholds.forEach { body["billing_thresholds[\($0)]"] = $1 }
         }
-        
+
+        if let discounts {
+            body["discounts"] = discounts
+        }
+
         if let priceData {
             priceData.forEach { body["price_data[\($0)]"] = $1 }
         }
-        
+
         if let prorationDate {
             body["proration_date"] = Int(prorationDate.timeIntervalSince1970)
         }
@@ -148,7 +157,7 @@ public struct StripeSubscriptionItemRoutes: SubscriptionItemRoutes {
         if let taxRates {
             body["tax_rates"] = taxRates
         }
-        
+
         return try await apiHandler.send(method: .POST, path: subscirptionitems, body: .string(body.queryParameters), headers: headers)
     }
     
@@ -163,6 +172,7 @@ public struct StripeSubscriptionItemRoutes: SubscriptionItemRoutes {
                        prorationBehavior: SubscriptionItemProrationBehavior? = nil,
                        quantity: Int? = nil,
                        billingThresholds: [String: Any]? = nil,
+                       discounts: [[String: Any]]? = nil,
                        offSession: Bool? = nil,
                        priceData: [String: Any]? = nil,
                        prorationDate: Date? = nil,
@@ -192,7 +202,11 @@ public struct StripeSubscriptionItemRoutes: SubscriptionItemRoutes {
         if let billingThresholds {
             billingThresholds.forEach { body["billing_thresholds[\($0)]"] = $1 }
         }
-        
+
+        if let discounts {
+            body["discounts"] = discounts
+        }
+
         if let offSession {
             body["off_session"] = offSession
         }

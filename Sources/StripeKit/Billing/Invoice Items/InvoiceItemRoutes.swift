@@ -19,7 +19,7 @@ public protocol InvoiceItemRoutes: StripeAPIRoute {
     ///   - description: An arbitrary string which you can attach to the invoice item. The description is displayed in the invoice for easy tracking. This will be unset if you POST an empty value.
     ///   - metadata: A set of key-value pairs that you can attach to an invoice item object. It can be useful for storing additional information about the invoice item in a structured format.
     ///   - period: The period associated with this invoice item.
-    ///   - price: The ID of the price object.
+    ///   - pricing: The pricing information for the invoice item. Use `pricing[price]` to reference an existing price.
     ///   - discountable: Controls whether discounts apply to this invoice item. Defaults to false for prorations or negative invoice items, and true for all other invoice items.
     ///   - discounts: The coupons to redeem into discounts for the invoice item or invoice line item.
     ///   - invoice: The ID of an existing invoice to add this invoice item to. When left blank, the invoice item will be added to the next upcoming scheduled invoice. This is useful when adding invoice items in response to an invoice.created webhook. You can only add invoice items to draft invoices.
@@ -29,8 +29,7 @@ public protocol InvoiceItemRoutes: StripeAPIRoute {
     ///   - taxBehavior: Only required if a default tax behavior was not provided in the Stripe Tax settings. Specifies whether the price is considered inclusive of taxes or exclusive of taxes. One of `inclusive`, `exclusive`, or `unspecified`. Once specified as either inclusive or exclusive, it cannot be changed.
     ///   - taxCode: A tax code ID.
     ///   - taxRates: The tax rates which apply to the invoice item. When set, the `default_tax_rates` on the invoice do not apply to this invoice item.
-    ///   - unitAmount: The integer unit amount in cents of the charge to be applied to the upcoming invoice. This `unit_amount` will be multiplied by the quantity to get the full amount. If you want to apply a credit to the customer’s account, pass a negative `unit_amount`.
-    ///   - unitAmountDecimal: Same as `unit_amount`, but accepts a decimal value with at most 12 decimal places. Only one of `unit_amount` and `unit_amount_decimal` can be set.
+    ///   - unitAmountDecimal: The decimal unit amount in cents of the charge to be applied to the upcoming invoice, with at most 12 decimal places. This will be multiplied by the quantity to get the full amount.
     ///   - expand: Specifies which fields in the response should be expanded.
     /// - Returns: The created invoice item object is returned if successful. Otherwise, this call returns an error.
     func create(customer: String,
@@ -39,7 +38,7 @@ public protocol InvoiceItemRoutes: StripeAPIRoute {
                 description: String?,
                 metadata: [String: String]?,
                 period: [String: Any]?,
-                price: String?,
+                pricing: [String: Any]?,
                 discountable: Bool?,
                 discounts: [[String: Any]]?,
                 invoice: String?,
@@ -49,7 +48,6 @@ public protocol InvoiceItemRoutes: StripeAPIRoute {
                 taxBehavior: String?,
                 taxCode: String?,
                 taxRates: [String]?,
-                unitAmount: Int?,
                 unitAmountDecimal: String?,
                 expand: [String]?) async throws -> InvoiceItem
     
@@ -69,7 +67,7 @@ public protocol InvoiceItemRoutes: StripeAPIRoute {
     ///   - description: An arbitrary string which you can attach to the invoice item. The description is displayed in the invoice for easy tracking. This will be unset if you POST an empty value.
     ///   - metadata: A set of key-value pairs that you can attach to an invoice item object. It can be useful for storing additional information about the invoice item in a structured format.
     ///   - period: The period associated with this invoice item.
-    ///   - price: The ID of the price object.
+    ///   - pricing: The pricing information for the invoice item. Use `pricing[price]` to reference an existing price.
     ///   - discountable: Controls whether discounts apply to this invoice item. Defaults to false for prorations or negative invoice items, and true for all other invoice items. Cannot be set to true for prorations.
     ///   - discounts: The coupons & existing discounts which apply to the invoice item or invoice line item. Item discounts are applied before invoice discounts. Pass an empty string to remove previously-defined discounts.
     ///   - priceData: Data used to generate a new price object inline.
@@ -77,8 +75,7 @@ public protocol InvoiceItemRoutes: StripeAPIRoute {
     ///   - taxBehavior: Only required if a default tax behavior was not provided in the Stripe Tax settings. Specifies whether the price is considered inclusive of taxes or exclusive of taxes. One of `inclusive`, `exclusive`, or `unspecified`. Once specified as either inclusive or exclusive, it cannot be changed.
     ///   - taxCode: A tax code ID.
     ///   - taxRates: The tax rates which apply to the invoice item. When set, the `default_tax_rates` on the invoice do not apply to this invoice item.
-    ///   - unitAmount: The integer unit amount in cents of the charge to be applied to the upcoming invoice. This `unit_amount` will be multiplied by the quantity to get the full amount. If you want to apply a credit to the customer’s account, pass a negative `unit_amount`.
-    ///   - unitAmountDecimal: Same as `unit_amount`, but accepts a decimal value with at most 12 decimal places. Only one of `unit_amount` and `unit_amount_decimal` can be set.
+    ///   - unitAmountDecimal: The decimal unit amount in cents of the charge to be applied to the upcoming invoice, with at most 12 decimal places. This will be multiplied by the quantity to get the full amount.
     ///   - expand: Specifies which fields in the response should be expanded.
     /// - Returns: The updated invoice item object is returned upon success. Otherwise, this call returns an error.
     func update(invoiceItem: String,
@@ -86,7 +83,7 @@ public protocol InvoiceItemRoutes: StripeAPIRoute {
                 description: String?,
                 metadata: [String: String]?,
                 period: [String: Any]?,
-                price: String?,
+                pricing: [String: Any]?,
                 discountable: Bool?,
                 discounts: [[String: Any]]?,
                 priceData: [String: Any]?,
@@ -94,7 +91,6 @@ public protocol InvoiceItemRoutes: StripeAPIRoute {
                 taxBehavior: String?,
                 taxCode: String?,
                 taxRates: [String]?,
-                unitAmount: Int?,
                 unitAmountDecimal: String?,
                 expand: [String]?) async throws -> InvoiceItem
     
@@ -127,7 +123,7 @@ public struct StripeInvoiceItemRoutes: InvoiceItemRoutes {
                        description: String? = nil,
                        metadata: [String: String]? = nil,
                        period: [String: Any]? = nil,
-                       price: String? = nil,
+                       pricing: [String: Any]? = nil,
                        discountable: Bool? = nil,
                        discounts: [[String: Any]]? = nil,
                        invoice: String? = nil,
@@ -137,11 +133,10 @@ public struct StripeInvoiceItemRoutes: InvoiceItemRoutes {
                        taxBehavior: String? = nil,
                        taxCode: String? = nil,
                        taxRates: [String]? = nil,
-                       unitAmount: Int? = nil,
                        unitAmountDecimal: String? = nil,
                        expand: [String]? = nil) async throws -> InvoiceItem {
         var body: [String: Any] = ["customer": customer]
-        
+
         if let amount {
             body["amount"] = amount
         }
@@ -149,23 +144,23 @@ public struct StripeInvoiceItemRoutes: InvoiceItemRoutes {
         if let currency {
             body["currency"] = currency.rawValue
         }
-        
+
         if let description {
             body["description"] = description
         }
-        
+
         if let metadata {
             metadata.forEach { body["metadata[\($0)]"] = $1 }
         }
-        
+
         if let period {
             period.forEach { body["period[\($0)]"] = $1 }
         }
-        
-        if let price {
-            body["price"] = price
+
+        if let pricing {
+            pricing.forEach { body["pricing[\($0)]"] = $1 }
         }
-        
+
         if let discountable {
             body["discountable"] = discountable
         }
@@ -201,19 +196,15 @@ public struct StripeInvoiceItemRoutes: InvoiceItemRoutes {
         if let taxRates {
             body["tax_rates"] = taxRates
         }
-        
-        if let unitAmount {
-            body["unit_amount"] = unitAmount
-        }
-        
+
         if let unitAmountDecimal {
             body["unit_amount_decimal"] = unitAmountDecimal
         }
-        
+
         if let expand {
             body["expand"] = expand
         }
-        
+
         return try await apiHandler.send(method: .POST, path: invoiceitems, body: .string(body.queryParameters), headers: headers)
     }
     
@@ -231,7 +222,7 @@ public struct StripeInvoiceItemRoutes: InvoiceItemRoutes {
                        description: String? = nil,
                        metadata: [String: String]? = nil,
                        period: [String: Any]? = nil,
-                       price: String? = nil,
+                       pricing: [String: Any]? = nil,
                        discountable: Bool? = nil,
                        discounts: [[String: Any]]? = nil,
                        priceData: [String: Any]? = nil,
@@ -239,31 +230,30 @@ public struct StripeInvoiceItemRoutes: InvoiceItemRoutes {
                        taxBehavior: String? = nil,
                        taxCode: String? = nil,
                        taxRates: [String]? = nil,
-                       unitAmount: Int? = nil,
                        unitAmountDecimal: String? = nil,
                        expand: [String]? = nil) async throws -> InvoiceItem {
         var body: [String: Any] = [:]
-        
+
         if let amount {
             body["amount"] = amount
         }
-        
+
         if let description {
             body["description"] = description
         }
-        
+
         if let metadata {
             metadata.forEach { body["metadata[\($0)]"] = $1 }
         }
-        
+
         if let period {
             period.forEach { body["period[\($0)]"] = $1 }
         }
-        
-        if let price {
-            body["price"] = price
+
+        if let pricing {
+            pricing.forEach { body["pricing[\($0)]"] = $1 }
         }
-        
+
         if let discountable {
             body["discountable"] = discountable
         }
@@ -291,19 +281,15 @@ public struct StripeInvoiceItemRoutes: InvoiceItemRoutes {
         if let taxRates {
             body["tax_rates"] = taxRates
         }
-        
-        if let unitAmount {
-            body["unit_amount"] = unitAmount
-        }
-        
+
         if let unitAmountDecimal {
             body["unit_amount_decimal"] = unitAmountDecimal
         }
-        
+
         if let expand {
             body["expand"] = expand
         }
-        
+
         return try await apiHandler.send(method: .POST, path: "\(invoiceitems)/\(invoiceItem)", body: .string(body.queryParameters), headers: headers)
     }
     

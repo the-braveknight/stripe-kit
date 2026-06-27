@@ -17,6 +17,8 @@ public protocol CustomerRoutes: StripeAPIRoute {
     ///   - email: Customer’s email address. It’s displayed alongside the customer in your dashboard and can be useful for searching and tracking. This may be up to 512 characters.
     ///   - metadata: Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to metadata.
     ///   - name: The customer’s full name or business name.
+    ///   - businessName: The customer’s business name. This may be up to 150 characters.
+    ///   - individualName: The customer’s individual (personal) name. This may be up to 150 characters.
     ///   - paymentMethod: The ID of the PaymentMethod to attach to the customer.
     ///   - phone: The customer’s phone number.
     ///   - shipping: The customer’s shipping information. Appears on invoices emailed to this customer.
@@ -40,6 +42,8 @@ public protocol CustomerRoutes: StripeAPIRoute {
                 email: String?,
                 metadata: [String: String]?,
                 name: String?,
+                businessName: String?,
+                individualName: String?,
                 paymentMethod: String?,
                 phone: String?,
                 shipping: [String: Any]?,
@@ -77,6 +81,8 @@ public protocol CustomerRoutes: StripeAPIRoute {
     ///   - email: Customer’s email address. It’s displayed alongside the customer in your dashboard and can be useful for searching and tracking. This may be up to 512 characters.
     ///   - metadata: Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to metadata.
     ///   - name: The customer’s full name or business name.
+    ///   - businessName: The customer’s business name. This may be up to 150 characters.
+    ///   - individualName: The customer’s individual (personal) name. This may be up to 150 characters.
     ///   - phone: The customer’s phone number.
     ///   - shipping: The customer’s shipping information. Appears on invoices emailed to this customer.
     ///   - balance: An integer amount in cents that represents the customer’s current balance, which affect the customer’s future invoices. A negative amount represents a credit that decreases the amount due on an invoice; a positive amount increases the amount due on an invoice.
@@ -99,6 +105,8 @@ public protocol CustomerRoutes: StripeAPIRoute {
                 email: String?,
                 metadata: [String: String]?,
                 name: String?,
+                businessName: String?,
+                individualName: String?,
                 phone: String?,
                 shipping: [String: Any]?,
                 balance: Int?,
@@ -154,6 +162,8 @@ public struct StripeCustomerRoutes: CustomerRoutes {
                        email: String? = nil,
                        metadata: [String: String]? = nil,
                        name: String? = nil,
+                       businessName: String? = nil,
+                       individualName: String? = nil,
                        paymentMethod: String? = nil,
                        phone: String? = nil,
                        shipping: [String: Any]? = nil,
@@ -192,7 +202,15 @@ public struct StripeCustomerRoutes: CustomerRoutes {
         if let name {
             body["name"] = name
         }
-        
+
+        if let businessName {
+            body["business_name"] = businessName
+        }
+
+        if let individualName {
+            body["individual_name"] = individualName
+        }
+
         if let paymentMethod {
             body["payment_method"] = paymentMethod
         }
@@ -283,6 +301,8 @@ public struct StripeCustomerRoutes: CustomerRoutes {
                        email: String? = nil,
                        metadata: [String: String]? = nil,
                        name: String? = nil,
+                       businessName: String? = nil,
+                       individualName: String? = nil,
                        phone: String? = nil,
                        shipping: [String: Any]? = nil,
                        balance: Int? = nil,
@@ -319,7 +339,15 @@ public struct StripeCustomerRoutes: CustomerRoutes {
         if let name {
             body["name"] = name
         }
-        
+
+        if let businessName {
+            body["business_name"] = businessName
+        }
+
+        if let individualName {
+            body["individual_name"] = individualName
+        }
+
         if let phone {
             body["phone"] = phone
         }

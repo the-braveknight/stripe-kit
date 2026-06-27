@@ -35,6 +35,12 @@ public struct Authorization: Codable {
     public var balanceTransactions: [BalanceTransaction]?
     /// Time at which the object was created. Measured in seconds since the Unix epoch.
     public var created: Date
+    /// Fleet-specific information for authorizations using Fleet cards.
+    public var fleet: AuthorizationFleet?
+    /// Fraud challenges sent to the cardholder, if this authorization was declined for fraud risk reasons.
+    public var fraudChallenges: [AuthorizationFraudChallenge]?
+    /// Information about fuel that was purchased with this transaction. Typically this information is received from the merchant after the authorization has been approved and the fuel dispensed.
+    public var fuel: AuthorizationFuel?
     /// Has the value true if the object exists in live mode or the value false if the object exists in test mode.
     public var livemode: Bool?
     /// The total amount that was authorized or rejected. This amount is in the `merchant_currency` and in the smallest currency unit.
@@ -51,11 +57,13 @@ public struct Authorization: Codable {
     public var requestHistory: [AuthorizationRequestHistory]?
     /// List of transactions associated with this authorization.
     public var transactions: [Transaction]?
+    /// [Treasury](https://stripe.com/docs/api/treasury) details related to this authorization if it was created on a [FinancialAccount](https://stripe.com/docs/api/treasury/financial_accounts).
+    public var treasury: AuthorizationTreasury?
     /// Verifications that Stripe performed on information that the cardholder provided to the merchant.
     public var verificationData: AuthorizationVerificationData?
     /// What, if any, digital wallet was used for this authorization. One of `apple_pay`, `google_pay`, or `samsung_pay`.
     public var wallet: AuthorizationWallet?
-    
+
     public init(id: String,
                 amount: Int? = nil,
                 approved: Bool? = nil,
@@ -69,6 +77,9 @@ public struct Authorization: Codable {
                 authorizationMethod: AuthorizationMethod? = nil,
                 balanceTransactions: [BalanceTransaction]? = nil,
                 created: Date,
+                fleet: AuthorizationFleet? = nil,
+                fraudChallenges: [AuthorizationFraudChallenge]? = nil,
+                fuel: AuthorizationFuel? = nil,
                 livemode: Bool? = nil,
                 merchantAmount: Int? = nil,
                 merchantCurrency: Currency? = nil,
@@ -77,6 +88,7 @@ public struct Authorization: Codable {
                 pendingRequest: AuthorizationPendingRequest? = nil,
                 requestHistory: [AuthorizationRequestHistory]? = nil,
                 transactions: [Transaction]? = nil,
+                treasury: AuthorizationTreasury? = nil,
                 verificationData: AuthorizationVerificationData? = nil,
                 wallet: AuthorizationWallet? = nil) {
         self.id = id
@@ -92,6 +104,9 @@ public struct Authorization: Codable {
         self.authorizationMethod = authorizationMethod
         self.balanceTransactions = balanceTransactions
         self.created = created
+        self.fleet = fleet
+        self.fraudChallenges = fraudChallenges
+        self.fuel = fuel
         self.livemode = livemode
         self.merchantAmount = merchantAmount
         self.merchantCurrency = merchantCurrency
@@ -100,6 +115,7 @@ public struct Authorization: Codable {
         self.pendingRequest = pendingRequest
         self.requestHistory = requestHistory
         self.transactions = transactions
+        self.treasury = treasury
         self.verificationData = verificationData
         self.wallet = wallet
     }
@@ -108,9 +124,13 @@ public struct Authorization: Codable {
 public struct AuthorizationAmountDetails: Codable {
     /// The fee charged by the ATM for the cash withdrawal.
     public var atmFee: Int?
-    
-    public init(atmFee: Int? = nil) {
+    /// The amount of cash requested by the cardholder.
+    public var cashbackAmount: Int?
+
+    public init(atmFee: Int? = nil,
+                cashbackAmount: Int? = nil) {
         self.atmFee = atmFee
+        self.cashbackAmount = cashbackAmount
     }
 }
 
@@ -127,28 +147,36 @@ public struct AuthorizationPendingRequest: Codable {
     public var merchantAmount: Int?
     /// The local currency the merchant is requesting to authorize.
     public var merchantCurrency: Currency?
-    
+    /// The card network's estimate of the likelihood that an authorization is fraudulent. Takes on values between 1 and 99.
+    public var networkRiskScore: Int?
+
     public init(amount: Int? = nil,
                 amountDetails: AuthorizationPendingRequestAmountDetails? = nil,
                 currency: Currency? = nil,
                 isAmountControllable: Bool? = nil,
                 merchantAmount: Int? = nil,
-                merchantCurrency: Currency? = nil) {
+                merchantCurrency: Currency? = nil,
+                networkRiskScore: Int? = nil) {
         self.amount = amount
         self.amountDetails = amountDetails
         self.currency = currency
         self.isAmountControllable = isAmountControllable
         self.merchantAmount = merchantAmount
         self.merchantCurrency = merchantCurrency
+        self.networkRiskScore = networkRiskScore
     }
 }
 
 public struct AuthorizationPendingRequestAmountDetails: Codable {
     /// The fee charged by the ATM for the cash withdrawal.
     public var atmFee: Int?
-    
-    public init(atmFee: Int? = nil) {
+    /// The amount of cash requested by the cardholder.
+    public var cashbackAmount: Int?
+
+    public init(atmFee: Int? = nil,
+                cashbackAmount: Int? = nil) {
         self.atmFee = atmFee
+        self.cashbackAmount = cashbackAmount
     }
 }
 
@@ -183,9 +211,13 @@ public struct AuthorizationMerchantData: Codable {
     public var postalCode: String?
     /// State where the seller is located
     public var state: String?
+    /// The seller's tax identification number. Currently populated for French merchants only.
+    public var taxId: String?
     /// An ID assigned by the seller to the location of the sale.
     public var terminalId: String?
-    
+    /// URL provided by the merchant on a 3DS request.
+    public var url: String?
+
     public init(category: String? = nil,
                 categoryCode: String? = nil,
                 city: String? = nil,
@@ -194,7 +226,9 @@ public struct AuthorizationMerchantData: Codable {
                 networkId: String? = nil,
                 postalCode: String? = nil,
                 state: String? = nil,
-                terminalId: String? = nil) {
+                taxId: String? = nil,
+                terminalId: String? = nil,
+                url: String? = nil) {
         self.category = category
         self.categoryCode = categoryCode
         self.city = city
@@ -203,16 +237,26 @@ public struct AuthorizationMerchantData: Codable {
         self.networkId = networkId
         self.postalCode = postalCode
         self.state = state
+        self.taxId = taxId
         self.terminalId = terminalId
+        self.url = url
     }
 }
 
 public struct AuthorizationNetworkData: Codable {
     /// Identifier assigned to the acquirer by the card network. Sometimes this value is not provided by the network; in this case, the value will be `null`.
     public var acquiringInstitutionId: String?
-    
-    public init(acquiringInstitutionId: String? = nil) {
+    /// The System Trace Audit Number (STAN) is a 6-digit identifier assigned by the acquirer. Prefer `network_data.transaction_id` if present, unless you have special requirements.
+    public var systemTraceAuditNumber: String?
+    /// Unique identifier for the authorization assigned by the card network used to match subsequent messages, disputes, and transactions.
+    public var transactionId: String?
+
+    public init(acquiringInstitutionId: String? = nil,
+                systemTraceAuditNumber: String? = nil,
+                transactionId: String? = nil) {
         self.acquiringInstitutionId = acquiringInstitutionId
+        self.systemTraceAuditNumber = systemTraceAuditNumber
+        self.transactionId = transactionId
     }
 }
 
@@ -231,9 +275,15 @@ public struct AuthorizationRequestHistory: Codable {
     public var merchantAmount: Int?
     /// The currency that was collected by the merchant and presented to the cardholder for the authorization. Three-letter ISO currency code, in lowercase. Must be a supported currency.
     public var merchantCurrency: Currency?
+    /// The card network's estimate of the likelihood that an authorization is fraudulent. Takes on values between 1 and 99.
+    public var networkRiskScore: Int?
     /// When an authorization is approved or declined by you or by Stripe, this field provides additional detail on the reason for the outcome.
     public var reason: AuthorizationRequestHistoryReason?
-    
+    /// If the `request_history.reason` is `webhook_error` because the direct webhook response is invalid (for example, parsing errors or missing parameters), we surface a more detailed error message via this field.
+    public var reasonMessage: String?
+    /// Time when the card network received an authorization request from the acquirer in UTC. Referred to by networks as transmission time.
+    public var requestedAt: Date?
+
     public init(amount: Int? = nil,
                 amountDetails: AuthorizationRequestHistoryAmountDetails? = nil,
                 approved: Bool? = nil,
@@ -241,7 +291,10 @@ public struct AuthorizationRequestHistory: Codable {
                 currency: Currency? = nil,
                 merchantAmount: Int? = nil,
                 merchantCurrency: Currency? = nil,
-                reason: AuthorizationRequestHistoryReason? = nil) {
+                networkRiskScore: Int? = nil,
+                reason: AuthorizationRequestHistoryReason? = nil,
+                reasonMessage: String? = nil,
+                requestedAt: Date? = nil) {
         self.amount = amount
         self.amountDetails = amountDetails
         self.approved = approved
@@ -249,16 +302,23 @@ public struct AuthorizationRequestHistory: Codable {
         self.currency = currency
         self.merchantAmount = merchantAmount
         self.merchantCurrency = merchantCurrency
+        self.networkRiskScore = networkRiskScore
         self.reason = reason
+        self.reasonMessage = reasonMessage
+        self.requestedAt = requestedAt
     }
 }
 
 public struct AuthorizationRequestHistoryAmountDetails: Codable {
     /// The fee charged by the ATM for the cash withdrawal.
     public var atmFee: Int?
-    
-    public init(atmFee: Int? = nil) {
+    /// The amount of cash requested by the cardholder.
+    public var cashbackAmount: Int?
+
+    public init(atmFee: Int? = nil,
+                cashbackAmount: Int? = nil) {
         self.atmFee = atmFee
+        self.cashbackAmount = cashbackAmount
     }
 }
 
@@ -304,19 +364,31 @@ public struct AuthorizationVerificationData: Codable {
     public var addressLine1Check: AuthorizationVerificationDataCheck?
     /// Whether the cardholder provided a postal code and if it matched the cardholder’s `billing.address.postal_code`.
     public var addressPostalCodeCheck: AuthorizationVerificationDataCheck?
+    /// The exemption applied to this authorization.
+    public var authenticationExemption: AuthorizationVerificationDataAuthenticationExemption?
     /// Whether the cardholder provided a CVC and if it matched Stripe’s record.
     public var cvcCheck: AuthorizationVerificationDataCheck?
     /// Whether the cardholder provided an expiry date and if it matched Stripe’s record.
     public var expiryCheck: AuthorizationVerificationDataCheck?
-    
+    /// The postal code submitted as part of the authorization used for postal code verification.
+    public var postalCode: String?
+    /// 3D Secure details.
+    public var threeDSecure: AuthorizationVerificationDataThreeDSecure?
+
     public init(addressLine1Check: AuthorizationVerificationDataCheck? = nil,
                 addressPostalCodeCheck: AuthorizationVerificationDataCheck? = nil,
+                authenticationExemption: AuthorizationVerificationDataAuthenticationExemption? = nil,
                 cvcCheck: AuthorizationVerificationDataCheck? = nil,
-                expiryCheck: AuthorizationVerificationDataCheck? = nil) {
+                expiryCheck: AuthorizationVerificationDataCheck? = nil,
+                postalCode: String? = nil,
+                threeDSecure: AuthorizationVerificationDataThreeDSecure? = nil) {
         self.addressLine1Check = addressLine1Check
         self.addressPostalCodeCheck = addressPostalCodeCheck
+        self.authenticationExemption = authenticationExemption
         self.cvcCheck = cvcCheck
         self.expiryCheck = expiryCheck
+        self.postalCode = postalCode
+        self.threeDSecure = threeDSecure
     }
 }
 
@@ -326,10 +398,255 @@ public enum AuthorizationVerificationDataCheck: String, Codable {
     case notProvided = "not_provided"
 }
 
+public struct AuthorizationVerificationDataAuthenticationExemption: Codable {
+    /// The entity that requested the exemption, either the acquiring merchant or the Issuing user.
+    public var claimedBy: AuthorizationVerificationDataAuthenticationExemptionClaimedBy?
+    /// The specific exemption claimed for this authorization.
+    public var type: AuthorizationVerificationDataAuthenticationExemptionType?
+
+    public init(claimedBy: AuthorizationVerificationDataAuthenticationExemptionClaimedBy? = nil,
+                type: AuthorizationVerificationDataAuthenticationExemptionType? = nil) {
+        self.claimedBy = claimedBy
+        self.type = type
+    }
+}
+
+public enum AuthorizationVerificationDataAuthenticationExemptionClaimedBy: String, Codable {
+    case acquirer
+    case issuer
+}
+
+public enum AuthorizationVerificationDataAuthenticationExemptionType: String, Codable {
+    case lowValueTransaction = "low_value_transaction"
+    case transactionRiskAnalysis = "transaction_risk_analysis"
+    case unknown
+}
+
+public struct AuthorizationVerificationDataThreeDSecure: Codable {
+    /// The outcome of the 3D Secure authentication request.
+    public var result: AuthorizationVerificationDataThreeDSecureResult?
+
+    public init(result: AuthorizationVerificationDataThreeDSecureResult? = nil) {
+        self.result = result
+    }
+}
+
+public enum AuthorizationVerificationDataThreeDSecureResult: String, Codable {
+    /// 3D Secure authentication was attempted but did not succeed.
+    case attemptAcknowledged = "attempt_acknowledged"
+    /// 3D Secure authentication succeeded.
+    case authenticated
+    /// The cardholder did not complete 3D Secure authentication, or the issuer was unavailable.
+    case failed
+    /// 3D Secure authentication was required but was not performed.
+    case required
+}
+
 public enum AuthorizationWallet: String, Codable {
     case applePay = "apple_pay"
     case googlePay = "google_pay"
     case samsungPay = "samsung_pay"
+}
+
+public struct AuthorizationFleet: Codable {
+    /// Answers to prompts presented to the cardholder at the point of sale. Prompted fields vary depending on the configuration of your physical fleet cards. Typical points of sale support only numeric entry.
+    public var cardholderPromptData: AuthorizationFleetCardholderPromptData?
+    /// The type of purchase.
+    public var purchaseType: AuthorizationFleetPurchaseType?
+    /// More information about the total amount. Typically this information is received from the merchant after the authorization has been approved and the fuel dispensed. This information is not guaranteed to be accurate as some merchants may provide unreliable data.
+    public var reportedBreakdown: AuthorizationFleetReportedBreakdown?
+    /// The type of fuel service.
+    public var serviceType: AuthorizationFleetServiceType?
+
+    public init(cardholderPromptData: AuthorizationFleetCardholderPromptData? = nil,
+                purchaseType: AuthorizationFleetPurchaseType? = nil,
+                reportedBreakdown: AuthorizationFleetReportedBreakdown? = nil,
+                serviceType: AuthorizationFleetServiceType? = nil) {
+        self.cardholderPromptData = cardholderPromptData
+        self.purchaseType = purchaseType
+        self.reportedBreakdown = reportedBreakdown
+        self.serviceType = serviceType
+    }
+}
+
+public struct AuthorizationFleetCardholderPromptData: Codable {
+    /// Driver ID.
+    public var driverId: String?
+    /// Odometer reading.
+    public var odometer: Int?
+    /// An alphanumeric ID. This field is used when a vehicle ID, driver ID, or generic ID is entered by the cardholder, but the merchant or card network did not specify the prompt type.
+    public var unspecifiedId: String?
+    /// User ID.
+    public var userId: String?
+    /// Vehicle number.
+    public var vehicleNumber: String?
+
+    public init(driverId: String? = nil,
+                odometer: Int? = nil,
+                unspecifiedId: String? = nil,
+                userId: String? = nil,
+                vehicleNumber: String? = nil) {
+        self.driverId = driverId
+        self.odometer = odometer
+        self.unspecifiedId = unspecifiedId
+        self.userId = userId
+        self.vehicleNumber = vehicleNumber
+    }
+}
+
+public enum AuthorizationFleetPurchaseType: String, Codable {
+    case fuelPurchase = "fuel_purchase"
+    case fuelAndNonFuelPurchase = "fuel_and_non_fuel_purchase"
+    case nonFuelPurchase = "non_fuel_purchase"
+}
+
+public enum AuthorizationFleetServiceType: String, Codable {
+    case fullService = "full_service"
+    case nonFuelTransaction = "non_fuel_transaction"
+    case selfService = "self_service"
+}
+
+public struct AuthorizationFleetReportedBreakdown: Codable {
+    /// Breakdown of fuel portion of the purchase.
+    public var fuel: AuthorizationFleetReportedBreakdownFuel?
+    /// Breakdown of non-fuel portion of the purchase.
+    public var nonFuel: AuthorizationFleetReportedBreakdownNonFuel?
+    /// Information about tax included in this transaction.
+    public var tax: AuthorizationFleetReportedBreakdownTax?
+
+    public init(fuel: AuthorizationFleetReportedBreakdownFuel? = nil,
+                nonFuel: AuthorizationFleetReportedBreakdownNonFuel? = nil,
+                tax: AuthorizationFleetReportedBreakdownTax? = nil) {
+        self.fuel = fuel
+        self.nonFuel = nonFuel
+        self.tax = tax
+    }
+}
+
+public struct AuthorizationFleetReportedBreakdownFuel: Codable {
+    /// Gross fuel amount that should equal Fuel Quantity multiplied by Fuel Unit Cost, inclusive of taxes.
+    public var grossAmountDecimal: String?
+
+    public init(grossAmountDecimal: String? = nil) {
+        self.grossAmountDecimal = grossAmountDecimal
+    }
+}
+
+public struct AuthorizationFleetReportedBreakdownNonFuel: Codable {
+    /// Gross non-fuel amount that should equal the sum of the line items, inclusive of taxes.
+    public var grossAmountDecimal: String?
+
+    public init(grossAmountDecimal: String? = nil) {
+        self.grossAmountDecimal = grossAmountDecimal
+    }
+}
+
+public struct AuthorizationFleetReportedBreakdownTax: Codable {
+    /// Amount of state or provincial Sales Tax included in the transaction amount. Null if not reported by merchant or not subject to tax.
+    public var localAmountDecimal: String?
+    /// Amount of national Sales Tax or VAT included in the transaction amount. Null if not reported by merchant or not subject to tax.
+    public var nationalAmountDecimal: String?
+
+    public init(localAmountDecimal: String? = nil,
+                nationalAmountDecimal: String? = nil) {
+        self.localAmountDecimal = localAmountDecimal
+        self.nationalAmountDecimal = nationalAmountDecimal
+    }
+}
+
+public struct AuthorizationFuel: Codable {
+    /// [Conexxus Payment System Product Code](https://www.conexxus.org/conexxus-payment-system-product-codes) identifying the primary fuel product purchased.
+    public var industryProductCode: String?
+    /// The quantity of `unit`s of fuel that was dispensed, represented as a decimal string with at most 12 decimal places.
+    public var quantityDecimal: String?
+    /// The type of fuel that was purchased.
+    public var type: AuthorizationFuelType?
+    /// The units for `quantity_decimal`.
+    public var unit: AuthorizationFuelUnit?
+    /// The cost in cents per each unit of fuel, represented as a decimal string with at most 12 decimal places.
+    public var unitCostDecimal: String?
+
+    public init(industryProductCode: String? = nil,
+                quantityDecimal: String? = nil,
+                type: AuthorizationFuelType? = nil,
+                unit: AuthorizationFuelUnit? = nil,
+                unitCostDecimal: String? = nil) {
+        self.industryProductCode = industryProductCode
+        self.quantityDecimal = quantityDecimal
+        self.type = type
+        self.unit = unit
+        self.unitCostDecimal = unitCostDecimal
+    }
+}
+
+public enum AuthorizationFuelType: String, Codable {
+    case diesel
+    case other
+    case unleadedPlus = "unleaded_plus"
+    case unleadedRegular = "unleaded_regular"
+    case unleadedSuper = "unleaded_super"
+}
+
+public enum AuthorizationFuelUnit: String, Codable {
+    case chargingMinute = "charging_minute"
+    case imperialGallon = "imperial_gallon"
+    case kilogram
+    case kilowattHour = "kilowatt_hour"
+    case liter
+    case other
+    case pound
+    case usGallon = "us_gallon"
+}
+
+public struct AuthorizationFraudChallenge: Codable {
+    /// The method by which the fraud challenge was delivered to the cardholder.
+    public var channel: AuthorizationFraudChallengeChannel?
+    /// The status of the fraud challenge.
+    public var status: AuthorizationFraudChallengeStatus?
+    /// If the challenge is not deliverable, the reason why.
+    public var undeliverableReason: AuthorizationFraudChallengeUndeliverableReason?
+
+    public init(channel: AuthorizationFraudChallengeChannel? = nil,
+                status: AuthorizationFraudChallengeStatus? = nil,
+                undeliverableReason: AuthorizationFraudChallengeUndeliverableReason? = nil) {
+        self.channel = channel
+        self.status = status
+        self.undeliverableReason = undeliverableReason
+    }
+}
+
+public enum AuthorizationFraudChallengeChannel: String, Codable {
+    case sms
+}
+
+public enum AuthorizationFraudChallengeStatus: String, Codable {
+    case expired
+    case pending
+    case rejected
+    case undeliverable
+    case verified
+}
+
+public enum AuthorizationFraudChallengeUndeliverableReason: String, Codable {
+    case noPhoneNumber = "no_phone_number"
+    case unsupportedPhoneNumber = "unsupported_phone_number"
+}
+
+public struct AuthorizationTreasury: Codable {
+    /// The array of [ReceivedCredits](https://stripe.com/docs/api/treasury/received_credits) associated with this authorization
+    public var receivedCredits: [String]?
+    /// The array of [ReceivedDebits](https://stripe.com/docs/api/treasury/received_debits) associated with this authorization
+    public var receivedDebits: [String]?
+    /// The Treasury [Transaction](https://stripe.com/docs/api/treasury/transactions) associated with this authorization
+    public var transaction: String?
+
+    public init(receivedCredits: [String]? = nil,
+                receivedDebits: [String]? = nil,
+                transaction: String? = nil) {
+        self.receivedCredits = receivedCredits
+        self.receivedDebits = receivedDebits
+        self.transaction = transaction
+    }
 }
 
 public struct AuthorizationList: Codable {

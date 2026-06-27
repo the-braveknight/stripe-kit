@@ -22,19 +22,22 @@ public struct Token: Codable {
     public var clientIp: String?
     /// Time at which the object was created. Measured in seconds since the Unix epoch.
     public var created: Date
+    /// An arbitrary string attached to the object. Often useful for displaying to users.
+    public var description: String?
     /// Has the value true if the object exists in live mode or the value false if the object exists in test mode.
     public var livemode: Bool?
     /// Type of the token: `account`, `bank_account`, `card`, or `pii`.
     public var type: TokenType?
     /// Whether this token has already been used (tokens can be used only once).
     public var used: Bool?
-    
+
     public init(id: String,
                 object: String,
                 bankAccount: BankAccount? = nil,
                 card: Card? = nil,
                 clientIp: String? = nil,
                 created: Date,
+                description: String? = nil,
                 livemode: Bool? = nil,
                 type: TokenType? = nil,
                 used: Bool? = nil) {
@@ -44,6 +47,7 @@ public struct Token: Codable {
         self.card = card
         self.clientIp = clientIp
         self.created = created
+        self.description = description
         self.livemode = livemode
         self.type = type
         self.used = used

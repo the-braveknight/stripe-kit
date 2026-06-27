@@ -20,6 +20,8 @@ public struct TerminalHardwareOrder: Codable {
     public var metadata: [String: String]?
     /// One of `monthly_invoice`, `payment_intent`, or `none`.
     public var paymentType: TerminalHardwareOrderPaymentType?
+    /// The purchase order number used in the order.
+    public var poNumber: String?
     /// Shipping address for the order.
     public var shipping: TerminalHardwareOrderShipping?
     /// The Shipping Method for the order.
@@ -47,6 +49,7 @@ public struct TerminalHardwareOrder: Codable {
                 hardwareOrderItems: [TerminalHardwareOrderLineItem]? = nil,
                 metadata: [String : String]? = nil,
                 paymentType: TerminalHardwareOrderPaymentType? = nil,
+                poNumber: String? = nil,
                 shipping: TerminalHardwareOrderShipping? = nil,
                 shippingMethod: String? = nil,
                 status: TerminalHardwareOrderStatus? = nil,
@@ -63,6 +66,7 @@ public struct TerminalHardwareOrder: Codable {
         self.hardwareOrderItems = hardwareOrderItems
         self.metadata = metadata
         self.paymentType = paymentType
+        self.poNumber = poNumber
         self.shipping = shipping
         self.shippingMethod = shippingMethod
         self.status = status
@@ -141,6 +145,8 @@ public enum TerminalHardwareOrderStatus: String, Codable {
     case pending
     /// Order was canceled. Please create a new order to receive these items.
     case canceled
+    /// Order is ready to be shipped.
+    case readyToShip = "ready_to_ship"
     /// Order has been shipped, and can no longer be canceled.
     case shipped
     /// Order has been delivered!
@@ -165,12 +171,18 @@ public struct TerminalHardwareOrderShipmentTracking: Codable {
 public enum TerminalHardwareOrderShipmentTrackingCarrier: String, Codable {
     /// A placeholder to catch new carriers in your integration as we introduce them.
     case other
+    /// ABF Freight
+    case abfFreight = "abf_freight"
     /// UPS
     case ups
+    /// UPS Freight
+    case upsFreight = "ups_freight"
     /// Purolator
     case purolator
     /// FedEx
     case fedex
+    /// FedEx Freight
+    case fedexFreight = "fedex_freight"
     /// Australia Post
     case australiaPost = "australia_post"
     /// USPS
@@ -181,6 +193,18 @@ public enum TerminalHardwareOrderShipmentTrackingCarrier: String, Codable {
     case dhl
     /// DPD
     case dpd
+    /// Estes Express
+    case estesExpress = "estes_express"
+    /// Exact Logistics
+    case exactLogistics = "exact_logistics"
+    /// Palletforce
+    case palletforce
+    /// Royal Mail
+    case royalMail = "royal_mail"
+    /// TForce Freight
+    case tforceFreight = "tforce_freight"
+    /// TNT Australia
+    case tntAustralia = "tnt_australia"
 }
 
 public struct TerminalHardwareOrderTotalTaxAmount: Codable {

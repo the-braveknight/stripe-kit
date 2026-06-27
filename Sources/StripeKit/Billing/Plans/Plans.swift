@@ -22,6 +22,8 @@ public struct Plan: Codable {
     public var interval: PlanInterval?
     /// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
     public var metadata: [String: String]?
+    /// The meter tracking the usage of a metered price.
+    public var meter: String?
     /// A brief description of the plan, hidden from customers.
     public var nickname: String?
     /// The product whose pricing this plan determines.
@@ -57,6 +59,7 @@ public struct Plan: Codable {
                 currency: Currency? = nil,
                 interval: PlanInterval? = nil,
                 metadata: [String : String]? = nil,
+                meter: String? = nil,
                 nickname: String? = nil,
                 product: String? = nil,
                 object: String,
@@ -77,6 +80,7 @@ public struct Plan: Codable {
         self.currency = currency
         self.interval = interval
         self.metadata = metadata
+        self.meter = meter
         self.nickname = nickname
         self._product = Expandable(id: product)
         self.object = object
