@@ -37,7 +37,9 @@ public struct Review: Codable {
     public var openedReason: ReviewOpenedReason?
     /// Information related to the browsing session of the user who initiated the payment.
     public var session: ReviewSession?
-    
+    /// Signals to indicate that the review should be prioritized and a payment refund should be considered.
+    public var refundSignals: ReviewRefundSignals?
+
     public init(id: String,
                 charge: String? = nil,
                 open: Bool? = nil,
@@ -51,7 +53,8 @@ public struct Review: Codable {
                 ipAddressLocation: ReviewIPAddressLocation? = nil,
                 livemode: Bool? = nil,
                 openedReason: ReviewOpenedReason? = nil,
-                session: ReviewSession? = nil) {
+                session: ReviewSession? = nil,
+                refundSignals: ReviewRefundSignals? = nil) {
         self.id = id
         self._charge = Expandable(id: charge)
         self.open = open
@@ -66,6 +69,7 @@ public struct Review: Codable {
         self.livemode = livemode
         self.openedReason = openedReason
         self.session = session
+        self.refundSignals = refundSignals
     }
 }
 
@@ -76,6 +80,10 @@ public enum ReviewReason: String, Codable {
     case refunded
     case refundedAsFraud = "refunded_as_fraud"
     case disputed
+    case redacted
+    case canceled
+    case paymentNeverSettled = "payment_never_settled"
+    case acknowledged
 }
 
 public enum ReviewClosedReason: String, Codable {
@@ -84,6 +92,9 @@ public enum ReviewClosedReason: String, Codable {
     case refundedAsFraud = "refunded_as_fraud"
     case disputed
     case redacted
+    case canceled
+    case paymentNeverSettled = "payment_never_settled"
+    case acknowledged
 }
 
 public enum ReviewOpenedReason: String, Codable {
@@ -135,6 +146,23 @@ public struct ReviewSession: Codable {
         self.platform = platform
         self.version = version
     }
+}
+
+public struct ReviewRefundSignals: Codable {
+    /// When present, this signal indicates that the payment associated with the review received an early fraud warning.
+    @Expandable<EarlyFraudWarning> public var earlyFraudWarning: String?
+    /// When present, this signal indicates that Smart Refunds recommends refunding the payment based on risk signals collected after the payment completed.
+    public var recommendedRefund: ReviewRefundSignalsRecommendedRefund?
+
+    public init(earlyFraudWarning: String? = nil,
+                recommendedRefund: ReviewRefundSignalsRecommendedRefund? = nil) {
+        self._earlyFraudWarning = Expandable(id: earlyFraudWarning)
+        self.recommendedRefund = recommendedRefund
+    }
+}
+
+public struct ReviewRefundSignalsRecommendedRefund: Codable {
+    public init() {}
 }
 
 public struct ReviewList: Codable {

@@ -19,6 +19,7 @@ public protocol QuoteRoutes: StripeAPIRoute {
     ///    - automaticTax: Settings for automatic tax lookup for this quote and resulting invoices and subscriptions.
     ///    - collectionMethod: Either `charge_automatically`, or `send_invoice`. When charging automatically, Stripe will attempt to pay invoices at the end of the subscription cycle or at invoice finalization using the default payment method attached to the subscription or customer. When sending an invoice, Stripe will email your customer an invoice with payment instructions. Defaults to `charge_automatically`.
     ///    - customer: The customer for which this quote belongs to. A customer is required before finalizing the quote. Once specified, it   cannot be changed.
+    ///    - customerAccount: The account for which this quote belongs to. The customer's account is required before finalizing the quote. Once specified, it cannot be changed.
     ///    - defaultTaxRates: The tax rates that will apply to any line item that does not have `tax_rates` set.
     ///    - description: A description that will be displayed on the quote PDF. If no value is passed, the default description configured in your quote template settings will be used.
     ///    - discounts: The discounts applied to the quote. You can only set up to one discount.
@@ -40,6 +41,7 @@ public protocol QuoteRoutes: StripeAPIRoute {
                 automaticTax: [String: Any]?,
                 collectionMethod: QuoteCollectionMethod?,
                 customer: String?,
+                customerAccount: String?,
                 defaultTaxRates: [String]?,
                 description: String?,
                 discounts: [[String: Any]]?,
@@ -70,6 +72,7 @@ public protocol QuoteRoutes: StripeAPIRoute {
     ///    - automaticTax: Settings for automatic tax lookup for this quote and resulting invoices and subscriptions.
     ///    - collectionMethod: Either `charge_automatically`, or `send_invoice`. When charging automatically, Stripe will attempt to pay invoices at the end of the subscription cycle or at invoice finalization using the default payment method attached to the subscription or customer. When sending an invoice, Stripe will email your customer an invoice with payment instructions. Defaults to `charge_automatically`.
     ///    - customer: The customer for which this quote belongs to. A customer is required before finalizing the quote. Once specified, it   cannot be changed.
+    ///    - customerAccount: The account for which this quote belongs to. The customer's account is required before finalizing the quote. Once specified, it cannot be changed.
     ///    - defaultTaxRates: The tax rates that will apply to any line item that does not have `tax_rates` set.
     ///    - description: A description that will be displayed on the quote PDF. If no value is passed, the default description configured in your quote template settings will be used.
     ///    - discounts: The discounts applied to the quote. You can only set up to one discount.
@@ -90,6 +93,7 @@ public protocol QuoteRoutes: StripeAPIRoute {
                 automaticTax: [String: Any]?,
                 collectionMethod: QuoteCollectionMethod?,
                 customer: String?,
+                customerAccount: String?,
                 defaultTaxRates: [String]?,
                 description: String?,
                 discounts: [[String: Any]]?,
@@ -164,6 +168,7 @@ public struct StripeQuoteRoutes: QuoteRoutes {
                        automaticTax: [String: Any]? = nil,
                        collectionMethod: QuoteCollectionMethod? = nil,
                        customer: String? = nil,
+                       customerAccount: String? = nil,
                        defaultTaxRates: [String]? = nil,
                        description: String? = nil,
                        discounts: [[String: Any]]? = nil,
@@ -206,27 +211,31 @@ public struct StripeQuoteRoutes: QuoteRoutes {
         if let customer {
             body["customer"] = customer
         }
-        
+
+        if let customerAccount {
+            body["customer_account"] = customerAccount
+        }
+
         if let defaultTaxRates {
             body["default_tax_rates"] = defaultTaxRates
         }
-        
+
         if let description {
             body["description"] = description
         }
-        
+
         if let discounts {
             body["discounts"] = discounts
         }
-        
+
         if let expiresAt {
             body["expires_at"] = Int(expiresAt.timeIntervalSince1970)
         }
-        
+
         if let footer {
             body["footer"] = footer
         }
-        
+
         if let fromQuote {
             fromQuote.forEach { body["from_quote[\($0)]"] = $1 }
         }
@@ -279,6 +288,7 @@ public struct StripeQuoteRoutes: QuoteRoutes {
                        automaticTax: [String: Any]?,
                        collectionMethod: QuoteCollectionMethod?,
                        customer: String?,
+                       customerAccount: String?,
                        defaultTaxRates: [String]?,
                        description: String?,
                        discounts: [[String: Any]]?,
@@ -319,27 +329,31 @@ public struct StripeQuoteRoutes: QuoteRoutes {
         if let customer {
             body["customer"] = customer
         }
-        
+
+        if let customerAccount {
+            body["customer_account"] = customerAccount
+        }
+
         if let defaultTaxRates {
             body["default_tax_rates"] = defaultTaxRates
         }
-        
+
         if let description {
             body["description"] = description
         }
-        
+
         if let discounts {
             body["discounts"] = discounts
         }
-        
+
         if let expiresAt {
             body["expires_at"] = Int(expiresAt.timeIntervalSince1970)
         }
-        
+
         if let footer {
             body["footer"] = footer
         }
-        
+
         if let header {
             body["header"] = header
         }

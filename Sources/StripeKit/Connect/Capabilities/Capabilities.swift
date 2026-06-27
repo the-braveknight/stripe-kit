@@ -51,10 +51,10 @@ public struct CapabilitiesRequirements: Codable {
     public var currentDeadline: Date?
     /// Fields that need to be collected to keep the capability enabled. If not collected by `current_deadline`, these fields appear in `past_due` as well, and the capability is disabled.
     public var currentlyDue: [String]?
-    /// If the capability is disabled, this string describes why. Can be `requirements.past_due`, `requirements.pending_verification`, `listed`, `platform_paused`, `rejected.fraud`, `rejected.listed`, `rejected.terms_of_service`, `rejected.other`, `under_review`, or `other`.
+    /// If the capability is disabled, this string describes why. Can be `requirements.fields_needed`, `pending.onboarding`, `pending.review`, `rejected.other`, `rejected.unsupported_business`, `rejected.inactivity`, `paused.inactivity`, `platform_paused`, `platform_disabled`, or `other`.
     ///
     /// `rejected.unsupported_business` means that the account’s business is not supported by the capability. For example, payment methods may restrict the businesses they support in their terms of service:
-    /// - [Adterpay Clearpay's terms of service](https://stripe.com/afterpay-clearpay/legal#restricted-businesses)
+    /// - [Afterpay Clearpay's terms of service](https://stripe.com/afterpay-clearpay/legal#restricted-businesses)
     ///
     /// If you believe that the rejection is in error, please contact support@stripe.com for assistance.
     public var disabledReason: String?

@@ -104,16 +104,20 @@ public struct PriceRecurring: Codable {
     public var interval: PlanInterval?
     /// The number of intervals (specified in the `interval` attribute) between subscription billings. For example, `interval=month` and `interval_count=3` bills every 3 months.
     public var intervalCount: Int?
+    /// The meter tracking the usage of a metered price.
+    public var meter: String?
     /// Configures how the quantity per period should be determined. Can be either `metered` or `licensed`. `licensed` automatically bills the `quantity` set when adding it to a subscription. `metered` aggregates the total usage based on usage records. Defaults to `licensed`.
     public var usageType: PlanUsageType?
-    
+
     public init(aggregateUsage: PriceRecurringAggregateUsage? = nil,
                 interval: PlanInterval? = nil,
                 intervalCount: Int? = nil,
+                meter: String? = nil,
                 usageType: PlanUsageType? = nil) {
         self.aggregateUsage = aggregateUsage
         self.interval = interval
         self.intervalCount = intervalCount
+        self.meter = meter
         self.usageType = usageType
     }
 }

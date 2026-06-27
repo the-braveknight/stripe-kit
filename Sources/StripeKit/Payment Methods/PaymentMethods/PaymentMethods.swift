@@ -1030,3 +1030,228 @@ public enum PaymentMethodUSBankAccountStatusDetailsBlockedReason: String, Codabl
 public struct PaymentMethodWechatPay: Codable {
     public init() {}
 }
+
+// MARK: Alma
+public struct PaymentMethodAlma: Codable {
+    public init() {}
+}
+
+// MARK: Amazon Pay
+public struct PaymentMethodAmazonPay: Codable {
+    public init() {}
+}
+
+// MARK: Billie
+public struct PaymentMethodBillie: Codable {
+    public init() {}
+}
+
+// MARK: Bizum
+public struct PaymentMethodBizum: Codable {
+    public init() {}
+}
+
+// MARK: Crypto
+public struct PaymentMethodCrypto: Codable {
+    public init() {}
+}
+
+// MARK: Kakao Pay
+public struct PaymentMethodKakaoPay: Codable {
+    public init() {}
+}
+
+// MARK: KR Card
+public struct PaymentMethodKrCard: Codable {
+    /// The local credit or debit card brand.
+    public var brand: String?
+    /// The last four digits of the card. This may not be present for American Express cards.
+    public var last4: String?
+
+    public init(brand: String? = nil, last4: String? = nil) {
+        self.brand = brand
+        self.last4 = last4
+    }
+}
+
+// MARK: MB WAY
+public struct PaymentMethodMbWay: Codable {
+    public init() {}
+}
+
+// MARK: MobilePay
+public struct PaymentMethodMobilepay: Codable {
+    public init() {}
+}
+
+// MARK: Multibanco
+public struct PaymentMethodMultibanco: Codable {
+    public init() {}
+}
+
+// MARK: Naver Pay
+public struct PaymentMethodNaverPay: Codable {
+    /// Whether to fund this transaction with Naver Pay points or a card.
+    public var funding: PaymentMethodNaverPayFunding?
+
+    public init(funding: PaymentMethodNaverPayFunding? = nil) {
+        self.funding = funding
+    }
+}
+
+public enum PaymentMethodNaverPayFunding: String, Codable {
+    /// Use a card to fund this transaction.
+    case card
+    /// Use Naver Pay points to fund this transaction.
+    case points
+}
+
+// MARK: NZ Bank Account
+public struct PaymentMethodNzBankAccount: Codable {
+    /// The name on the bank account. Only present if the account holder name is different from the name of the authorized signatory collected in the PaymentMethod’s billing details.
+    public var accountHolderName: String?
+    /// The numeric code for the bank account’s bank.
+    public var bankCode: String?
+    /// The name of the bank.
+    public var bankName: String?
+    /// The numeric code for the bank account’s bank branch.
+    public var branchCode: String?
+    /// Last four digits of the bank account number.
+    public var last4: String?
+    /// The suffix of the bank account number.
+    public var suffix: String?
+
+    public init(accountHolderName: String? = nil,
+                bankCode: String? = nil,
+                bankName: String? = nil,
+                branchCode: String? = nil,
+                last4: String? = nil,
+                suffix: String? = nil) {
+        self.accountHolderName = accountHolderName
+        self.bankCode = bankCode
+        self.bankName = bankName
+        self.branchCode = branchCode
+        self.last4 = last4
+        self.suffix = suffix
+    }
+}
+
+// MARK: Pay By Bank
+public struct PaymentMethodPayByBank: Codable {
+    public init() {}
+}
+
+// MARK: PAYCO
+public struct PaymentMethodPayco: Codable {
+    public init() {}
+}
+
+// MARK: PayPal
+public struct PaymentMethodPaypal: Codable {
+    /// Two-letter ISO code representing the buyer’s country. Values are provided by PayPal directly (if supported) at the time of authorization or settlement. They cannot be set or mutated.
+    public var country: String?
+    /// Uniquely identifies this particular PayPal account. You can use this attribute to check whether two PayPal accounts are the same.
+    public var fingerprint: String?
+    /// Owner’s email. Values are provided by PayPal directly (if supported) at the time of authorization or settlement. They cannot be set or mutated.
+    public var payerEmail: String?
+    /// PayPal account PayerID. This identifier uniquely identifies the PayPal customer.
+    public var payerId: String?
+    /// Owner’s verified email. Values are verified or provided by PayPal directly (if supported) at the time of authorization or settlement. They cannot be set or mutated.
+    public var verifiedEmail: String?
+
+    public init(country: String? = nil,
+                fingerprint: String? = nil,
+                payerEmail: String? = nil,
+                payerId: String? = nil,
+                verifiedEmail: String? = nil) {
+        self.country = country
+        self.fingerprint = fingerprint
+        self.payerEmail = payerEmail
+        self.payerId = payerId
+        self.verifiedEmail = verifiedEmail
+    }
+}
+
+// MARK: PayPay
+public struct PaymentMethodPaypay: Codable {
+    public init() {}
+}
+
+// MARK: PayTo
+public struct PaymentMethodPayto: Codable {
+    /// Bank-State-Branch number of the bank account.
+    public var bsbNumber: String?
+    /// Last four digits of the bank account number.
+    public var last4: String?
+    /// The PayID alias for the bank account.
+    public var payId: String?
+
+    public init(bsbNumber: String? = nil, last4: String? = nil, payId: String? = nil) {
+        self.bsbNumber = bsbNumber
+        self.last4 = last4
+        self.payId = payId
+    }
+}
+
+// MARK: Revolut Pay
+public struct PaymentMethodRevolutPay: Codable {
+    public init() {}
+}
+
+// MARK: Samsung Pay
+public struct PaymentMethodSamsungPay: Codable {
+    public init() {}
+}
+
+// MARK: Satispay
+public struct PaymentMethodSatispay: Codable {
+    public init() {}
+}
+
+// MARK: Swish
+public struct PaymentMethodSwish: Codable {
+    public init() {}
+}
+
+// MARK: TWINT
+public struct PaymentMethodTwint: Codable {
+    public init() {}
+}
+
+// MARK: Zip
+public struct PaymentMethodZip: Codable {
+    public init() {}
+}
+
+// MARK: Custom
+public struct PaymentMethodCustom: Codable {
+    /// Display name for the custom (user-defined) payment method type used in checkout.
+    public var displayName: String?
+    /// The custom payment method type associated with this payment method.
+    public var type: String?
+
+    public init(displayName: String? = nil, type: String? = nil) {
+        self.displayName = displayName
+        self.type = type
+    }
+}
+
+// MARK: Scalapay
+public struct PaymentMethodScalapay: Codable {
+    public init() {}
+}
+
+// MARK: Sunbit
+public struct PaymentMethodSunbit: Codable {
+    public init() {}
+}
+
+// MARK: UPI
+public struct PaymentMethodUpi: Codable {
+    /// The customer’s Virtual Payment Address (VPA).
+    public var vpa: String?
+
+    public init(vpa: String? = nil) {
+        self.vpa = vpa
+    }
+}

@@ -15,13 +15,17 @@ public protocol VerificationSessionRoutes: StripeAPIRoute {
     /// - Parameter type: The type of verification check to be performed.
     /// - Parameter metadata: Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to metadata.
     /// - Parameter options: A set of options for the session’s verification checks.
+    /// - Parameter relatedCustomer: Customer ID of the user being verified.
     /// - Parameter returnUrl: The URL that the user will be redirected to upon completing the verification flow.
+    /// - Parameter verificationFlow: The ID of a verification flow from the dashboard.
     /// - Parameter expand: Specifies which fields in the response should be expanded.
     /// - Returns: Returns the created ``VerificationSession`` object
     func create(type: VerificationSessionType,
                 metadata: [String: String]?,
                 options: [String: Any]?,
+                relatedCustomer: String?,
                 returnUrl: String?,
+                verificationFlow: String?,
                 expand: [String]?) async throws -> VerificationSession
     
     /// Returns a list of VerificationSessions
@@ -87,26 +91,36 @@ public struct StripeVerificationSessionRoutes: VerificationSessionRoutes {
     public func create(type: VerificationSessionType,
                        metadata: [String: String]? = nil,
                        options: [String: Any]? = nil,
+                       relatedCustomer: String? = nil,
                        returnUrl: String? = nil,
+                       verificationFlow: String? = nil,
                        expand: [String]? = nil) async throws -> VerificationSession {
         var body: [String: Any] = ["type": type.rawValue]
-        
+
         if let metadata {
             metadata.forEach { body["metadata[\($0)]"] = $1 }
         }
-        
+
         if let options {
             options.forEach { body["options[\($0)]"] = $1 }
         }
-        
+
+        if let relatedCustomer {
+            body["related_customer"] = relatedCustomer
+        }
+
         if let returnUrl {
             body["return_url"] = returnUrl
         }
-        
+
+        if let verificationFlow {
+            body["verification_flow"] = verificationFlow
+        }
+
         if let expand {
             body["expand"] = expand
         }
-        
+
         return try await apiHandler.send(method: .POST, path: verificationsession, body: .string(body.queryParameters), headers: headers)
     }
     

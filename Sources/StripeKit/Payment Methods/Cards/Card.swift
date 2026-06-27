@@ -24,7 +24,9 @@ public struct Card: Codable {
     public var addressZip: String?
     /// If `address_zip` was provided, results of the check: `pass`, `fail`, `unavailable`, or `unchecked`.
     public var addressZipCheck: CardValidationCheck?
-    /// Card brand. Can be `American Express`, `Diners Club`, `Discover`, `JCB`, `MasterCard`, `UnionPay`, `Visa`, or `Unknown`.
+    /// This field indicates whether this payment method can be shown again to its customer in a checkout flow. Stripe products such as Checkout and Elements use this field to determine whether a payment method can be shown as a saved payment method in a checkout flow. The field defaults to `unspecified`.
+    public var allowRedisplay: CardAllowRedisplay?
+    /// Card brand. Can be `American Express`, `Cartes Bancaires`, `Diners Club`, `Discover`, `Eftpos Australia`, `Girocard`, `JCB`, `MasterCard`, `UnionPay`, `Visa`, or `Unknown`.
     public var brand: CardBrand?
     /// Two-letter ISO code representing the country of the card. You could use this attribute to get a sense of the international breakdown of cards you’ve collected.
     public var country: String?
@@ -42,6 +44,8 @@ public struct Card: Codable {
     public var fingerprint: String?
     /// Card funding type. Can be `credit`, `debit`, `prepaid`, or `unknown`.
     public var funding: CardFundingType?
+    /// Issuer identification number of the card.
+    public var iin: String?
     /// The last four digits of the card.
     public var last4: String?
     /// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
@@ -60,6 +64,8 @@ public struct Card: Codable {
     public var currency: Currency?
     /// (For tokenized numbers only.) The last four digits of the device account number.
     public var dynamicLast4: String?
+    /// Status of a card based on the card issuer.
+    public var regulatedStatus: CardRegulatedStatus?
     /// If the card number is tokenized, this is the method that was used. Can be `android_pay` (includes Google Pay), `apple_pay`, `masterpass`, `visa_checkout`, or null.
     public var tokenizationMethod: CardTokenizedMethod?
     /// If this Card is part of a card wallet, this contains the details of the card wallet.
@@ -73,6 +79,7 @@ public struct Card: Codable {
                 addressState: String? = nil,
                 addressZip: String? = nil,
                 addressZipCheck: CardValidationCheck? = nil,
+                allowRedisplay: CardAllowRedisplay? = nil,
                 brand: CardBrand? = nil,
                 country: String? = nil,
                 customer: String? = nil,
@@ -81,6 +88,7 @@ public struct Card: Codable {
                 expYear: Int? = nil,
                 fingerprint: String? = nil,
                 funding: CardFundingType? = nil,
+                iin: String? = nil,
                 last4: String? = nil,
                 metadata: [String : String]? = nil,
                 name: String? = nil,
@@ -91,6 +99,7 @@ public struct Card: Codable {
                 currency: Currency? = nil,
 				defaultForCurrency: Bool? = nil,
                 dynamicLast4: String? = nil,
+                regulatedStatus: CardRegulatedStatus? = nil,
                 tokenizationMethod: CardTokenizedMethod? = nil,
                 wallet: CardWallet? = nil) {
         self.id = id
@@ -101,6 +110,7 @@ public struct Card: Codable {
         self.addressState = addressState
         self.addressZip = addressZip
         self.addressZipCheck = addressZipCheck
+        self.allowRedisplay = allowRedisplay
         self.brand = brand
         self.country = country
         self._customer = Expandable(id: customer)
@@ -109,6 +119,7 @@ public struct Card: Codable {
         self.expYear = expYear
         self.fingerprint = fingerprint
         self.funding = funding
+        self.iin = iin
         self.last4 = last4
         self.metadata = metadata
         self.name = name
@@ -119,6 +130,7 @@ public struct Card: Codable {
         self.currency = currency
 		self.defaultForCurrency = defaultForCurrency
         self.dynamicLast4 = dynamicLast4
+        self.regulatedStatus = regulatedStatus
         self.tokenizationMethod = tokenizationMethod
         self.wallet = wallet
     }
@@ -133,10 +145,11 @@ public enum CardValidationCheck: String, Codable {
 
 public enum CardBrand: String, Codable {
     case americanExpress = "American Express"
+    case cartesBancaires = "Cartes Bancaires"
     case dinersClub = "Diners Club"
     case discover = "Discover"
-    case eftpos = "Eftpos"
-    case australia = "Australia"
+    case eftposAustralia = "Eftpos Australia"
+    case girocard = "Girocard"
     case jcb = "JCB"
     case masterCard = "MasterCard"
     case unionPay = "UnionPay"
@@ -156,6 +169,17 @@ public enum CardTokenizedMethod: String, Codable {
     case applePay = "apple_pay"
     case masterpass
     case visaCheckout = "visa_checkout"
+}
+
+public enum CardAllowRedisplay: String, Codable {
+    case always
+    case limited
+    case unspecified
+}
+
+public enum CardRegulatedStatus: String, Codable {
+    case regulated
+    case unregulated
 }
 
 public struct CardWallet: Codable {

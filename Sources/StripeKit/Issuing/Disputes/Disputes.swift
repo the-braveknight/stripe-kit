@@ -19,6 +19,8 @@ public struct IssuingDispute: Codable {
     public var currency: Currency?
     /// Evidence related to the dispute. This hash will contain exactly one non-null value, containing an evidence object that matches its `reason`
     public var evidence: IssuingDisputeEvidence?
+    /// The enum that describes the dispute loss outcome. If the dispute is not lost, this field will be absent. New enum values may be added in the future, so be sure to handle unknown values.
+    public var lossReason: IssuingDisputeLossReason?
     /// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to metadata.
     public var metadata: [String: String]?
     /// Current status of dispute. One of `unsubmitted`, `under_review`, `won`, or `lost`.
@@ -37,6 +39,7 @@ public struct IssuingDispute: Codable {
                 balanceTransactions: [BalanceTransaction]? = nil,
                 currency: Currency? = nil,
                 evidence: IssuingDisputeEvidence? = nil,
+                lossReason: IssuingDisputeLossReason? = nil,
                 metadata: [String : String]? = nil,
                 status: IssuingDisputeStatus? = nil,
                 transaction: String? = nil,
@@ -48,6 +51,7 @@ public struct IssuingDispute: Codable {
         self.balanceTransactions = balanceTransactions
         self.currency = currency
         self.evidence = evidence
+        self.lossReason = lossReason
         self.metadata = metadata
         self.status = status
         self._transaction = Expandable(id: transaction)
@@ -83,6 +87,8 @@ public struct IssuingDisputeEvidence: Codable {
     public var fraudulent: IssuingDisputeEvidenceFraudulent?
     /// Evidence provided when `reason` is `‘merchandise_not_as_described'`.
     public var merchandiseNotAsDescribed: IssuingDisputeEvidenceMerchandiseNotAsDescribed?
+    /// Evidence provided when `reason` is `‘no_valid_authorization’`.
+    public var noValidAuthorization: IssuingDisputeEvidenceNoValidAuthorization?
     /// Evidence provided when `reason` is `‘not_received’`.
     public var notReceived: IssuingDisputeEvidenceNotReceived?
     /// Evidence to support an uncategorized dispute. This will only be present if your dispute’s `reason` is `other`.
@@ -229,6 +235,18 @@ public enum IssuingDisputeEvidenceMerchandiseNotAsDescribedReturnStatus: String,
     case merchantRejected = "merchant_rejected"
 }
 
+public struct IssuingDisputeEvidenceNoValidAuthorization: Codable {
+    /// (ID of a file upload) Additional documentation supporting the dispute.
+    @Expandable<File> public var additionalDocumentation: String?
+    /// Explanation of why the cardholder is disputing this transaction.
+    public var explanation: String?
+
+    public init(additionalDocumentation: String? = nil, explanation: String? = nil) {
+        self._additionalDocumentation = Expandable(id: additionalDocumentation)
+        self.explanation = explanation
+    }
+}
+
 public struct IssuingDisputeEvidenceNotReceived: Codable {
     /// (ID of a file upload) Additional documentation supporting the dispute.
     @Expandable<File> public var additionalDocumentation: String?
@@ -294,6 +312,8 @@ public enum IssuingDisputeEvidenceReason: String, Codable {
     case notReceived = "not_received"
     /// The cardholder did not make the transaction.
     case fraudulent
+    /// The transaction was not authorized by the cardholder.
+    case noValidAuthorization = "no_valid_authorization"
     /// There were multiple copies of a charge for a single purchase, or the charge was paid by other means.
     case duplicate
     /// All other types of disputes.
@@ -342,4 +362,27 @@ public enum IssuingDisputeStatus: String, Codable {
     case unsubmitted
     /// The dispute has expired.
     case expired
+}
+
+public enum IssuingDisputeLossReason: String, Codable {
+    case cardholderAuthenticationIssuerLiability = "cardholder_authentication_issuer_liability"
+    case eci5TokenTransactionWithTavv = "eci5_token_transaction_with_tavv"
+    case excessDisputesInTimeframe = "excess_disputes_in_timeframe"
+    case hasNotMetTheMinimumDisputeAmountRequirements = "has_not_met_the_minimum_dispute_amount_requirements"
+    case invalidDuplicateDispute = "invalid_duplicate_dispute"
+    case invalidIncorrectAmountDispute = "invalid_incorrect_amount_dispute"
+    case invalidNoAuthorization = "invalid_no_authorization"
+    case invalidUseOfDisputes = "invalid_use_of_disputes"
+    case merchandiseDeliveredOrShipped = "merchandise_delivered_or_shipped"
+    case merchandiseOrServiceAsDescribed = "merchandise_or_service_as_described"
+    case notCancelled = "not_cancelled"
+    case other
+    case refundIssued = "refund_issued"
+    case submittedBeyondAllowableTimeLimit = "submitted_beyond_allowable_time_limit"
+    case transaction3dsRequired = "transaction_3ds_required"
+    case transactionApprovedAfterPriorFraudDispute = "transaction_approved_after_prior_fraud_dispute"
+    case transactionAuthorized = "transaction_authorized"
+    case transactionElectronicallyRead = "transaction_electronically_read"
+    case transactionQualifiesForVisaEasyPaymentService = "transaction_qualifies_for_visa_easy_payment_service"
+    case transactionUnattended = "transaction_unattended"
 }

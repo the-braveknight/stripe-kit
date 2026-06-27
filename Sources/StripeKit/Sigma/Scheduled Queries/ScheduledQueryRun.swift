@@ -87,5 +87,5 @@ public enum ScheduledQueryRunStatus: String, Codable {
     case completed
     case canceled
     case failed
-    case timedOut = "time_out"
+    case timedOut = "timed_out"
 }

@@ -12,6 +12,8 @@ public struct EphemeralKey: Codable {
     public var id: String
     /// String representing the object's type. Objects of the same type share the same value.
     public var object: String
+    /// List of objects to which this ephemeral key grants access.
+    public var associatedObjects: [EphemeralKeyAssociatedObject]?
     /// Time at which the object was created. Measured in seconds since the Unix epoch.
     public var created: Date
     /// Time at which the key will expire. Measured in seconds since the Unix epoch.
@@ -20,18 +22,33 @@ public struct EphemeralKey: Codable {
     public var livemode: Bool
     /// The key's secret. You can use this value to make authorized requests to the Stripe API.
     public var secret: String?
-    
+
     public init(id: String,
                 object: String,
+                associatedObjects: [EphemeralKeyAssociatedObject]? = nil,
                 created: Date,
                 expires: Date,
                 livemode: Bool,
                 secret: String? = nil) {
         self.id = id
         self.object = object
+        self.associatedObjects = associatedObjects
         self.created = created
         self.expires = expires
         self.livemode = livemode
         self.secret = secret
+    }
+}
+
+public struct EphemeralKeyAssociatedObject: Codable {
+    /// The ID of the object to which this ephemeral key grants access.
+    public var id: String?
+    /// The type of the object to which this ephemeral key grants access.
+    public var type: String?
+
+    public init(id: String? = nil,
+                type: String? = nil) {
+        self.id = id
+        self.type = type
     }
 }

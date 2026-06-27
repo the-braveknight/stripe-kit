@@ -22,6 +22,8 @@ public struct Subscription: Codable {
     public var currentPeriodStart: Date?
     /// ID of the customer who owns the subscription.
     @Expandable<Customer> public var customer: String?
+    /// The ID of the account that owns the subscription, represented as a customer.
+    public var customerAccount: String?
     /// ID of the default payment method for the subscription. It must belong to the customer associated with the subscription. If not set, invoices will use the default payment method in the customer’s invoice settings.
     @Expandable<PaymentMethod> public var defaultPaymentMethod: String?
     /// The subscription’s description, meant to be displayable to the customer. Use this field to optionally store an explanation of the subscription for rendering in Stripe surfaces.
@@ -56,6 +58,10 @@ public struct Subscription: Codable {
     public var automaticTax: SubscriptionAutomaticTax
     /// Determines the date of the first full invoice, and, for plans with `month` or `year` intervals, the day of the month for subsequent invoices.
     public var billingCycleAnchor: Date?
+    /// The fixed values used to calculate the `billing_cycle_anchor`.
+    public var billingCycleAnchorConfig: SubscriptionBillingCycleAnchorConfig?
+    /// Controls how prorations and invoices for subscriptions are calculated and orchestrated.
+    public var billingMode: SubscriptionBillingMode?
     /// Define thresholds at which an invoice will be sent, and the subscription advanced to a new billing period
     public var billingThresholds: SubscriptionBillingThresholds?
     /// A date in the future at which the subscription will automatically get canceled
@@ -76,6 +82,10 @@ public struct Subscription: Codable {
     public var defaultTaxRates: [TaxRate]?
     /// Describes the current discount applied to this subscription, if there is one. When billing, a discount applied to a subscription overrides a discount applied on a customer-wide basis.
     public var discount: Discount?
+    /// The discounts applied to the subscription. Subscription item discounts are applied before subscription discounts. Use `expand[]=discounts` to expand each discount.
+    @ExpandableCollection<Discount> public var discounts: [String]?
+    /// All invoices will be billed using the specified settings.
+    public var invoiceSettings: SubscriptionInvoiceSettings?
     /// If the subscription has ended, the date the subscription ended.
     public var endedAt: Date?
     /// Has the value true if the object exists in live mode or the value false if the object exists in test mode.
@@ -94,6 +104,10 @@ public struct Subscription: Codable {
     @Expandable<SubscriptionSchedule> public var schedule: String?
     /// Date when the subscription was first created. The date might differ from the `created` date due to backdating.
     public var startDate: Date?
+    /// Details about the Managed Payments configuration for this subscription.
+    public var managedPayments: SubscriptionManagedPayments?
+    /// Details about the presentment currency for the subscription.
+    public var presentmentDetails: SubscriptionPresentmentDetails?
     /// ID of the test clock this subscription belongs to.
     public var testClock: String?
     /// The account (if any) the subscription’s payments will be attributed to for tax reporting, and where funds from each payment will be transferred to for each of the subscription’s invoices.
@@ -111,6 +125,7 @@ public struct Subscription: Codable {
                 currentPeriodEnd: Date? = nil,
                 currentPeriodStart: Date? = nil,
                 customer: String? = nil,
+                customerAccount: String? = nil,
                 defaultPaymentMethod: String? = nil,
                 description: String? = nil,
                 items: SubscriptionItemList? = nil,
@@ -124,6 +139,8 @@ public struct Subscription: Codable {
                 applicationFeePercent: Decimal? = nil,
                 automaticTax: SubscriptionAutomaticTax,
                 billingCycleAnchor: Date? = nil,
+                billingCycleAnchorConfig: SubscriptionBillingCycleAnchorConfig? = nil,
+                billingMode: SubscriptionBillingMode? = nil,
                 billingThresholds: SubscriptionBillingThresholds? = nil,
                 cancelAt: Date? = nil,
                 canceledAt: Date? = nil,
@@ -134,6 +151,8 @@ public struct Subscription: Codable {
                 defaultSource: String? = nil,
                 defaultTaxRates: [TaxRate]? = nil,
                 discount: Discount? = nil,
+                discounts: [String]? = nil,
+                invoiceSettings: SubscriptionInvoiceSettings? = nil,
                 endedAt: Date? = nil,
                 livemode: Bool? = nil,
                 nextPendingInvoiceItemInvoice: Date? = nil,
@@ -143,6 +162,8 @@ public struct Subscription: Codable {
                 pendingInvoiceItemInterval: SubscriptionPendingInvoiceInterval? = nil,
                 schedule: String? = nil,
                 startDate: Date? = nil,
+                managedPayments: SubscriptionManagedPayments? = nil,
+                presentmentDetails: SubscriptionPresentmentDetails? = nil,
                 testClock: String? = nil,
                 transferData: SubscriptionTransferData? = nil,
                 trialEnd: Date? = nil,
@@ -154,6 +175,7 @@ public struct Subscription: Codable {
         self.currentPeriodEnd = currentPeriodEnd
         self.currentPeriodStart = currentPeriodStart
         self._customer = Expandable(id: customer)
+        self.customerAccount = customerAccount
         self._defaultPaymentMethod = Expandable(id: defaultPaymentMethod)
         self.description = description
         self.items = items
@@ -167,6 +189,8 @@ public struct Subscription: Codable {
         self.applicationFeePercent = applicationFeePercent
         self.automaticTax = automaticTax
         self.billingCycleAnchor = billingCycleAnchor
+        self.billingCycleAnchorConfig = billingCycleAnchorConfig
+        self.billingMode = billingMode
         self.billingThresholds = billingThresholds
         self.cancelAt = cancelAt
         self.canceledAt = canceledAt
@@ -177,6 +201,8 @@ public struct Subscription: Codable {
         self._defaultSource = DynamicExpandable(id: defaultSource)
         self.defaultTaxRates = defaultTaxRates
         self.discount = discount
+        self._discounts = ExpandableCollection(ids: discounts)
+        self.invoiceSettings = invoiceSettings
         self.endedAt = endedAt
         self.livemode = livemode
         self.nextPendingInvoiceItemInvoice = nextPendingInvoiceItemInvoice
@@ -186,6 +212,8 @@ public struct Subscription: Codable {
         self.pendingInvoiceItemInterval = pendingInvoiceItemInterval
         self._schedule = Expandable(id: schedule)
         self.startDate = startDate
+        self.managedPayments = managedPayments
+        self.presentmentDetails = presentmentDetails
         self.testClock = testClock
         self.transferData = transferData
         self.trialEnd = trialEnd
@@ -197,10 +225,40 @@ public struct Subscription: Codable {
 public struct SubscriptionAutomaticTax: Codable {
     /// Whether Stripe automatically computes tax on this subscription.
     public var enabled: Bool?
-    
-    public init(enabled: Bool? = nil) {
+    /// If Stripe disabled automatic tax, this enum describes why.
+    public var disabledReason: SubscriptionAutomaticTaxDisabledReason?
+    /// The account that's liable for tax. If set, the business address and tax registrations required to perform the tax calculation are loaded from this account. The tax transaction is returned in the report of the connected account.
+    public var liability: SubscriptionAutomaticTaxLiability?
+
+    public init(enabled: Bool? = nil,
+                disabledReason: SubscriptionAutomaticTaxDisabledReason? = nil,
+                liability: SubscriptionAutomaticTaxLiability? = nil) {
         self.enabled = enabled
+        self.disabledReason = disabledReason
+        self.liability = liability
     }
+}
+
+public enum SubscriptionAutomaticTaxDisabledReason: String, Codable {
+    /// Stripe's systems automatically turned off Tax for this subscription when finalizing one of its invoices with a missing or incomplete location for your customer.
+    case requiresLocationInputs = "requires_location_inputs"
+}
+
+public struct SubscriptionAutomaticTaxLiability: Codable {
+    /// The connected account being referenced when `type` is `account`.
+    @Expandable<ConnectAccount> public var account: String?
+    /// Type of the account referenced.
+    public var type: SubscriptionAutomaticTaxLiabilityType?
+
+    public init(account: String? = nil, type: SubscriptionAutomaticTaxLiabilityType? = nil) {
+        self._account = Expandable(id: account)
+        self.type = type
+    }
+}
+
+public enum SubscriptionAutomaticTaxLiabilityType: String, Codable {
+    case account
+    case `self`
 }
 
 public struct SubscriptionBillingThresholds: Codable {
@@ -220,11 +278,27 @@ public struct SubscriptionCancellationDetails: Codable {
     public var comment: String?
     /// The customer submitted reason for why they cancelled, if the subscription was cancelled explicitly by the user.
     public var feedback: SubscriptionCancellationDetailsFeedback?
-    
-    public init(comment: String? = nil, feedback: SubscriptionCancellationDetailsFeedback? = nil) {
+    /// Why this subscription was cancelled.
+    public var reason: SubscriptionCancellationDetailsReason?
+
+    public init(comment: String? = nil,
+                feedback: SubscriptionCancellationDetailsFeedback? = nil,
+                reason: SubscriptionCancellationDetailsReason? = nil) {
         self.comment = comment
         self.feedback = feedback
+        self.reason = reason
     }
+}
+
+public enum SubscriptionCancellationDetailsReason: String, Codable {
+    /// The subscription was canceled by a retention policy.
+    case canceledByRetentionPolicy = "canceled_by_retention_policy"
+    /// The subscription was canceled explicitly by the user.
+    case cancellationRequested = "cancellation_requested"
+    /// The subscription was canceled because payment was disputed.
+    case paymentDisputed = "payment_disputed"
+    /// The subscription was canceled because payment failed.
+    case paymentFailed = "payment_failed"
 }
 
 public enum SubscriptionCancellationDetailsFeedback: String, Codable {
@@ -233,7 +307,7 @@ public enum SubscriptionCancellationDetailsFeedback: String, Codable {
     /// Some features are missing
     case missingFeatures = "missing_features"
     /// I’m switching to a different service
-    case switchService = "switch_service"
+    case switchedService = "switched_service"
     /// I don’t use the service enough
     case unused
     /// Customer service was less than expected
@@ -336,20 +410,24 @@ public struct SubscriptionPendingUpdate: Codable {
     public var billingCycleAnchor: Date?
     /// The point after which the changes reflected by this update will be discarded and no longer applied.
     public var expiresAt: Date?
+    /// The metadata to be applied to the subscription if the update is applied.
+    public var metadata: [String: String]?
     /// List of subscription items, each with an attached plan, that will be set if the update is applied.
     public var subscriptionItems: [SubscriptionItem]?
     /// Unix timestamp representing the end of the trial period the customer will get before being charged for the first time, if the update is applied.
     public var trialEnd: Date?
     /// Indicates if a plan’s `trial_period_days` should be applied to the subscription. Setting `trial_end` per subscription is preferred, and this defaults to `false`. Setting this flag to `true` together with `trial_end` is not allowed. See [Using trial periods on subscriptions](https://stripe.com/docs/billing/subscriptions/trials) to learn more.
     public var trialFromPlan: Bool?
-    
+
     public init(billingCycleAnchor: Date? = nil,
                 expiresAt: Date? = nil,
+                metadata: [String: String]? = nil,
                 subscriptionItems: [SubscriptionItem]? = nil,
                 trialEnd: Date? = nil,
                 trialFromPlan: Bool? = nil) {
         self.billingCycleAnchor = billingCycleAnchor
         self.expiresAt = expiresAt
+        self.metadata = metadata
         self.subscriptionItems = subscriptionItems
         self.trialEnd = trialEnd
         self.trialFromPlan = trialFromPlan
@@ -408,6 +486,133 @@ public struct SubscriptionTransferData: Codable {
     public init(amountPercent: Int? = nil, destination: String? = nil) {
         self.amountPercent = amountPercent
         self._destination = Expandable(id: destination)
+    }
+}
+
+public struct SubscriptionBillingCycleAnchorConfig: Codable {
+    /// The day of the month of the billing_cycle_anchor.
+    public var dayOfMonth: Int?
+    /// The hour of the day of the billing_cycle_anchor.
+    public var hour: Int?
+    /// The minute of the hour of the billing_cycle_anchor.
+    public var minute: Int?
+    /// The month to start full cycle billing periods.
+    public var month: Int?
+    /// The second of the minute of the billing_cycle_anchor.
+    public var second: Int?
+
+    public init(dayOfMonth: Int? = nil,
+                hour: Int? = nil,
+                minute: Int? = nil,
+                month: Int? = nil,
+                second: Int? = nil) {
+        self.dayOfMonth = dayOfMonth
+        self.hour = hour
+        self.minute = minute
+        self.month = month
+        self.second = second
+    }
+}
+
+public struct SubscriptionBillingMode: Codable {
+    /// Controls the calculation and orchestration of prorations and invoices for subscriptions.
+    public var type: SubscriptionBillingModeType?
+    /// Configure behavior for flexible billing mode.
+    public var flexible: SubscriptionBillingModeFlexible?
+    /// Details on when the current billing_mode was adopted.
+    public var updatedAt: Date?
+
+    public init(type: SubscriptionBillingModeType? = nil,
+                flexible: SubscriptionBillingModeFlexible? = nil,
+                updatedAt: Date? = nil) {
+        self.type = type
+        self.flexible = flexible
+        self.updatedAt = updatedAt
+    }
+}
+
+public enum SubscriptionBillingModeType: String, Codable {
+    /// Calculations for subscriptions and invoices are based on legacy defaults.
+    case classic
+    /// Supports more flexible calculation and orchestration options for subscriptions and invoices.
+    case flexible
+}
+
+public struct SubscriptionBillingModeFlexible: Codable {
+    /// Controls how invoices and invoice items display proration amounts and discount amounts.
+    public var prorationDiscounts: SubscriptionBillingModeFlexibleProrationDiscounts?
+
+    public init(prorationDiscounts: SubscriptionBillingModeFlexibleProrationDiscounts? = nil) {
+        self.prorationDiscounts = prorationDiscounts
+    }
+}
+
+public enum SubscriptionBillingModeFlexibleProrationDiscounts: String, Codable {
+    case included
+    case itemized
+}
+
+public struct SubscriptionInvoiceSettings: Codable {
+    /// The account tax IDs associated with the subscription. Will be set on invoices generated by the subscription.
+    @ExpandableCollection<TaxID> public var accountTaxIds: [String]?
+    /// A list of up to 4 custom fields to be displayed on the invoice.
+    public var customFields: [SubscriptionInvoiceSettingsCustomField]?
+    /// The connected account that issues the invoice. The invoice is presented with the branding and support information of the specified account.
+    public var issuer: SubscriptionInvoiceSettingsIssuer?
+
+    public init(accountTaxIds: [String]? = nil,
+                customFields: [SubscriptionInvoiceSettingsCustomField]? = nil,
+                issuer: SubscriptionInvoiceSettingsIssuer? = nil) {
+        self._accountTaxIds = ExpandableCollection(ids: accountTaxIds)
+        self.customFields = customFields
+        self.issuer = issuer
+    }
+}
+
+public struct SubscriptionInvoiceSettingsCustomField: Codable {
+    /// The name of the custom field.
+    public var name: String?
+    /// The value of the custom field.
+    public var value: String?
+
+    public init(name: String? = nil, value: String? = nil) {
+        self.name = name
+        self.value = value
+    }
+}
+
+public struct SubscriptionInvoiceSettingsIssuer: Codable {
+    /// The connected account being referenced when `type` is `account`.
+    @Expandable<ConnectAccount> public var account: String?
+    /// Type of the account referenced.
+    public var type: SubscriptionInvoiceSettingsIssuerType?
+
+    public init(account: String? = nil, type: SubscriptionInvoiceSettingsIssuerType? = nil) {
+        self._account = Expandable(id: account)
+        self.type = type
+    }
+}
+
+public enum SubscriptionInvoiceSettingsIssuerType: String, Codable {
+    case account
+    case `self`
+}
+
+public struct SubscriptionManagedPayments: Codable {
+    /// Whether Managed Payments is enabled for this subscription.
+    public var enabled: Bool?
+
+    public init(enabled: Bool? = nil) {
+        self.enabled = enabled
+    }
+}
+
+public struct SubscriptionPresentmentDetails: Codable {
+    /// The currency in which the subscription is presented to the customer. Three-letter ISO currency code, in lowercase.
+    public var presentmentCurrency: Currency?
+
+    public init(presentmentCurrency: Currency? = nil) {
+        self.presentmentCurrency = presentmentCurrency
     }
 }
 

@@ -33,6 +33,8 @@ public struct DisputeEvidence: Codable {
     public var duplicateChargeExplanation: String?
     /// The Stripe ID for the prior charge which appears to be a duplicate of the disputed charge.
     public var duplicateChargeId: String?
+    /// The enhanced evidence supplied for an eligibility type that gives the dispute a better chance of being resolved in your favor.
+    public var enhancedEvidence: DisputeEvidenceEnhancedEvidence?
     /// A description of the product or service that was sold.
     public var productDescription: String?
     /// (ID of a [file upload](https://stripe.com/docs/guides/file-upload)) Any receipt or message sent to the customer notifying them of the charge.
@@ -75,6 +77,7 @@ public struct DisputeEvidence: Codable {
                 duplicateChargeDocumentation: String? = nil,
                 duplicateChargeExplanation: String? = nil,
                 duplicateChargeId: String? = nil,
+                enhancedEvidence: DisputeEvidenceEnhancedEvidence? = nil,
                 productDescription: String? = nil,
                 receipt: String? = nil,
                 refundPolicy: String? = nil,
@@ -102,6 +105,7 @@ public struct DisputeEvidence: Codable {
         self._duplicateChargeDocumentation = Expandable(id: duplicateChargeDocumentation)
         self.duplicateChargeExplanation = duplicateChargeExplanation
         self.duplicateChargeId = duplicateChargeId
+        self.enhancedEvidence = enhancedEvidence
         self.productDescription = productDescription
         self._receipt = Expandable(id: receipt)
         self._refundPolicy = Expandable(id: refundPolicy)
@@ -116,5 +120,132 @@ public struct DisputeEvidence: Codable {
         self.shippingTrackingNumber = shippingTrackingNumber
         self._uncategorizedFile = Expandable(id: uncategorizedFile)
         self.uncategorizedText = uncategorizedText
+    }
+}
+
+public struct DisputeEvidenceEnhancedEvidence: Codable {
+    /// Evidence provided for Mastercard Compliance disputes.
+    public var mastercardCompliance: DisputeEvidenceEnhancedEvidenceMastercardCompliance?
+    /// Evidence provided for Visa Compelling Evidence 3.0 evidence submission.
+    public var visaCompellingEvidence3: DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3?
+    /// Evidence provided for Visa Compliance disputes.
+    public var visaCompliance: DisputeEvidenceEnhancedEvidenceVisaCompliance?
+
+    public init(mastercardCompliance: DisputeEvidenceEnhancedEvidenceMastercardCompliance? = nil,
+                visaCompellingEvidence3: DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3? = nil,
+                visaCompliance: DisputeEvidenceEnhancedEvidenceVisaCompliance? = nil) {
+        self.mastercardCompliance = mastercardCompliance
+        self.visaCompellingEvidence3 = visaCompellingEvidence3
+        self.visaCompliance = visaCompliance
+    }
+}
+
+public struct DisputeEvidenceEnhancedEvidenceMastercardCompliance: Codable {
+    /// When set to true, indicates that you have submitted your acknowledgement of the Mastercard compliance dispute fee.
+    public var feeAcknowledged: Bool?
+
+    public init(feeAcknowledged: Bool? = nil) {
+        self.feeAcknowledged = feeAcknowledged
+    }
+}
+
+public struct DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3: Codable {
+    /// Disputed transaction details for Visa Compelling Evidence 3.0 evidence submission.
+    public var disputedTransaction: DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3DisputedTransaction?
+    /// List of exactly two prior undisputed transaction objects for Visa Compelling Evidence 3.0 evidence submission.
+    public var priorUndisputedTransactions: [DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3PriorUndisputedTransaction]?
+
+    public init(disputedTransaction: DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3DisputedTransaction? = nil,
+                priorUndisputedTransactions: [DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3PriorUndisputedTransaction]? = nil) {
+        self.disputedTransaction = disputedTransaction
+        self.priorUndisputedTransactions = priorUndisputedTransactions
+    }
+}
+
+public struct DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3DisputedTransaction: Codable {
+    /// User Account ID used to log into business platform. Must be recognizable by the user.
+    public var customerAccountId: String?
+    /// Unique identifier of the cardholder’s device derived from a combination of at least two hardware and software attributes. Must be at least 20 characters.
+    public var customerDeviceFingerprint: String?
+    /// Unique identifier of the cardholder’s device such as a device serial number (e.g., International Mobile Equipment Identity [IMEI]). Must be at least 15 characters.
+    public var customerDeviceId: String?
+    /// The email address of the customer.
+    public var customerEmailAddress: String?
+    /// The IP address that the customer used when making the purchase.
+    public var customerPurchaseIp: String?
+    /// Categorization of disputed payment.
+    public var merchandiseOrServices: DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3MerchandiseOrServices?
+    /// A description of the product or service that was sold.
+    public var productDescription: String?
+    /// The address to which a physical product was shipped. All fields are required for Visa Compelling Evidence 3.0 evidence submission.
+    public var shippingAddress: Address?
+
+    public init(customerAccountId: String? = nil,
+                customerDeviceFingerprint: String? = nil,
+                customerDeviceId: String? = nil,
+                customerEmailAddress: String? = nil,
+                customerPurchaseIp: String? = nil,
+                merchandiseOrServices: DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3MerchandiseOrServices? = nil,
+                productDescription: String? = nil,
+                shippingAddress: Address? = nil) {
+        self.customerAccountId = customerAccountId
+        self.customerDeviceFingerprint = customerDeviceFingerprint
+        self.customerDeviceId = customerDeviceId
+        self.customerEmailAddress = customerEmailAddress
+        self.customerPurchaseIp = customerPurchaseIp
+        self.merchandiseOrServices = merchandiseOrServices
+        self.productDescription = productDescription
+        self.shippingAddress = shippingAddress
+    }
+}
+
+public enum DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3MerchandiseOrServices: String, Codable {
+    case merchandise
+    case services
+}
+
+public struct DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3PriorUndisputedTransaction: Codable {
+    /// Stripe charge ID for the Visa Compelling Evidence 3.0 eligible prior undisputed transaction.
+    public var charge: String?
+    /// User Account ID used to log into business platform. Must be recognizable by the user.
+    public var customerAccountId: String?
+    /// Unique identifier of the cardholder’s device derived from a combination of at least two hardware and software attributes. Must be at least 20 characters.
+    public var customerDeviceFingerprint: String?
+    /// Unique identifier of the cardholder’s device such as a device serial number (e.g., International Mobile Equipment Identity [IMEI]). Must be at least 15 characters.
+    public var customerDeviceId: String?
+    /// The email address of the customer.
+    public var customerEmailAddress: String?
+    /// The IP address that the customer used when making the purchase.
+    public var customerPurchaseIp: String?
+    /// A description of the product or service that was sold.
+    public var productDescription: String?
+    /// The address to which a physical product was shipped. All fields are required for Visa Compelling Evidence 3.0 evidence submission.
+    public var shippingAddress: Address?
+
+    public init(charge: String? = nil,
+                customerAccountId: String? = nil,
+                customerDeviceFingerprint: String? = nil,
+                customerDeviceId: String? = nil,
+                customerEmailAddress: String? = nil,
+                customerPurchaseIp: String? = nil,
+                productDescription: String? = nil,
+                shippingAddress: Address? = nil) {
+        self.charge = charge
+        self.customerAccountId = customerAccountId
+        self.customerDeviceFingerprint = customerDeviceFingerprint
+        self.customerDeviceId = customerDeviceId
+        self.customerEmailAddress = customerEmailAddress
+        self.customerPurchaseIp = customerPurchaseIp
+        self.productDescription = productDescription
+        self.shippingAddress = shippingAddress
+    }
+}
+
+public struct DisputeEvidenceEnhancedEvidenceVisaCompliance: Codable {
+    /// When set to true, indicates that you have submitted your acknowledgement of the Visa compliance dispute fee.
+    public var feeAcknowledged: Bool?
+
+    public init(feeAcknowledged: Bool? = nil) {
+        self.feeAcknowledged = feeAcknowledged
     }
 }

@@ -18,6 +18,8 @@ public struct TerminalHardwareShippingMethod: Codable {
     public var name: TerminalHardwareShippingMethodName?
     /// String representing the object’s type. Objects of the same type share the same value.
     public var object: String
+    /// The hardware provider for this Shipping Method.
+    public var provider: TerminalHardwareShippingMethodProvider?
     /// The Shipping Method’s status.
     public var status: TerminalHardwareShippingMethodStatus?
     /// A UNIX timestamp, after which time this Shipping Method has a status of `unavailable` and it can’t be used for order creation. If absent, we have no plans to make this Shipping Method unavailable.
@@ -28,6 +30,7 @@ public struct TerminalHardwareShippingMethod: Codable {
                 estimatedDeliveryWindow: TerminalHardwareShippingMethodEstimatedDeliveryWindow? = nil,
                 name: TerminalHardwareShippingMethodName? = nil,
                 object: String,
+                provider: TerminalHardwareShippingMethodProvider? = nil,
                 status: TerminalHardwareShippingMethodStatus? = nil,
                 unavailableAfter: Date? = nil) {
         self.id = id
@@ -35,9 +38,15 @@ public struct TerminalHardwareShippingMethod: Codable {
         self.estimatedDeliveryWindow = estimatedDeliveryWindow
         self.name = name
         self.object = object
+        self.provider = provider
         self.status = status
         self.unavailableAfter = unavailableAfter
     }
+}
+
+public enum TerminalHardwareShippingMethodProvider: String, Codable {
+    /// The hardware is provided by Stripe.
+    case stripe
 }
 
 public struct TerminalHardwareShippingMethodEstimatedDeliveryWindow: Codable {
@@ -60,6 +69,8 @@ public enum TerminalHardwareShippingMethodName: String, Codable {
     case express
     /// Priority
     case priority
+    /// Freight
+    case freight
 }
 
 public enum TerminalHardwareShippingMethodStatus: String, Codable {

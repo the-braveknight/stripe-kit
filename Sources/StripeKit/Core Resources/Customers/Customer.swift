@@ -22,6 +22,12 @@ public struct Customer: Codable {
     public var metadata: [String: String]?
     /// The customers full name or business name.
     public var name: String?
+    /// The customer's business name. This may be up to 150 characters.
+    public var businessName: String?
+    /// The customer's individual (personal) name. This may be up to 150 characters.
+    public var individualName: String?
+    /// The ID of the Account that owns this Customer, if any.
+    public var customerAccount: String?
     /// The customers phone number.
     public var phone: String?
     /// Mailing and shipping address for the customer. Appears on invoices emailed to this customer.
@@ -73,6 +79,9 @@ public struct Customer: Codable {
                 email: String? = nil,
                 metadata: [String : String]? = nil,
                 name: String? = nil,
+                businessName: String? = nil,
+                individualName: String? = nil,
+                customerAccount: String? = nil,
                 phone: String? = nil,
                 shipping: ShippingLabel? = nil,
                 object: String,
@@ -100,6 +109,9 @@ public struct Customer: Codable {
         self.email = email
         self.metadata = metadata
         self.name = name
+        self.businessName = businessName
+        self.individualName = individualName
+        self.customerAccount = customerAccount
         self.phone = phone
         self.shipping = shipping
         self.object = object
@@ -131,19 +143,23 @@ public struct CustomerCashBalance: Codable {
     public var available: [String: Int]?
     /// The ID of the customer whose cash balance this object represents.
     public var customer: String?
+    /// The ID of the Account whose cash balance this object represents.
+    public var customerAccount: String?
     /// Has the value true if the object exists in live mode or the value false if the object exists in test mode.
     public var livemode: Bool
     /// A hash of settings for this cash balance.
     public var settings: CustomerCashBalanceSettings?
-    
+
     public init(object: String,
                 available: [String : Int]? = nil,
                 customer: String? = nil,
+                customerAccount: String? = nil,
                 livemode: Bool,
                 settings: CustomerCashBalanceSettings? = nil) {
         self.object = object
         self.available = available
         self.customer = customer
+        self.customerAccount = customerAccount
         self.livemode = livemode
         self.settings = settings
     }
@@ -197,9 +213,12 @@ public struct CustomerInvoiceSettingsCustomFields: Codable {
 public struct CustomerInvoiceSettingsRenderingOptions: Codable {
     /// How line-item prices and amounts will be displayed with respect to tax on invoice PDFs.
     public var amountTaxDisplay: String?
-    
-    public init(amountTaxDisplay: String? = nil) {
+    /// ID of the invoice rendering template to be used for this customer's invoices.
+    public var template: String?
+
+    public init(amountTaxDisplay: String? = nil, template: String? = nil) {
         self.amountTaxDisplay = amountTaxDisplay
+        self.template = template
     }
 }
 

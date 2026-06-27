@@ -72,6 +72,8 @@ public struct Charge: Codable {
     public var paymentMethod: String?
     /// Details about the payment method at the time of the transaction.
     public var paymentMethodDetails: ChargePaymentMethodDetails?
+    /// Details about the presentment amount and currency for this transaction.
+    public var presentmentDetails: ChargePresentmentDetails?
     /// Options to configure Radar. See Radar Session for more information.
     public var radarOptions: ChrageRadarOptions?
     /// This is the email address that the receipt for this charge was sent to.
@@ -134,6 +136,7 @@ public struct Charge: Codable {
                 paymentIntent: String? = nil,
                 paymentMethod: String? = nil,
                 paymentMethodDetails: ChargePaymentMethodDetails? = nil,
+                presentmentDetails: ChargePresentmentDetails? = nil,
                 radarOptions: ChrageRadarOptions? = nil,
                 receiptEmail: String? = nil,
                 receiptNumber: String? = nil,
@@ -180,6 +183,7 @@ public struct Charge: Codable {
         self._paymentIntent = Expandable(id: paymentIntent)
         self.paymentMethod = paymentMethod
         self.paymentMethodDetails = paymentMethodDetails
+        self.presentmentDetails = presentmentDetails
         self.radarOptions = radarOptions
         self.receiptEmail = receiptEmail
         self.receiptNumber = receiptNumber
@@ -217,6 +221,12 @@ public enum ChargeFraudDetailsReportType: String, Codable {
 }
 
 public struct ChargeOutcome: Codable {
+    /// An enumerated value providing a more detailed explanation on [how to proceed with an error](https://stripe.com/docs/declines#retrying-issuer-declines).
+    public var adviceCode: ChargeOutcomeAdviceCode?
+    /// For charges declined by the network, a 2 digit code which indicates the advice returned by the network on how to proceed with an error.
+    public var networkAdviceCode: String?
+    /// For charges declined by the network, an alphanumeric code which indicates the reason the charge failed.
+    public var networkDeclineCode: String?
     /// Possible values are `approved_by_network`, `declined_by_network`, `not_sent_to_network`, and `reversed_after_approval`. The value `reversed_after_approval` indicates the payment was [blocked by Stripe](https://stripe.com/docs/declines#blocked-payments) after bank authorization, and may temporarily appear as “pending” on a cardholder’s statement.
     public var networkStatus: ChargeOutcomeNetworkStatus?
     /// An enumerated value providing a more detailed explanation of the outcome’s `type`. Charges blocked by Radar’s default block rule have the value `highest_risk_level`. Charges placed in review by Radar’s default review rule have the value `elevated_risk_level`. Charges authorized, blocked, or placed in review by custom rules have the value `rule`. See [understanding declines](https://stripe.com/docs/declines) for more details.
@@ -232,13 +242,19 @@ public struct ChargeOutcome: Codable {
     /// Possible values are `authorized`, `manual_review`, `issuer_declined`, `blocked`, and `invalid`. See understanding declines and Radar reviews for details.
     public var type: ChargeOutcomeType?
     
-    public init(networkStatus: ChargeOutcomeNetworkStatus? = nil,
+    public init(adviceCode: ChargeOutcomeAdviceCode? = nil,
+                networkAdviceCode: String? = nil,
+                networkDeclineCode: String? = nil,
+                networkStatus: ChargeOutcomeNetworkStatus? = nil,
                 reason: String? = nil,
                 riskLevel: ChargeOutcomeRiskLevel? = nil,
                 riskScore: Int? = nil,
                 rule: String? = nil,
                 sellerMessage: String? = nil,
                 type: ChargeOutcomeType? = nil) {
+        self.adviceCode = adviceCode
+        self.networkAdviceCode = networkAdviceCode
+        self.networkDeclineCode = networkDeclineCode
         self.networkStatus = networkStatus
         self.reason = reason
         self.riskLevel = riskLevel
@@ -247,6 +263,12 @@ public struct ChargeOutcome: Codable {
         self.sellerMessage = sellerMessage
         self.type = type
     }
+}
+
+public enum ChargeOutcomeAdviceCode: String, Codable {
+    case confirmCardData = "confirm_card_data"
+    case doNotTryAgain = "do_not_try_again"
+    case tryAgainLater = "try_again_later"
 }
 
 public enum ChargeOutcomeNetworkStatus: String, Codable {
@@ -420,7 +442,53 @@ public struct ChargePaymentMethodDetails: Codable {
     public var wechatPay: ChargePaymentMethodDetailsWechatPay?
     /// If this is a zip payment, this hash contains a snapshot of the transaction specific details of the zip payment method.
     public var zip: ChargePaymentMethodDetailsZip?
-    
+    /// If this is a `alma` payment, this hash contains a snapshot of the transaction specific details of the `alma` payment method.
+    public var alma: ChargePaymentMethodDetailsAlma?
+    /// If this is a `amazon_pay` payment, this hash contains a snapshot of the transaction specific details of the `amazon_pay` payment method.
+    public var amazonPay: ChargePaymentMethodDetailsAmazonPay?
+    /// If this is a `billie` payment, this hash contains a snapshot of the transaction specific details of the `billie` payment method.
+    public var billie: ChargePaymentMethodDetailsBillie?
+    /// If this is a `bizum` payment, this hash contains a snapshot of the transaction specific details of the `bizum` payment method.
+    public var bizum: ChargePaymentMethodDetailsBizum?
+    /// If this is a `crypto` payment, this hash contains a snapshot of the transaction specific details of the `crypto` payment method.
+    public var crypto: ChargePaymentMethodDetailsCrypto?
+    /// If this is a `kakao_pay` payment, this hash contains a snapshot of the transaction specific details of the `kakao_pay` payment method.
+    public var kakaoPay: ChargePaymentMethodDetailsKakaoPay?
+    /// If this is a `kr_card` payment, this hash contains a snapshot of the transaction specific details of the `kr_card` payment method.
+    public var krCard: ChargePaymentMethodDetailsKrCard?
+    /// If this is a `mb_way` payment, this hash contains a snapshot of the transaction specific details of the `mb_way` payment method.
+    public var mbWay: ChargePaymentMethodDetailsMbWay?
+    /// If this is a `mobilepay` payment, this hash contains a snapshot of the transaction specific details of the `mobilepay` payment method.
+    public var mobilepay: ChargePaymentMethodDetailsMobilepay?
+    /// If this is a `naver_pay` payment, this hash contains a snapshot of the transaction specific details of the `naver_pay` payment method.
+    public var naverPay: ChargePaymentMethodDetailsNaverPay?
+    /// If this is a `nz_bank_account` payment, this hash contains a snapshot of the transaction specific details of the `nz_bank_account` payment method.
+    public var nzBankAccount: ChargePaymentMethodDetailsNZBankAccount?
+    /// If this is a `pay_by_bank` payment, this hash contains a snapshot of the transaction specific details of the `pay_by_bank` payment method.
+    public var payByBank: ChargePaymentMethodDetailsPayByBank?
+    /// If this is a `payco` payment, this hash contains a snapshot of the transaction specific details of the `payco` payment method.
+    public var payco: ChargePaymentMethodDetailsPayco?
+    /// If this is a `paypay` payment, this hash contains a snapshot of the transaction specific details of the `paypay` payment method.
+    public var paypay: ChargePaymentMethodDetailsPaypay?
+    /// If this is a `payto` payment, this hash contains a snapshot of the transaction specific details of the `payto` payment method.
+    public var payto: ChargePaymentMethodDetailsPayto?
+    /// If this is a `revolut_pay` payment, this hash contains a snapshot of the transaction specific details of the `revolut_pay` payment method.
+    public var revolutPay: ChargePaymentMethodDetailsRevolutPay?
+    /// If this is a `samsung_pay` payment, this hash contains a snapshot of the transaction specific details of the `samsung_pay` payment method.
+    public var samsungPay: ChargePaymentMethodDetailsSamsungPayPaymentMethod?
+    /// If this is a `satispay` payment, this hash contains a snapshot of the transaction specific details of the `satispay` payment method.
+    public var satispay: ChargePaymentMethodDetailsSatispay?
+    /// If this is a `scalapay` payment, this hash contains a snapshot of the transaction specific details of the `scalapay` payment method.
+    public var scalapay: ChargePaymentMethodDetailsScalapay?
+    /// If this is a `sunbit` payment, this hash contains a snapshot of the transaction specific details of the `sunbit` payment method.
+    public var sunbit: ChargePaymentMethodDetailsSunbit?
+    /// If this is a `swish` payment, this hash contains a snapshot of the transaction specific details of the `swish` payment method.
+    public var swish: ChargePaymentMethodDetailsSwish?
+    /// If this is a `twint` payment, this hash contains a snapshot of the transaction specific details of the `twint` payment method.
+    public var twint: ChargePaymentMethodDetailsTwint?
+    /// If this is a `upi` payment, this hash contains a snapshot of the transaction specific details of the `upi` payment method.
+    public var upi: ChargePaymentMethodDetailsUPI?
+
     public init(achCreditTransfer: ChargePaymentMethodDetailsACHCreditTransfer? = nil,
                 achDebit: ChargePaymentMethodDetailsACHDebit? = nil,
                 acssDebit: ChargePaymentMethodDetailsACSSDebit? = nil,
@@ -459,7 +527,30 @@ public struct ChargePaymentMethodDetails: Codable {
                 usBankAccount: ChargePaymentMethodDetailsUSBankAccount? = nil,
                 wechat: ChargePaymentMethodDetailsWechat? = nil,
                 wechatPay: ChargePaymentMethodDetailsWechatPay? = nil,
-                zip: ChargePaymentMethodDetailsZip? = nil) {
+                zip: ChargePaymentMethodDetailsZip? = nil,
+                alma: ChargePaymentMethodDetailsAlma? = nil,
+                amazonPay: ChargePaymentMethodDetailsAmazonPay? = nil,
+                billie: ChargePaymentMethodDetailsBillie? = nil,
+                bizum: ChargePaymentMethodDetailsBizum? = nil,
+                crypto: ChargePaymentMethodDetailsCrypto? = nil,
+                kakaoPay: ChargePaymentMethodDetailsKakaoPay? = nil,
+                krCard: ChargePaymentMethodDetailsKrCard? = nil,
+                mbWay: ChargePaymentMethodDetailsMbWay? = nil,
+                mobilepay: ChargePaymentMethodDetailsMobilepay? = nil,
+                naverPay: ChargePaymentMethodDetailsNaverPay? = nil,
+                nzBankAccount: ChargePaymentMethodDetailsNZBankAccount? = nil,
+                payByBank: ChargePaymentMethodDetailsPayByBank? = nil,
+                payco: ChargePaymentMethodDetailsPayco? = nil,
+                paypay: ChargePaymentMethodDetailsPaypay? = nil,
+                payto: ChargePaymentMethodDetailsPayto? = nil,
+                revolutPay: ChargePaymentMethodDetailsRevolutPay? = nil,
+                samsungPay: ChargePaymentMethodDetailsSamsungPayPaymentMethod? = nil,
+                satispay: ChargePaymentMethodDetailsSatispay? = nil,
+                scalapay: ChargePaymentMethodDetailsScalapay? = nil,
+                sunbit: ChargePaymentMethodDetailsSunbit? = nil,
+                swish: ChargePaymentMethodDetailsSwish? = nil,
+                twint: ChargePaymentMethodDetailsTwint? = nil,
+                upi: ChargePaymentMethodDetailsUPI? = nil) {
         self.achCreditTransfer = achCreditTransfer
         self.achDebit = achDebit
         self.acssDebit = acssDebit
@@ -499,6 +590,29 @@ public struct ChargePaymentMethodDetails: Codable {
         self.wechat = wechat
         self.wechatPay = wechatPay
         self.zip = zip
+        self.alma = alma
+        self.amazonPay = amazonPay
+        self.billie = billie
+        self.bizum = bizum
+        self.crypto = crypto
+        self.kakaoPay = kakaoPay
+        self.krCard = krCard
+        self.mbWay = mbWay
+        self.mobilepay = mobilepay
+        self.naverPay = naverPay
+        self.nzBankAccount = nzBankAccount
+        self.payByBank = payByBank
+        self.payco = payco
+        self.paypay = paypay
+        self.payto = payto
+        self.revolutPay = revolutPay
+        self.samsungPay = samsungPay
+        self.satispay = satispay
+        self.scalapay = scalapay
+        self.sunbit = sunbit
+        self.swish = swish
+        self.twint = twint
+        self.upi = upi
     }
 }
 
@@ -541,6 +655,42 @@ public enum ChargePaymentMethodDetailsType: String, Codable {
     case wechat
     case wechatPay = "wechat_pay"
     case zip
+    case alma
+    case amazonPay = "amazon_pay"
+    case billie
+    case bizum
+    case crypto
+    case kakaoPay = "kakao_pay"
+    case krCard = "kr_card"
+    case mbWay = "mb_way"
+    case mobilepay
+    case naverPay = "naver_pay"
+    case nzBankAccount = "nz_bank_account"
+    case payByBank = "pay_by_bank"
+    case payco
+    case paypay
+    case payto
+    case revolutPay = "revolut_pay"
+    case samsungPay = "samsung_pay"
+    case satispay
+    case scalapay
+    case sunbit
+    case swish
+    case twint
+    case upi
+}
+
+public struct ChargePresentmentDetails: Codable {
+    /// Amount intended to be collected by this payment, denominated in `presentmentCurrency`.
+    public var presentmentAmount: Int?
+    /// Currency presented to the customer during payment.
+    public var presentmentCurrency: Currency?
+
+    public init(presentmentAmount: Int? = nil,
+                presentmentCurrency: Currency? = nil) {
+        self.presentmentAmount = presentmentAmount
+        self.presentmentCurrency = presentmentCurrency
+    }
 }
 
 public struct ChrageRadarOptions: Codable {

@@ -364,11 +364,11 @@ public struct StripeInvoiceRoutes: InvoiceRoutes {
         }
         
         if let renderingOptions {
-            renderingOptions.forEach { body["rendering_options[\($0)]"] = $1 }
+            renderingOptions.forEach { body["rendering[\($0)]"] = $1 }
         }
         
         if let shippingCost {
-            shippingCost.forEach { body["shippping_cost[\($0)]"] = $1 }
+            shippingCost.forEach { body["shipping_cost[\($0)]"] = $1 }
         }
         
         if let shippingDetails {
@@ -494,11 +494,11 @@ public struct StripeInvoiceRoutes: InvoiceRoutes {
         }
         
         if let renderingOptions {
-            renderingOptions.forEach { body["rendering_options[\($0)]"] = $1 }
+            renderingOptions.forEach { body["rendering[\($0)]"] = $1 }
         }
         
         if let shippingCost {
-            shippingCost.forEach { body["shippping_cost[\($0)]"] = $1 }
+            shippingCost.forEach { body["shipping_cost[\($0)]"] = $1 }
         }
         
         if let shippingDetails {

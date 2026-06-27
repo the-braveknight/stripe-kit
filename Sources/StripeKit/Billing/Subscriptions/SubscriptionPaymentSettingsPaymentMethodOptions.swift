@@ -18,20 +18,36 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptions: Codable {
     public var customerBalance: SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalance?
     /// If paying by `konbini`, this sub-hash contains details about the Konbini payment method options to pass to the invoice’s PaymentIntent.
     public var konbini: SubscriptionPaymentSettingsPaymentMethodOptionsKonbini?
+    /// If paying by `payto`, this sub-hash contains details about the PayTo payment method options to pass to the invoice’s PaymentIntent.
+    public var payto: SubscriptionPaymentSettingsPaymentMethodOptionsPayto?
+    /// If paying by `pix`, this sub-hash contains details about the Pix payment method options to pass to the invoice’s PaymentIntent.
+    public var pix: SubscriptionPaymentSettingsPaymentMethodOptionsPix?
+    /// If paying by `sepa_debit`, this sub-hash contains details about the SEPA Direct Debit payment method options to pass to the invoice’s PaymentIntent.
+    public var sepaDebit: SubscriptionPaymentSettingsPaymentMethodOptionsSepaDebit?
+    /// If paying by `upi`, this sub-hash contains details about the UPI payment method options to pass to the invoice’s PaymentIntent.
+    public var upi: SubscriptionPaymentSettingsPaymentMethodOptionsUpi?
     /// If paying by `us_bank_account`, this sub-hash contains details about the ACH direct debit payment method options to pass to the invoice’s PaymentIntent.
     public var usBankAccount: SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccount?
-    
+
     public init(acssDebit: SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebit? = nil,
                 bancontact: SubscriptionPaymentSettingsPaymentMethodOptionsBancontact? = nil,
                 card: SubscriptionPaymentSettingsPaymentMethodOptionsCard? = nil,
                 customerBalance: SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalance? = nil,
                 konbini: SubscriptionPaymentSettingsPaymentMethodOptionsKonbini? = nil,
+                payto: SubscriptionPaymentSettingsPaymentMethodOptionsPayto? = nil,
+                pix: SubscriptionPaymentSettingsPaymentMethodOptionsPix? = nil,
+                sepaDebit: SubscriptionPaymentSettingsPaymentMethodOptionsSepaDebit? = nil,
+                upi: SubscriptionPaymentSettingsPaymentMethodOptionsUpi? = nil,
                 usBankAccount: SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccount? = nil) {
         self.acssDebit = acssDebit
         self.bancontact = bancontact
         self.card = card
         self.customerBalance = customerBalance
         self.konbini = konbini
+        self.payto = payto
+        self.pix = pix
+        self.sepaDebit = sepaDebit
+        self.upi = upi
         self.usBankAccount = usBankAccount
     }
 }
@@ -108,10 +124,15 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsCardMandateOptions:
     public var amount: Int?
     /// One of `fixed` or `maximum`. If `fixed`, the `amount` param refers to the exact amount to be charged in future payments. If `maximum`, the `amount` charged can be up to the value passed for the `amount` param.
     public var amountType: SubscriptionPaymentSettingsPaymentMethodOptionsCardMandateOptionsAmountType?
-    
-    public init(amount: Int? = nil, amountType: SubscriptionPaymentSettingsPaymentMethodOptionsCardMandateOptionsAmountType? = nil) {
+    /// A description of the mandate or subscription that is meant to be displayed to the customer.
+    public var description: String?
+
+    public init(amount: Int? = nil,
+                amountType: SubscriptionPaymentSettingsPaymentMethodOptionsCardMandateOptionsAmountType? = nil,
+                description: String? = nil) {
         self.amount = amount
         self.amountType = amountType
+        self.description = description
     }
 }
 
@@ -127,6 +148,8 @@ public enum SubscriptionPaymentSettingsPaymentMethodOptionsCardRequestThreedSecu
     case automatic
     /// Requires 3D Secure authentication if it is available.
     case any
+    /// Requests that Stripe attempt to challenge the customer for authentication during the transaction.
+    case challenge
 }
 
 // MARK: Customer Balance
@@ -170,6 +193,7 @@ public enum SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceBankTr
     case gbBankTransfer = "gb_bank_transfer"
     case jpBankTransfer = "jp_bank_transfer"
     case mxBankTransfer = "mx_bank_transfer"
+    case usBankTransfer = "us_bank_transfer"
 }
 
 public enum SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceFundingType: String, Codable {
@@ -196,12 +220,34 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccount: Coda
 }
 
 public struct SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnections: Codable {
+    /// Provide filters for the linked accounts that the customer can select for the payment method.
+    public var filters: SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFilters?
     /// The list of permissions to request. The `payment_method` permission must be included.
     public var permissions: [SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPermission]?
-    
-    public init(permissions: [SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPermission]? = nil) {
+    /// Data features requested to be retrieved upon account creation.
+    public var prefetch: [SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPrefetch]?
+
+    public init(filters: SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFilters? = nil,
+                permissions: [SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPermission]? = nil,
+                prefetch: [SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPrefetch]? = nil) {
+        self.filters = filters
         self.permissions = permissions
+        self.prefetch = prefetch
     }
+}
+
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFilters: Codable {
+    /// The account subcategories to use to filter for selectable accounts. Valid subcategories are `checking` and `savings`.
+    public var accountSubcategories: [SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFiltersAccountSubcategory]?
+
+    public init(accountSubcategories: [SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFiltersAccountSubcategory]? = nil) {
+        self.accountSubcategories = accountSubcategories
+    }
+}
+
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFiltersAccountSubcategory: String, Codable {
+    case checking
+    case savings
 }
 
 public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPermission: String, Codable {
@@ -209,7 +255,18 @@ public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancia
     case paymentMethod = "payment_method"
     /// Allows accessing balance data from the account.
     case balances
+    /// Allows accessing ownership data from the account.
+    case ownership
     /// Allows accessing transactions data from the account.
+    case transactions
+}
+
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPrefetch: String, Codable {
+    /// Requests to prefetch balance data on accounts collected in this session.
+    case balances
+    /// Requests to prefetch ownership data on accounts collected in this session.
+    case ownership
+    /// Requests to prefetch transaction data on accounts collected in this session.
     case transactions
 }
 
@@ -220,4 +277,141 @@ public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountVerifica
     case instant
     /// Verification using microdeposits. Cannot be used with Stripe Checkout or Hosted Invoices.
     case microdeposits
+}
+
+// MARK: PayTo
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsPayto: Codable {
+    /// Additional fields for Mandate creation.
+    public var mandateOptions: SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptions?
+
+    public init(mandateOptions: SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptions? = nil) {
+        self.mandateOptions = mandateOptions
+    }
+}
+
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptions: Codable {
+    /// Amount that will be collected. It is required when `amount_type` is `fixed`.
+    public var amount: Int?
+    /// The type of amount that will be collected. The amount charged must be exact or up to the value of `amount` param for `fixed` or `maximum` type respectively.
+    public var amountType: SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptionsAmountType?
+    /// The purpose for which payments are made. Defaults to `retail`.
+    public var purpose: SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptionsPurpose?
+
+    public init(amount: Int? = nil,
+                amountType: SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptionsAmountType? = nil,
+                purpose: SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptionsPurpose? = nil) {
+        self.amount = amount
+        self.amountType = amountType
+        self.purpose = purpose
+    }
+}
+
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptionsAmountType: String, Codable {
+    case fixed
+    case maximum
+}
+
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptionsPurpose: String, Codable {
+    case dependantSupport = "dependant_support"
+    case government
+    case loan
+    case mortgage
+    case other
+    case pension
+    case personal
+    case retail
+    case salary
+    case tax
+    case utility
+}
+
+// MARK: Pix
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsPix: Codable {
+    /// Determines the amount of time, in seconds, that the customer has to authorize the payment after the invoice is finalized.
+    public var expiresAfterSeconds: Int?
+    /// Additional fields for Mandate creation.
+    public var mandateOptions: SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptions?
+
+    public init(expiresAfterSeconds: Int? = nil,
+                mandateOptions: SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptions? = nil) {
+        self.expiresAfterSeconds = expiresAfterSeconds
+        self.mandateOptions = mandateOptions
+    }
+}
+
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptions: Codable {
+    /// Amount to be charged for future payments.
+    public var amount: Int?
+    /// Determines if the amount includes the IOF tax.
+    public var amountIncludesIof: SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptionsAmountIncludesIof?
+    /// Date, in YYYY-MM-DD format, after which payments will not be collected.
+    public var endDate: String?
+    /// Schedule at which the future payments will be charged.
+    public var paymentSchedule: SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptionsPaymentSchedule?
+
+    public init(amount: Int? = nil,
+                amountIncludesIof: SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptionsAmountIncludesIof? = nil,
+                endDate: String? = nil,
+                paymentSchedule: SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptionsPaymentSchedule? = nil) {
+        self.amount = amount
+        self.amountIncludesIof = amountIncludesIof
+        self.endDate = endDate
+        self.paymentSchedule = paymentSchedule
+    }
+}
+
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptionsAmountIncludesIof: String, Codable {
+    /// The amount includes the IOF tax.
+    case always
+    /// The amount does not include the IOF tax.
+    case never
+}
+
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptionsPaymentSchedule: String, Codable {
+    case halfyearly
+    case monthly
+    case quarterly
+    case weekly
+    case yearly
+}
+
+// MARK: SEPA Debit
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsSepaDebit: Codable {
+    public init() {}
+}
+
+// MARK: UPI
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsUpi: Codable {
+    /// Additional fields for Mandate creation.
+    public var mandateOptions: SubscriptionPaymentSettingsPaymentMethodOptionsUpiMandateOptions?
+
+    public init(mandateOptions: SubscriptionPaymentSettingsPaymentMethodOptionsUpiMandateOptions? = nil) {
+        self.mandateOptions = mandateOptions
+    }
+}
+
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsUpiMandateOptions: Codable {
+    /// Amount to be charged for future payments.
+    public var amount: Int?
+    /// One of `fixed` or `maximum`. If `fixed`, the `amount` param refers to the exact amount to be charged in future payments. If `maximum`, the amount charged can be up to the value passed for the `amount` param.
+    public var amountType: SubscriptionPaymentSettingsPaymentMethodOptionsUpiMandateOptionsAmountType?
+    /// A description of the mandate or subscription that is meant to be displayed to the customer.
+    public var description: String?
+    /// End date of the mandate or subscription. If not provided, the mandate will be active until canceled.
+    public var endDate: Date?
+
+    public init(amount: Int? = nil,
+                amountType: SubscriptionPaymentSettingsPaymentMethodOptionsUpiMandateOptionsAmountType? = nil,
+                description: String? = nil,
+                endDate: Date? = nil) {
+        self.amount = amount
+        self.amountType = amountType
+        self.description = description
+        self.endDate = endDate
+    }
+}
+
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsUpiMandateOptionsAmountType: String, Codable {
+    case fixed
+    case maximum
 }

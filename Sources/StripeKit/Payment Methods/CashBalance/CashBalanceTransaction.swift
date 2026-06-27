@@ -12,6 +12,8 @@ public struct CashBalanceTransaction: Codable {
     public var id: String
     /// String representing the object’s type. Objects of the same type share the same value.
     public var object: String
+    /// If this is a `type=adjusted_for_overdraft` transaction, contains information about how funds were adjusted.
+    public var adjustedForOverdraft: CashBalanceTransactionAdjustedForOverdraft?
     /// If this is a `type=applied_to_payment` transaction, contains information about how funds were applied.
     public var appliedToPayment: CashBalanceTransactionAppliedToPayment?
     /// Time at which the object was created. Measured in seconds since the Unix epoch.
@@ -20,6 +22,8 @@ public struct CashBalanceTransaction: Codable {
     public var currency: Currency?
     /// The customer whose available cash balance changed as a result of this transaction.
     @Expandable<Customer> public var customer: String?
+    /// The ID of the account representing a customer whose available cash balance changed as a result of this transaction.
+    public var customerAccount: String?
     /// The total available cash balance for the specified currency after this transaction was applied. Represented in the smallest currency unit.
     public var endingBalance: Int?
     /// If this is a`type=funded` transaction, contains information about the funding.
@@ -30,37 +34,67 @@ public struct CashBalanceTransaction: Codable {
     public var netAmount: Int?
     /// If this is a `type=refunded_from_payment` transaction, contains information about the source of the refund.
     public var refundedFromPayment: CashBalanceTransactionRefundedFromPayment?
-    /// The type of the cash balance transaction. One of `applied_to_payment`, `unapplied_from_payment`, `refunded_from_payment`, `funded`, `return_initiated`, or `return_canceled`. New types may be added in future. See Customer Balance to learn more about these types.
+    /// If this is a `type=transferred_to_balance` transaction, contains the balance transaction linked to the transfer.
+    public var transferredToBalance: CashBalanceTransactionTransferredToBalance?
+    /// The type of the cash balance transaction. One of `adjusted_for_overdraft`, `applied_to_payment`, `funded`, `funding_reversed`, `refunded_from_payment`, `return_canceled`, `return_initiated`, `transferred_to_balance`, or `unapplied_from_payment`. New types may be added in future. See Customer Balance to learn more about these types.
     public var type: String?
     /// If this is a `type=unapplied_from_payment` transaction, contains information about how funds were unapplied.
     public var unappliedFromPayment: CashBalanceTransactionUnappliedFromPayment?
-    
+
     public init(id: String,
                 object: String,
+                adjustedForOverdraft: CashBalanceTransactionAdjustedForOverdraft? = nil,
                 appliedToPayment: CashBalanceTransactionAppliedToPayment? = nil,
                 created: Date,
                 currency: Currency? = nil,
                 customer: String? = nil,
+                customerAccount: String? = nil,
                 endingBalance: Int? = nil,
                 funded: CashBalanceTransactionFunded? = nil,
                 livemode: Bool,
                 netAmount: Int? = nil,
                 refundedFromPayment: CashBalanceTransactionRefundedFromPayment? = nil,
+                transferredToBalance: CashBalanceTransactionTransferredToBalance? = nil,
                 type: String? = nil,
                 unappliedFromPayment: CashBalanceTransactionUnappliedFromPayment? = nil) {
         self.id = id
         self.object = object
+        self.adjustedForOverdraft = adjustedForOverdraft
         self.appliedToPayment = appliedToPayment
         self.created = created
         self.currency = currency
         self._customer = Expandable(id: customer)
+        self.customerAccount = customerAccount
         self.endingBalance = endingBalance
         self.funded = funded
         self.livemode = livemode
         self.netAmount = netAmount
         self.refundedFromPayment = refundedFromPayment
+        self.transferredToBalance = transferredToBalance
         self.type = type
         self.unappliedFromPayment = unappliedFromPayment
+    }
+}
+
+public struct CashBalanceTransactionAdjustedForOverdraft: Codable {
+    /// The Balance Transaction that corresponds to funds taken out of your Stripe balance.
+    @Expandable<BalanceTransaction> public var balanceTransaction: String?
+    /// The Cash Balance Transaction that brought the customer balance negative, triggering the clawback of funds.
+    @Expandable<CashBalanceTransaction> public var linkedTransaction: String?
+
+    public init(balanceTransaction: String? = nil,
+                linkedTransaction: String? = nil) {
+        self._balanceTransaction = Expandable(id: balanceTransaction)
+        self._linkedTransaction = Expandable(id: linkedTransaction)
+    }
+}
+
+public struct CashBalanceTransactionTransferredToBalance: Codable {
+    /// The Balance Transaction that corresponds to funds transferred to your Stripe balance.
+    @Expandable<BalanceTransaction> public var balanceTransaction: String?
+
+    public init(balanceTransaction: String? = nil) {
+        self._balanceTransaction = Expandable(id: balanceTransaction)
     }
 }
 
@@ -85,17 +119,29 @@ public struct CashBalanceTransactionFunded: Codable {
 public struct CashBalanceTransactionFundedBankTransfer: Codable {
     /// EU-specific details of the bank transfer.
     public var euBankTransfer: CashBalanceTransactionFundedBankTransferEUBankTransfer?
+    /// GB-specific details of the bank transfer.
+    public var gbBankTransfer: CashBalanceTransactionFundedBankTransferGBBankTransfer?
+    /// JP-specific details of the bank transfer.
+    public var jpBankTransfer: CashBalanceTransactionFundedBankTransferJPBankTransfer?
     /// The user-supplied reference field on the bank transfer.
     public var reference: String?
-    /// The funding method type used to fund the customer balance. Permitted values include: `eu_bank_transfer`, `gb_bank_transfer`, `jp_bank_transfer`, or `mx_bank_transfer`.
+    /// The funding method type used to fund the customer balance. Permitted values include: `eu_bank_transfer`, `gb_bank_transfer`, `jp_bank_transfer`, `mx_bank_transfer`, or `us_bank_transfer`.
     public var type: CashBalanceTransactionFundedBankTransferType?
-    
+    /// US-specific details of the bank transfer.
+    public var usBankTransfer: CashBalanceTransactionFundedBankTransferUSBankTransfer?
+
     public init(euBankTransfer: CashBalanceTransactionFundedBankTransferEUBankTransfer? = nil,
+                gbBankTransfer: CashBalanceTransactionFundedBankTransferGBBankTransfer? = nil,
+                jpBankTransfer: CashBalanceTransactionFundedBankTransferJPBankTransfer? = nil,
                 reference: String? = nil,
-                type: CashBalanceTransactionFundedBankTransferType? = nil) {
+                type: CashBalanceTransactionFundedBankTransferType? = nil,
+                usBankTransfer: CashBalanceTransactionFundedBankTransferUSBankTransfer? = nil) {
         self.euBankTransfer = euBankTransfer
+        self.gbBankTransfer = gbBankTransfer
+        self.jpBankTransfer = jpBankTransfer
         self.reference = reference
         self.type = type
+        self.usBankTransfer = usBankTransfer
     }
 }
 
@@ -108,6 +154,8 @@ public enum CashBalanceTransactionFundedBankTransferType: String, Codable {
     case jpBankTransfer = "jp_bank_transfer"
     /// A bank transfer of type `mx_bank_transfer`
     case mxBankTransfer = "mx_bank_transfer"
+    /// A bank transfer of type `us_bank_transfer`
+    case usBankTransfer = "us_bank_transfer"
 }
 
 public struct CashBalanceTransactionFundedBankTransferEUBankTransfer: Codable {
@@ -117,7 +165,7 @@ public struct CashBalanceTransactionFundedBankTransferEUBankTransfer: Codable {
     public var ibanLast4: String?
     /// The full name of the sender, as supplied by the sending bank.
     public var senderName: String?
-    
+
     public init(bic: String? = nil,
                 ibanLast4: String? = nil,
                 senderName: String? = nil) {
@@ -125,6 +173,62 @@ public struct CashBalanceTransactionFundedBankTransferEUBankTransfer: Codable {
         self.ibanLast4 = ibanLast4
         self.senderName = senderName
     }
+}
+
+public struct CashBalanceTransactionFundedBankTransferGBBankTransfer: Codable {
+    /// The last 4 digits of the account number of the sender of the funding.
+    public var accountNumberLast4: String?
+    /// The full name of the sender, as supplied by the sending bank.
+    public var senderName: String?
+    /// The sort code of the bank of the sender of the funding.
+    public var sortCode: String?
+
+    public init(accountNumberLast4: String? = nil,
+                senderName: String? = nil,
+                sortCode: String? = nil) {
+        self.accountNumberLast4 = accountNumberLast4
+        self.senderName = senderName
+        self.sortCode = sortCode
+    }
+}
+
+public struct CashBalanceTransactionFundedBankTransferJPBankTransfer: Codable {
+    /// The name of the bank of the sender of the funding.
+    public var senderBank: String?
+    /// The name of the bank branch of the sender of the funding.
+    public var senderBranch: String?
+    /// The full name of the sender, as supplied by the sending bank.
+    public var senderName: String?
+
+    public init(senderBank: String? = nil,
+                senderBranch: String? = nil,
+                senderName: String? = nil) {
+        self.senderBank = senderBank
+        self.senderBranch = senderBranch
+        self.senderName = senderName
+    }
+}
+
+public struct CashBalanceTransactionFundedBankTransferUSBankTransfer: Codable {
+    /// The banking network used for this funding.
+    public var network: CashBalanceTransactionFundedBankTransferUSBankTransferNetwork?
+    /// The full name of the sender, as supplied by the sending bank.
+    public var senderName: String?
+
+    public init(network: CashBalanceTransactionFundedBankTransferUSBankTransferNetwork? = nil,
+                senderName: String? = nil) {
+        self.network = network
+        self.senderName = senderName
+    }
+}
+
+public enum CashBalanceTransactionFundedBankTransferUSBankTransferNetwork: String, Codable {
+    /// An ACH transfer.
+    case ach
+    /// A domestic US wire transfer.
+    case domesticWireUs = "domestic_wire_us"
+    /// A SWIFT transfer.
+    case swift
 }
 
 public struct CashBalanceTransactionRefundedFromPayment: Codable {

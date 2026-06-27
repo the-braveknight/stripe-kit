@@ -17,13 +17,17 @@ public struct CustomerBalanceTransaction: Codable {
     public var currency: Currency?
     /// The ID of the customer the transaction belongs to.
     @Expandable<Customer> public var customer: String?
+    /// The account (if any) the customer is associated with.
+    public var customerAccount: String?
+    /// The ID of the checkout session (if any) related to the transaction.
+    @Expandable<Session> public var checkoutSession: String?
     /// An arbitrary string attached to the object. Often useful for displaying to users.
     public var description: String?
     /// The customer’s balance after the transaction was applied. A negative value decreases the amount due on the customer’s next invoice. A positive value increases the amount due on the customer’s next invoice.
     public var endingBalance: Int?
     /// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
     public var metadata: [String: String]?
-    /// Transaction type: `adjustment`, `applied_to_invoice`, `credit_note`, `initial`, `invoice_too_large`, `invoice_too_small`, `unapplied_from_invoice`, or `unspent_receiver_credit`. See the Customer Balance page to learn more about transaction types.
+    /// Transaction type: `adjustment`, `applied_to_invoice`, `checkout_session_subscription_payment`, `checkout_session_subscription_payment_canceled`, `credit_note`, `initial`, `invoice_overpaid`, `invoice_too_large`, `invoice_too_small`, `migration`, `unapplied_from_invoice`, or `unspent_receiver_credit`. See the Customer Balance page to learn more about transaction types.
     public var type: CustomerBalanceTransactionType?
     /// String representing the object’s type. Objects of the same type share the same value.
     public var object: String
@@ -40,6 +44,8 @@ public struct CustomerBalanceTransaction: Codable {
                 amount: Int? = nil,
                 currency: Currency? = nil,
                 customer: String? = nil,
+                customerAccount: String? = nil,
+                checkoutSession: String? = nil,
                 description: String? = nil,
                 endingBalance: Int? = nil,
                 metadata: [String : String]? = nil,
@@ -53,6 +59,8 @@ public struct CustomerBalanceTransaction: Codable {
         self.amount = amount
         self.currency = currency
         self._customer = Expandable(id: customer)
+        self.customerAccount = customerAccount
+        self._checkoutSession = Expandable(id: checkoutSession)
         self.description = description
         self.endingBalance = endingBalance
         self.metadata = metadata
@@ -68,11 +76,14 @@ public struct CustomerBalanceTransaction: Codable {
 public enum CustomerBalanceTransactionType: String, Codable {
     case adjustment
     case appliedToInvoice = "applied_to_invoice"
+    case checkoutSessionSubscriptionPayment = "checkout_session_subscription_payment"
+    case checkoutSessionSubscriptionPaymentCanceled = "checkout_session_subscription_payment_canceled"
     case creditNote = "credit_note"
     case initial
     case invoiceOverpaid = "invoice_overpaid"
     case invoiceTooLarge = "invoice_too_large"
     case invoiceTooSmall = "invoice_too_small"
+    case migration
     case unspentReceiverCredit = "unspent_receiver_credit"
     case unappliedFromInvoice = "unapplied_from_invoice"
 }

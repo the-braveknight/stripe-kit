@@ -15,19 +15,23 @@ public struct CashBalance: Codable {
     public var available: [String: Int]?
     /// The ID of the customer whose cash balance this object represents.
     public var customer: String?
+    /// The ID of the account representing the customer whose cash balance this object represents.
+    public var customerAccount: String?
     /// Has the value true if the object exists in live mode or the value false if the object exists in test mode.
     public var livemode: Bool?
     /// A hash of settings for this cash balance.
     public var settings: CashBalanceSettings?
-    
+
     public init(object: String,
                 available: [String: Int]? = nil,
                 customer: String? = nil,
+                customerAccount: String? = nil,
                 livemode: Bool? = nil,
                 settings: CashBalanceSettings? = nil) {
         self.object = object
         self.available = available
         self.customer = customer
+        self.customerAccount = customerAccount
         self.livemode = livemode
         self.settings = settings
     }
@@ -35,12 +39,19 @@ public struct CashBalance: Codable {
 
 public struct CashBalanceSettings: Codable {
     /// The configuration for how funds that land in the customer cash balance are reconciled.
-    public var reconciliationMode: String?
+    public var reconciliationMode: CashBalanceSettingsReconciliationMode?
     /// A flag to indicate if reconciliation mode returned is the user’s default or is specific to this customer cash balance.
     public var usingMerchantDefault: Bool?
-    
-    public init(reconciliationMode: String? = nil, usingMerchantDefault: Bool? = nil) {
+
+    public init(reconciliationMode: CashBalanceSettingsReconciliationMode? = nil, usingMerchantDefault: Bool? = nil) {
         self.reconciliationMode = reconciliationMode
         self.usingMerchantDefault = usingMerchantDefault
     }
+}
+
+public enum CashBalanceSettingsReconciliationMode: String, Codable {
+    /// Funds are automatically reconciled.
+    case automatic
+    /// Funds are manually reconciled.
+    case manual
 }

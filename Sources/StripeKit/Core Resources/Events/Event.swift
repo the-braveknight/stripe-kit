@@ -22,6 +22,8 @@ public struct Event: Codable {
     public var object: String
     /// The connected account that originated the event.
     public var account: String?
+    /// The authentication context needed to fetch the event or related object.
+    public var context: String?
     /// Time at which the object was created. Measured in seconds since the Unix epoch.
     public var created: Date?
     /// Has the value true if the object exists in live mode or the value false if the object exists in test mode.
@@ -36,6 +38,7 @@ public struct Event: Codable {
                 type: EventType? = nil,
                 object: String,
                 account: String? = nil,
+                context: String? = nil,
                 created: Date? = nil,
                 livemode: Bool? = nil,
                 pendingWebhooks: Int? = nil) {
@@ -46,6 +49,7 @@ public struct Event: Codable {
         self.type = type
         self.object = object
         self.account = account
+        self.context = context
         self.created = created
         self.livemode = livemode
         self.pendingWebhooks = pendingWebhooks

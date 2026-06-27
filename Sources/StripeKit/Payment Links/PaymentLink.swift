@@ -24,6 +24,8 @@ public struct PaymentLink: Codable {
     public var afterCompletion: PaymentLinkAfterCompletion?
     /// Whether user redeemable promotion codes are enabled.
     public var allowPromotionCodes: Bool?
+    /// The ID of the Connect application that created the Payment Link.
+    @Expandable<ConnectApplication> public var application: String?
     /// The amount of the application fee (if any) that will be requested to be applied to the payment and transferred to the application owner’s Stripe account.
     public var applicationFeeAmount: Int?
     /// This represents the percentage of the subscription invoice subtotal that will be transferred to the application owner’s Stripe account.
@@ -42,20 +44,32 @@ public struct PaymentLink: Codable {
     public var customText: PaymentLinkCustomText?
     /// Configuration for Customer creation during checkout.
     public var customerCreation: PaymentLinkCustomerCreation?
+    /// The custom message to be displayed to a customer when a payment link is no longer active.
+    public var inactiveMessage: String?
     /// Configuration for creating invoice for payment mode payment links.
     public var invoiceCreation: PaymentLinkInvoiceCreation?
     /// Has the value true if the object exists in live mode or the value false if the object exists in test mode.
     public var livemode: Bool?
+    /// Settings related to Managed Payments.
+    public var managedPayments: PaymentLinkManagedPayments?
+    /// Details on the collection of the customer's name.
+    public var nameCollection: PaymentLinkNameCollection?
     /// The account on behalf of which to charge. See the Connect documentation for details.
     @Expandable<ConnectAccount> public var onBehalfOf: String?
+    /// The optional items presented to the customer at checkout.
+    public var optionalItems: [PaymentLinkOptionalItem]?
     /// Indicates the parameters to be passed to PaymentIntent creation during checkout.
     public var paymentIntentData: PaymentLinkPaymentIntentData?
     /// Configuration for collecting a payment method during checkout.
     public var paymentMethodCollection: PaymentLinkPaymentMethodCollection?
+    /// Payment-method-specific configuration.
+    public var paymentMethodOptions: PaymentLinkPaymentMethodOptions?
     /// The list of payment method types that customers can use. When `null`, Stripe will dynamically show relevant payment methods you’ve enabled in your payment method settings.
     public var paymentMethodTypes: [String]?
     /// Controls phone number collection settings during checkout.
     public var phoneNumberCollection: PaymentLinkPhoneNumberCollection?
+    /// Settings that restrict the usage of a payment link.
+    public var restrictions: PaymentLinkRestrictions?
     /// Configuration for collecting the customer’s shipping address.
     public var shippingAddressCollection: PaymentLinkShippingAddressCollection?
     /// The shipping rate options applied to the session.
@@ -77,6 +91,7 @@ public struct PaymentLink: Codable {
                 object: String,
                 afterCompletion: PaymentLinkAfterCompletion? = nil,
                 allowPromotionCodes: Bool? = nil,
+                application: String? = nil,
                 applicationFeeAmount: Int? = nil,
                 applicationFeePercent: Decimal? = nil,
                 automaticTax: PaymentLinkAutomaticTax? = nil,
@@ -86,13 +101,19 @@ public struct PaymentLink: Codable {
                 customFields: [PaymentLinkCustomField]? = nil,
                 customText: PaymentLinkCustomText? = nil,
                 customerCreation: PaymentLinkCustomerCreation? = nil,
+                inactiveMessage: String? = nil,
                 invoiceCreation: PaymentLinkInvoiceCreation? = nil,
                 livemode: Bool? = nil,
+                managedPayments: PaymentLinkManagedPayments? = nil,
+                nameCollection: PaymentLinkNameCollection? = nil,
                 onBehalfOf: String? = nil,
+                optionalItems: [PaymentLinkOptionalItem]? = nil,
                 paymentIntentData: PaymentLinkPaymentIntentData? = nil,
                 paymentMethodCollection: PaymentLinkPaymentMethodCollection? = nil,
+                paymentMethodOptions: PaymentLinkPaymentMethodOptions? = nil,
                 paymentMethodTypes: [String]? = nil,
                 phoneNumberCollection: PaymentLinkPhoneNumberCollection? = nil,
+                restrictions: PaymentLinkRestrictions? = nil,
                 shippingAddressCollection: PaymentLinkShippingAddressCollection? = nil,
                 shippingOptions: [PaymentLinkShippingOption]? = nil,
                 submitType: PaymentLinkSubmitType? = nil,
@@ -107,6 +128,7 @@ public struct PaymentLink: Codable {
         self.object = object
         self.afterCompletion = afterCompletion
         self.allowPromotionCodes = allowPromotionCodes
+        self._application = Expandable(id: application)
         self.applicationFeeAmount = applicationFeeAmount
         self.applicationFeePercent = applicationFeePercent
         self.automaticTax = automaticTax
@@ -116,13 +138,19 @@ public struct PaymentLink: Codable {
         self.customFields = customFields
         self.customText = customText
         self.customerCreation = customerCreation
+        self.inactiveMessage = inactiveMessage
         self.invoiceCreation = invoiceCreation
         self.livemode = livemode
+        self.managedPayments = managedPayments
+        self.nameCollection = nameCollection
         self._onBehalfOf = Expandable(id: onBehalfOf)
+        self.optionalItems = optionalItems
         self.paymentIntentData = paymentIntentData
         self.paymentMethodCollection = paymentMethodCollection
+        self.paymentMethodOptions = paymentMethodOptions
         self.paymentMethodTypes = paymentMethodTypes
         self.phoneNumberCollection = phoneNumberCollection
+        self.restrictions = restrictions
         self.shippingAddressCollection = shippingAddressCollection
         self.shippingOptions = shippingOptions
         self.submitType = submitType
@@ -151,13 +179,15 @@ public struct PaymentLinkLineItem: Codable {
     public var description: String?
     /// The discounts applied to the line item. This field is not included by default. To include it in the response, expand the `discounts` field.
     public var discounts: [PaymentLinkLineItemDiscount]?
+    /// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
+    public var metadata: [String: String]?
     /// The price used to generate the line item.
     public var price: Price?
     /// The quantity of products being purchased.
     public var quantity: Int?
     /// The taxes applied to the line item. This field is not included by default. To include it in the response, expand the `taxes` field.
     public var taxes: [PaymentLinkLineItemTax]?
-    
+
     public init(id: String,
                 object: String,
                 amountDiscount: Int? = nil,
@@ -167,6 +197,7 @@ public struct PaymentLinkLineItem: Codable {
                 currency: Currency? = nil,
                 description: String? = nil,
                 discounts: [PaymentLinkLineItemDiscount]? = nil,
+                metadata: [String: String]? = nil,
                 price: Price? = nil,
                 quantity: Int? = nil,
                 taxes: [PaymentLinkLineItemTax]? = nil) {
@@ -179,6 +210,7 @@ public struct PaymentLinkLineItem: Codable {
         self.currency = currency
         self.description = description
         self.discounts = discounts
+        self.metadata = metadata
         self.price = price
         self.quantity = quantity
         self.taxes = taxes
@@ -249,10 +281,10 @@ public struct PaymentLinkAfterCompletion: Codable {
 
 public struct PaymentLinkAfterCompletionHostedConfirmation: Codable {
     /// The custom message that is displayed to the customer after the purchase is complete.
-    public var message: String?
-    
-    public init(message: String? = nil) {
-        self.message = message
+    public var customMessage: String?
+
+    public init(customMessage: String? = nil) {
+        self.customMessage = customMessage
     }
 }
 
@@ -275,10 +307,32 @@ public enum PaymentLinkAfterCompletionType: String, Codable {
 public struct PaymentLinkAutomaticTax: Codable {
     /// If `true`, tax will be calculated automatically using the customer’s location.
     public var enabled: Bool?
-    
-    public init(enabled: Bool? = nil) {
+    /// The account that's liable for tax. If set, the business address and tax registrations required to perform the tax calculation are loaded from this account. The tax transaction is returned in the report of the connected account.
+    public var liability: PaymentLinkAutomaticTaxLiability?
+
+    public init(enabled: Bool? = nil, liability: PaymentLinkAutomaticTaxLiability? = nil) {
         self.enabled = enabled
+        self.liability = liability
     }
+}
+
+public struct PaymentLinkAutomaticTaxLiability: Codable {
+    /// The connected account being referenced when `type` is `account`.
+    @Expandable<ConnectAccount> public var account: String?
+    /// Type of the account referenced.
+    public var type: PaymentLinkAutomaticTaxLiabilityType?
+
+    public init(account: String? = nil, type: PaymentLinkAutomaticTaxLiabilityType? = nil) {
+        self._account = Expandable(id: account)
+        self.type = type
+    }
+}
+
+public enum PaymentLinkAutomaticTaxLiabilityType: String, Codable {
+    /// Indicates that the account being referenced is a connected account which is liable for tax.
+    case account
+    /// Indicates that the account being referenced is the account making the API request.
+    case `self`
 }
 
 public enum PaymentLinkBillingAddressCollection: String, Codable {
@@ -289,15 +343,36 @@ public enum PaymentLinkBillingAddressCollection: String, Codable {
 }
 
 public struct PaymentLinkConsentCollection: Codable {
+    /// Settings related to the payment method reuse text shown in the Checkout UI.
+    public var paymentMethodReuseAgreement: PaymentLinkConsentCollectionPaymentMethodReuseAgreement?
     /// If set to `auto`, enables the collection of customer consent for promotional communications.
     public var promotions: String?
     /// If set to `required`, it requires cutomers to accept the terms of service before being able to pay. If set to none, customers won’t be shown a checkbox to accept the terms of service.
     public var termsOfService: String?
-    
-    public init(promotions: String? = nil, termsOfService: String? = nil) {
+
+    public init(paymentMethodReuseAgreement: PaymentLinkConsentCollectionPaymentMethodReuseAgreement? = nil,
+                promotions: String? = nil,
+                termsOfService: String? = nil) {
+        self.paymentMethodReuseAgreement = paymentMethodReuseAgreement
         self.promotions = promotions
         self.termsOfService = termsOfService
     }
+}
+
+public struct PaymentLinkConsentCollectionPaymentMethodReuseAgreement: Codable {
+    /// Determines the position and visibility of the payment method reuse agreement in the UI.
+    public var position: PaymentLinkConsentCollectionPaymentMethodReuseAgreementPosition?
+
+    public init(position: PaymentLinkConsentCollectionPaymentMethodReuseAgreementPosition? = nil) {
+        self.position = position
+    }
+}
+
+public enum PaymentLinkConsentCollectionPaymentMethodReuseAgreementPosition: String, Codable {
+    /// Uses Stripe defaults to determine the visibility and position of the payment method reuse agreement.
+    case auto
+    /// Hides the payment method reuse agreement.
+    case hidden
 }
 
 public struct PaymentLinkCustomField: Codable {
@@ -334,13 +409,17 @@ public struct PaymentLinkCustomField: Codable {
 }
 
 public struct PaymentLinkCustomFieldDropdown: Codable {
+    /// The value that will pre-fill the field on the payment page.
+    public var defaultValue: String?
     /// The options available for the customer to select. Up to 200 options allowed
     public var options: [PaymentLinkCustomFieldDropdownOption]?
     /// The option selected by the customer. This will be the `value` for the option.
     public var value: String?
-    
-    public init(options: [PaymentLinkCustomFieldDropdownOption]? = nil,
+
+    public init(defaultValue: String? = nil,
+                options: [PaymentLinkCustomFieldDropdownOption]? = nil,
                 value: String? = nil) {
+        self.defaultValue = defaultValue
         self.options = options
         self.value = value
     }
@@ -376,16 +455,20 @@ public enum PaymentLinkCustomFieldLabelType: String, Codable {
 }
 
 public struct PaymentLinkCustomFieldNumeric: Codable {
+    /// The value that will pre-fill the field on the payment page.
+    public var defaultValue: String?
     /// The maximum character length constraint for the customer’s input.
     public var maximumLength: Int?
     /// The minimum character length requirement for the customer’s input.
     public var minimumLength: Int?
     /// The value entered by the customer, containing only digits.
     public var value: String?
-    
-    public init(maximumLength: Int? = nil,
+
+    public init(defaultValue: String? = nil,
+                maximumLength: Int? = nil,
                 minimumLength: Int? = nil,
                 value: String? = nil) {
+        self.defaultValue = defaultValue
         self.maximumLength = maximumLength
         self.minimumLength = minimumLength
         self.value = value
@@ -393,16 +476,20 @@ public struct PaymentLinkCustomFieldNumeric: Codable {
 }
 
 public struct PaymentLinkCustomFieldText: Codable {
+    /// The value that will pre-fill the field on the payment page.
+    public var defaultValue: String?
     /// The maximum character length constraint for the customer’s input.
     public var maximumLength: Int?
     /// The minimum character length requirement for the customer’s input.
     public var minimumLength: Int?
     /// The value entered by the customer.
     public var value: String?
-    
-    public init(maximumLength: Int? = nil,
+
+    public init(defaultValue: String? = nil,
+                maximumLength: Int? = nil,
                 minimumLength: Int? = nil,
                 value: String? = nil) {
+        self.defaultValue = defaultValue
         self.maximumLength = maximumLength
         self.minimumLength = minimumLength
         self.value = value
@@ -419,31 +506,57 @@ public enum PaymentLinkCustomFieldType: String, Codable {
 }
 
 public struct PaymentLinkCustomText: Codable {
+    /// Custom text that should be displayed after the payment confirmation button.
+    public var afterSubmit: PaymentLinkCustomTextAfterSubmit?
     /// Custom text that should be displayed alongside shipping address collection.
     public var shippingAddress: PaymentLinkCustomTextShippingAddress?
     /// Custom text that should be displayed alongside the payment confirmation button.
     public var submit: PaymentLinkCustomTextSubmit?
-    
-    public init(shippingAddress: PaymentLinkCustomTextShippingAddress? = nil,
-                submit: PaymentLinkCustomTextSubmit? = nil) {
+    /// Custom text that should be displayed in place of the default terms of service agreement text.
+    public var termsOfServiceAcceptance: PaymentLinkCustomTextTermsOfServiceAcceptance?
+
+    public init(afterSubmit: PaymentLinkCustomTextAfterSubmit? = nil,
+                shippingAddress: PaymentLinkCustomTextShippingAddress? = nil,
+                submit: PaymentLinkCustomTextSubmit? = nil,
+                termsOfServiceAcceptance: PaymentLinkCustomTextTermsOfServiceAcceptance? = nil) {
+        self.afterSubmit = afterSubmit
         self.shippingAddress = shippingAddress
         self.submit = submit
+        self.termsOfServiceAcceptance = termsOfServiceAcceptance
+    }
+}
+
+public struct PaymentLinkCustomTextAfterSubmit: Codable {
+    /// Text may be up to 1200 characters in length.
+    public var message: String?
+
+    public init(message: String? = nil) {
+        self.message = message
     }
 }
 
 public struct PaymentLinkCustomTextShippingAddress: Codable {
-    /// Text may be up to 1000 characters in length.
+    /// Text may be up to 1200 characters in length.
     public var message: String?
-    
+
     public init(message: String? = nil) {
         self.message = message
     }
 }
 
 public struct PaymentLinkCustomTextSubmit: Codable {
-    /// Text may be up to 1000 characters in length.
+    /// Text may be up to 1200 characters in length.
     public var message: String?
-    
+
+    public init(message: String? = nil) {
+        self.message = message
+    }
+}
+
+public struct PaymentLinkCustomTextTermsOfServiceAcceptance: Codable {
+    /// Text may be up to 1200 characters in length.
+    public var message: String?
+
     public init(message: String? = nil) {
         self.message = message
     }
@@ -476,24 +589,47 @@ public struct PaymentLinkInvoiceCreationInvoiceData: Codable {
     public var description: String?
     /// Footer displayed on the invoice.
     public var footer: String?
+    /// The connected account that issues the invoice. The invoice is presented with the branding and support information of the specified account.
+    public var issuer: PaymentLinkInvoiceCreationInvoiceDataIssuer?
     /// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
     public var metadata: [String: String]?
     /// Options for invoice PDF rendering.
     public var renderingOptions: PaymentLinkInvoiceCreationInvoiceDataRenderingOptions?
-    
+
     public init(accountTaxIds: [String]? = nil,
                 customFields: [PaymentLinkInvoiceCreationInvoiceDataCustomFields]? = nil,
                 description: String? = nil,
                 footer: String? = nil,
+                issuer: PaymentLinkInvoiceCreationInvoiceDataIssuer? = nil,
                 metadata: [String : String]? = nil,
                 renderingOptions: PaymentLinkInvoiceCreationInvoiceDataRenderingOptions? = nil) {
         self._accountTaxIds = ExpandableCollection(ids: accountTaxIds)
         self.customFields = customFields
         self.description = description
         self.footer = footer
+        self.issuer = issuer
         self.metadata = metadata
         self.renderingOptions = renderingOptions
     }
+}
+
+public struct PaymentLinkInvoiceCreationInvoiceDataIssuer: Codable {
+    /// The connected account being referenced when `type` is `account`.
+    @Expandable<ConnectAccount> public var account: String?
+    /// Type of the account referenced.
+    public var type: PaymentLinkInvoiceCreationInvoiceDataIssuerType?
+
+    public init(account: String? = nil, type: PaymentLinkInvoiceCreationInvoiceDataIssuerType? = nil) {
+        self._account = Expandable(id: account)
+        self.type = type
+    }
+}
+
+public enum PaymentLinkInvoiceCreationInvoiceDataIssuerType: String, Codable {
+    /// Indicates that the account being referenced is a connected account which issues the invoice.
+    case account
+    /// Indicates that the account being referenced is the account making the API request.
+    case `self`
 }
 
 public struct PaymentLinkInvoiceCreationInvoiceDataCustomFields: Codable {
@@ -511,22 +647,45 @@ public struct PaymentLinkInvoiceCreationInvoiceDataCustomFields: Codable {
 public struct PaymentLinkInvoiceCreationInvoiceDataRenderingOptions: Codable {
     /// How line-item prices and amounts will be displayed with respect to tax on invoice PDFs.
     public var amountTaxDisplay: String?
-    
-    public init(amountTaxDisplay: String? = nil) {
+    /// ID of the invoice rendering template to be used for the generated invoice.
+    public var template: String?
+
+    public init(amountTaxDisplay: String? = nil, template: String? = nil) {
         self.amountTaxDisplay = amountTaxDisplay
+        self.template = template
     }
 }
 
 public struct PaymentLinkPaymentIntentData: Codable {
     /// Indicates when the funds will be captured from the customer’s account.
     public var captureMethod: PaymentLinkPaymentIntentDataCaptureMethod?
+    /// An arbitrary string attached to the object. Often useful for displaying to users.
+    public var description: String?
+    /// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
+    public var metadata: [String: String]?
     /// Indicates that you intend to make future payments with the payment method collected during checkout.
     public var setupFutureUsage: PaymentLinkPaymentIntentDataSetupFutureUsage?
-    
+    /// Extra information about the payment. This will appear on your customer’s statement when this payment succeeds in creating a charge.
+    public var statementDescriptor: String?
+    /// Provides information about the charge that customers see on their statements. Concatenated with the prefix (shortened descriptor) or statement descriptor that’s set on the account to form the complete statement descriptor.
+    public var statementDescriptorSuffix: String?
+    /// A string that identifies the resulting payment as part of a group. See the PaymentIntents [use case for connected accounts](https://stripe.com/docs/connect/separate-charges-and-transfers) for details.
+    public var transferGroup: String?
+
     public init(captureMethod: PaymentLinkPaymentIntentDataCaptureMethod? = nil,
-                setupFutureUsage: PaymentLinkPaymentIntentDataSetupFutureUsage? = nil) {
+                description: String? = nil,
+                metadata: [String: String]? = nil,
+                setupFutureUsage: PaymentLinkPaymentIntentDataSetupFutureUsage? = nil,
+                statementDescriptor: String? = nil,
+                statementDescriptorSuffix: String? = nil,
+                transferGroup: String? = nil) {
         self.captureMethod = captureMethod
+        self.description = description
+        self.metadata = metadata
         self.setupFutureUsage = setupFutureUsage
+        self.statementDescriptor = statementDescriptor
+        self.statementDescriptorSuffix = statementDescriptorSuffix
+        self.transferGroup = transferGroup
     }
 }
 
@@ -588,18 +747,87 @@ public enum PaymentLinkSubmitType: String, Codable {
     case book
     case donate
     case pay
+    case subscribe
 }
 
 public struct PaymentLinkSubscriptionData: Codable {
     /// The subscription’s description, meant to be displayable to the customer. Use this field to optionally store an explanation of the subscription.
     public var description: String?
+    /// All invoices will be billed using the specified settings.
+    public var invoiceSettings: PaymentLinkSubscriptionDataInvoiceSettings?
+    /// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
+    public var metadata: [String: String]?
     /// Integer representing the number of trial period days before the customer is charged for the first time.
     public var trialPeriodDays: Int?
-    
-    public init(description: String? = nil, trialPeriodDays: Int? = nil) {
+    /// Settings related to subscription trials.
+    public var trialSettings: PaymentLinkSubscriptionDataTrialSettings?
+
+    public init(description: String? = nil,
+                invoiceSettings: PaymentLinkSubscriptionDataInvoiceSettings? = nil,
+                metadata: [String: String]? = nil,
+                trialPeriodDays: Int? = nil,
+                trialSettings: PaymentLinkSubscriptionDataTrialSettings? = nil) {
         self.description = description
+        self.invoiceSettings = invoiceSettings
+        self.metadata = metadata
         self.trialPeriodDays = trialPeriodDays
+        self.trialSettings = trialSettings
     }
+}
+
+public struct PaymentLinkSubscriptionDataInvoiceSettings: Codable {
+    /// The connected account that issues the invoice. The invoice is presented with the branding and support information of the specified account.
+    public var issuer: PaymentLinkSubscriptionDataInvoiceSettingsIssuer?
+
+    public init(issuer: PaymentLinkSubscriptionDataInvoiceSettingsIssuer? = nil) {
+        self.issuer = issuer
+    }
+}
+
+public struct PaymentLinkSubscriptionDataInvoiceSettingsIssuer: Codable {
+    /// The connected account being referenced when `type` is `account`.
+    @Expandable<ConnectAccount> public var account: String?
+    /// Type of the account referenced.
+    public var type: PaymentLinkSubscriptionDataInvoiceSettingsIssuerType?
+
+    public init(account: String? = nil, type: PaymentLinkSubscriptionDataInvoiceSettingsIssuerType? = nil) {
+        self._account = Expandable(id: account)
+        self.type = type
+    }
+}
+
+public enum PaymentLinkSubscriptionDataInvoiceSettingsIssuerType: String, Codable {
+    /// Indicates that the account being referenced is a connected account which issues the invoice.
+    case account
+    /// Indicates that the account being referenced is the account making the API request.
+    case `self`
+}
+
+public struct PaymentLinkSubscriptionDataTrialSettings: Codable {
+    /// Defines how the subscription should behave when the user's free trial ends.
+    public var endBehavior: PaymentLinkSubscriptionDataTrialSettingsEndBehavior?
+
+    public init(endBehavior: PaymentLinkSubscriptionDataTrialSettingsEndBehavior? = nil) {
+        self.endBehavior = endBehavior
+    }
+}
+
+public struct PaymentLinkSubscriptionDataTrialSettingsEndBehavior: Codable {
+    /// Indicates how the subscription should change when the trial ends if the user did not provide a payment method.
+    public var missingPaymentMethod: PaymentLinkSubscriptionDataTrialSettingsEndBehaviorMissingPaymentMethod?
+
+    public init(missingPaymentMethod: PaymentLinkSubscriptionDataTrialSettingsEndBehaviorMissingPaymentMethod? = nil) {
+        self.missingPaymentMethod = missingPaymentMethod
+    }
+}
+
+public enum PaymentLinkSubscriptionDataTrialSettingsEndBehaviorMissingPaymentMethod: String, Codable {
+    /// Cancel the subscription if a payment method is not attached when the trial ends.
+    case cancel
+    /// Create an invoice when a payment method is not attached when the trial ends.
+    case createInvoice = "create_invoice"
+    /// Pause the subscription if a payment method is not attached when the trial ends.
+    case pause
 }
 
 public struct PaymentLinkTaxIdCollection: Codable {
@@ -620,6 +848,132 @@ public struct PaymentLinkTransferData: Codable {
     public init(amount: Int? = nil, destination: String? = nil) {
         self.amount = amount
         self._destination = Expandable(id: destination)
+    }
+}
+
+public struct PaymentLinkManagedPayments: Codable {
+    /// Whether Managed Payments is enabled for this payment link.
+    public var enabled: Bool?
+
+    public init(enabled: Bool? = nil) {
+        self.enabled = enabled
+    }
+}
+
+public struct PaymentLinkNameCollection: Codable {
+    /// Controls settings applied for collecting the customer's business name on the payment page.
+    public var business: PaymentLinkNameCollectionBusiness?
+    /// Controls settings applied for collecting the customer's individual name on the payment page.
+    public var individual: PaymentLinkNameCollectionIndividual?
+
+    public init(business: PaymentLinkNameCollectionBusiness? = nil,
+                individual: PaymentLinkNameCollectionIndividual? = nil) {
+        self.business = business
+        self.individual = individual
+    }
+}
+
+public struct PaymentLinkNameCollectionBusiness: Codable {
+    /// Indicates whether business name collection is enabled for the session.
+    public var enabled: Bool?
+    /// Indicates whether business name collection is optional for the session.
+    public var optional: Bool?
+
+    public init(enabled: Bool? = nil, optional: Bool? = nil) {
+        self.enabled = enabled
+        self.optional = optional
+    }
+}
+
+public struct PaymentLinkNameCollectionIndividual: Codable {
+    /// Indicates whether individual name collection is enabled for the session.
+    public var enabled: Bool?
+    /// Indicates whether individual name collection is optional for the session.
+    public var optional: Bool?
+
+    public init(enabled: Bool? = nil, optional: Bool? = nil) {
+        self.enabled = enabled
+        self.optional = optional
+    }
+}
+
+public struct PaymentLinkOptionalItem: Codable {
+    /// Settings for the adjustable quantity behavior for this optional item.
+    public var adjustableQuantity: PaymentLinkOptionalItemAdjustableQuantity?
+    /// The ID of the Price used to generate this optional item.
+    public var price: String?
+    /// The quantity of the optional item being purchased.
+    public var quantity: Int?
+
+    public init(adjustableQuantity: PaymentLinkOptionalItemAdjustableQuantity? = nil,
+                price: String? = nil,
+                quantity: Int? = nil) {
+        self.adjustableQuantity = adjustableQuantity
+        self.price = price
+        self.quantity = quantity
+    }
+}
+
+public struct PaymentLinkOptionalItemAdjustableQuantity: Codable {
+    /// Set to `true` if the quantity can be adjusted to any non-negative integer.
+    public var enabled: Bool?
+    /// The maximum quantity of this item the customer can purchase.
+    public var maximum: Int?
+    /// The minimum quantity of this item the customer must purchase, if they choose to purchase it.
+    public var minimum: Int?
+
+    public init(enabled: Bool? = nil, maximum: Int? = nil, minimum: Int? = nil) {
+        self.enabled = enabled
+        self.maximum = maximum
+        self.minimum = minimum
+    }
+}
+
+public struct PaymentLinkPaymentMethodOptions: Codable {
+    /// Card-specific payment method options.
+    public var card: PaymentLinkPaymentMethodOptionsCard?
+
+    public init(card: PaymentLinkPaymentMethodOptionsCard? = nil) {
+        self.card = card
+    }
+}
+
+public struct PaymentLinkPaymentMethodOptionsCard: Codable {
+    /// Restrictions applied to the card payment method.
+    public var restrictions: PaymentLinkPaymentMethodOptionsCardRestrictions?
+
+    public init(restrictions: PaymentLinkPaymentMethodOptionsCardRestrictions? = nil) {
+        self.restrictions = restrictions
+    }
+}
+
+public struct PaymentLinkPaymentMethodOptionsCardRestrictions: Codable {
+    /// Specify the card brands to block in the Checkout Session.
+    public var brandsBlocked: [String]?
+
+    public init(brandsBlocked: [String]? = nil) {
+        self.brandsBlocked = brandsBlocked
+    }
+}
+
+public struct PaymentLinkRestrictions: Codable {
+    /// Settings for limiting the number of completed sessions on the payment link.
+    public var completedSessions: PaymentLinkRestrictionsCompletedSessions?
+
+    public init(completedSessions: PaymentLinkRestrictionsCompletedSessions? = nil) {
+        self.completedSessions = completedSessions
+    }
+}
+
+public struct PaymentLinkRestrictionsCompletedSessions: Codable {
+    /// The current number of checkout sessions that have been completed on the payment link which count towards the `completed_sessions` restriction to be met.
+    public var count: Int?
+    /// The maximum number of checkout sessions that can be completed for the `completed_sessions` restriction to be met.
+    public var limit: Int?
+
+    public init(count: Int? = nil, limit: Int? = nil) {
+        self.count = count
+        self.limit = limit
     }
 }
 

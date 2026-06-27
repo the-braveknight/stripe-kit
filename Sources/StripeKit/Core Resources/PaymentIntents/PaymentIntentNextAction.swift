@@ -224,6 +224,14 @@ public enum PaymentIntentNextActionType: String, Codable {
     case alipayHandleRedirect = "alipay_handle_redirect"
     case oxxoDisplayDetails = "oxxo_display_details"
     case verifyWithMicrodeposits = "verify_with_microdeposits"
+    case boletoDisplayDetails = "boleto_display_details"
+    case cardAwaitNotification = "card_await_notification"
+    case konbiniDisplayDetails = "konbini_display_details"
+    case paynowDisplayQrCode = "paynow_display_qr_code"
+    case promptpayDisplayQrCode = "promptpay_display_qr_code"
+    case wechatPayDisplayQrCode = "wechat_pay_display_qr_code"
+    case wechatPayRedirectToAndroidApp = "wechat_pay_redirect_to_android_app"
+    case wechatPayRedirectToIosApp = "wechat_pay_redirect_to_ios_app"
 }
 
 public struct PaymentIntentNextActionVerifyWithMicrodeposits: Codable {

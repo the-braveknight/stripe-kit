@@ -40,3 +40,24 @@ public enum AccountLinkCreationCollectType: String, Codable {
     case currentlyDue = "currently_due"
     case eventuallyDue = "eventually_due"
 }
+
+/// Specifies the requirements that Stripe collects from connected accounts in the Connect Onboarding flow.
+public struct AccountLinkCollectionOptions: Codable {
+    /// Specifies whether the platform collects only currently_due requirements (`currently_due`) or both currently_due and eventually_due requirements (`eventually_due`). If you don't specify `collection_options`, the default value is `currently_due`.
+    public var fields: AccountLinkCreationCollectType?
+    /// Specifies whether the platform collects future_requirements in addition to requirements in Connect Onboarding. The default value is `omit`.
+    public var futureRequirements: AccountLinkCollectionOptionsFutureRequirements?
+
+    public init(fields: AccountLinkCreationCollectType? = nil,
+                futureRequirements: AccountLinkCollectionOptionsFutureRequirements? = nil) {
+        self.fields = fields
+        self.futureRequirements = futureRequirements
+    }
+}
+
+public enum AccountLinkCollectionOptionsFutureRequirements: String, Codable {
+    /// Collect future_requirements in addition to current requirements.
+    case include
+    /// Don't collect future_requirements.
+    case omit
+}

@@ -108,7 +108,45 @@ public struct Session: Codable {
     public var taxIdCollection: SessionTaxIdCollection?
     /// Tax and discount details for the computed total amount.
     public var totalDetails: SessionTotalDetails?
-    
+    /// Settings related to Adaptive Pricing.
+    public var adaptivePricing: SessionAdaptivePricing?
+    /// Branding settings for the Checkout Session.
+    public var brandingSettings: SessionBrandingSettings?
+    /// The client secret of the Session. Use this with [initStripe’s `clientSecret`](https://stripe.com/docs/js/initializing#init_stripe_js-options-clientSecret) on your front end. This value should be passed to your front end. The client secret can be used to complete a payment from your front end. It should not be stored, logged, or exposed to anyone other than the customer. Make sure that you have TLS enabled on any page that includes the client secret. Applies to Checkout Sessions with `ui_mode: embedded` or `ui_mode: custom`.
+    public var clientSecret: String?
+    /// Information about the customer collected within the Checkout Session.
+    public var collectedInformation: SessionCollectedInformation?
+    /// The ID of the account for this Session.
+    public var customerAccount: String?
+    /// List of coupons and promotion codes attached to the Checkout Session.
+    public var discounts: [SessionDiscount]?
+    /// The payment method types excluded from this Checkout Session.
+    public var excludedPaymentMethodTypes: [String]?
+    /// A unique string to reference the Checkout Session. This can be a customer ID, a cart ID, or similar, and can be used to reconcile the Session with your internal systems.
+    public var integrationIdentifier: String?
+    /// Settings related to Managed Payments for this Checkout Session.
+    public var managedPayments: SessionManagedPayments?
+    /// Settings for collecting the customer's name.
+    public var nameCollection: SessionNameCollection?
+    /// The optional items presented to the customer at checkout.
+    public var optionalItems: [SessionOptionalItem]?
+    /// Where the user is coming from. This informs the optimizations that are applied to the session.
+    public var originContext: SessionOriginContext?
+    /// Information about the payment method configuration used for this Checkout Session if one was specified.
+    public var paymentMethodConfigurationDetails: SessionPaymentMethodConfigurationDetails?
+    /// Permissions for actions that may be taken on this Checkout Session.
+    public var permissions: SessionPermissions?
+    /// Details on the state of presentment for the session.
+    public var presentmentDetails: SessionPresentmentDetails?
+    /// This parameter applies to `ui_mode: embedded`. Learn more about the `redirect_on_completion` behavior.
+    public var redirectOnCompletion: SessionRedirectOnCompletion?
+    /// Applies to Checkout Sessions with `ui_mode: embedded`. The URL to redirect your customer back to after they authenticate or cancel their payment on the payment method's app or site.
+    public var returnUrl: String?
+    /// Controls saved payment method settings for the session. Only available in `payment` and `subscription` mode.
+    public var savedPaymentMethodOptions: SessionSavedPaymentMethodOptions?
+    /// The UI mode of the Session. Can be `hosted` (default), `embedded`, or `custom`.
+    public var uiMode: SessionUIMode?
+
     public init(id: String,
                 cancelUrl: String? = nil,
                 clientReferenceId: String? = nil,
@@ -158,7 +196,26 @@ public struct Session: Codable {
                 submitType: SessionSubmitType? = nil,
                 subscription: String? = nil,
                 taxIdCollection: SessionTaxIdCollection? = nil,
-                totalDetails: SessionTotalDetails? = nil) {
+                totalDetails: SessionTotalDetails? = nil,
+                adaptivePricing: SessionAdaptivePricing? = nil,
+                brandingSettings: SessionBrandingSettings? = nil,
+                clientSecret: String? = nil,
+                collectedInformation: SessionCollectedInformation? = nil,
+                customerAccount: String? = nil,
+                discounts: [SessionDiscount]? = nil,
+                excludedPaymentMethodTypes: [String]? = nil,
+                integrationIdentifier: String? = nil,
+                managedPayments: SessionManagedPayments? = nil,
+                nameCollection: SessionNameCollection? = nil,
+                optionalItems: [SessionOptionalItem]? = nil,
+                originContext: SessionOriginContext? = nil,
+                paymentMethodConfigurationDetails: SessionPaymentMethodConfigurationDetails? = nil,
+                permissions: SessionPermissions? = nil,
+                presentmentDetails: SessionPresentmentDetails? = nil,
+                redirectOnCompletion: SessionRedirectOnCompletion? = nil,
+                returnUrl: String? = nil,
+                savedPaymentMethodOptions: SessionSavedPaymentMethodOptions? = nil,
+                uiMode: SessionUIMode? = nil) {
         self.id = id
         self.cancelUrl = cancelUrl
         self.clientReferenceId = clientReferenceId
@@ -209,6 +266,25 @@ public struct Session: Codable {
         self._subscription = Expandable(id: subscription)
         self.taxIdCollection = taxIdCollection
         self.totalDetails = totalDetails
+        self.adaptivePricing = adaptivePricing
+        self.brandingSettings = brandingSettings
+        self.clientSecret = clientSecret
+        self.collectedInformation = collectedInformation
+        self.customerAccount = customerAccount
+        self.discounts = discounts
+        self.excludedPaymentMethodTypes = excludedPaymentMethodTypes
+        self.integrationIdentifier = integrationIdentifier
+        self.managedPayments = managedPayments
+        self.nameCollection = nameCollection
+        self.optionalItems = optionalItems
+        self.originContext = originContext
+        self.paymentMethodConfigurationDetails = paymentMethodConfigurationDetails
+        self.permissions = permissions
+        self.presentmentDetails = presentmentDetails
+        self.redirectOnCompletion = redirectOnCompletion
+        self.returnUrl = returnUrl
+        self.savedPaymentMethodOptions = savedPaymentMethodOptions
+        self.uiMode = uiMode
     }
 }
 
@@ -331,15 +407,41 @@ public enum SessionCustomFieldType: String, Codable {
 }
 
 public struct SessionCustomText: Codable {
+    /// Custom text that should be displayed after the payment confirmation button.
+    public var afterSubmit: SessionCustomTextAfterSubmit?
     /// Custom text that should be displayed alongside shipping address collection.
     public var shippingAddress: SessionCustomTextShippingAddress?
     /// Custom text that should be displayed alongside the payment confirmation button.
     public var submit: SessionCustomTextSubmit?
-    
-    public init(shippingAddress: SessionCustomTextShippingAddress? = nil,
-                submit: SessionCustomTextSubmit? = nil) {
+    /// Custom text that should be displayed in place of the default terms of service agreement text.
+    public var termsOfServiceAcceptance: SessionCustomTextTermsOfServiceAcceptance?
+
+    public init(afterSubmit: SessionCustomTextAfterSubmit? = nil,
+                shippingAddress: SessionCustomTextShippingAddress? = nil,
+                submit: SessionCustomTextSubmit? = nil,
+                termsOfServiceAcceptance: SessionCustomTextTermsOfServiceAcceptance? = nil) {
+        self.afterSubmit = afterSubmit
         self.shippingAddress = shippingAddress
         self.submit = submit
+        self.termsOfServiceAcceptance = termsOfServiceAcceptance
+    }
+}
+
+public struct SessionCustomTextAfterSubmit: Codable {
+    /// Text may be up to 1200 characters in length.
+    public var message: String?
+
+    public init(message: String? = nil) {
+        self.message = message
+    }
+}
+
+public struct SessionCustomTextTermsOfServiceAcceptance: Codable {
+    /// Text may be up to 1200 characters in length.
+    public var message: String?
+
+    public init(message: String? = nil) {
+        self.message = message
     }
 }
 
@@ -462,8 +564,24 @@ public struct SessionAfterExpirationRecovery: Codable {
 public struct SessionAutomaticTax: Codable {
     /// Indicates whether automatic tax is enabled for the session.
     public var enabled: Bool?
+    /// The tax provider powering automatic tax.
+    public var provider: String?
+    /// The account that's liable for tax. If set, the business address and tax registrations required to perform the tax calculation are loaded from this account. The tax transaction is returned in the report of the connected account.
+    public var liability: SessionAutomaticTaxLiability?
     /// The status of the most recent automated tax calculation for this session.
     public var status: SessionAutomaticTaxStatus?
+}
+
+public struct SessionAutomaticTaxLiability: Codable {
+    /// The connected account being referenced when `type` is `account`.
+    @Expandable<ConnectAccount> public var account: String?
+    /// Type of the account referenced.
+    public var type: String?
+
+    public init(account: String? = nil, type: String? = nil) {
+        self._account = Expandable(id: account)
+        self.type = type
+    }
 }
 
 public enum SessionAutomaticTaxStatus: String, Codable {
@@ -801,6 +919,7 @@ public enum SessionSubmitType: String, Codable {
     case book
     case donate
     case pay
+    case subscribe
 }
 
 public enum SessionStatus: String, Codable {
@@ -880,6 +999,257 @@ public struct SessionTaxIdCollection: Codable {
     public init(enabled: Bool? = nil) {
         self.enabled = enabled
     }
+}
+
+// MARK: Adaptive Pricing
+public struct SessionAdaptivePricing: Codable {
+    /// Whether Adaptive Pricing is enabled.
+    public var enabled: Bool?
+
+    public init(enabled: Bool? = nil) {
+        self.enabled = enabled
+    }
+}
+
+// MARK: Branding Settings
+public struct SessionBrandingSettings: Codable {
+    /// A hex color value starting with `#` representing the background color for the Checkout Session.
+    public var backgroundColor: String?
+    /// The border style for the Checkout Session.
+    public var borderStyle: String?
+    /// A hex color value starting with `#` representing the button color for the Checkout Session.
+    public var buttonColor: String?
+    /// The display name shown on the Checkout Session.
+    public var displayName: String?
+    /// The font family for the Checkout Session.
+    public var fontFamily: String?
+    /// The icon for the Checkout Session.
+    public var icon: SessionBrandingSettingsImage?
+    /// The logo for the Checkout Session.
+    public var logo: SessionBrandingSettingsImage?
+
+    public init(backgroundColor: String? = nil,
+                borderStyle: String? = nil,
+                buttonColor: String? = nil,
+                displayName: String? = nil,
+                fontFamily: String? = nil,
+                icon: SessionBrandingSettingsImage? = nil,
+                logo: SessionBrandingSettingsImage? = nil) {
+        self.backgroundColor = backgroundColor
+        self.borderStyle = borderStyle
+        self.buttonColor = buttonColor
+        self.displayName = displayName
+        self.fontFamily = fontFamily
+        self.icon = icon
+        self.logo = logo
+    }
+}
+
+public struct SessionBrandingSettingsImage: Codable {
+    /// The type of image.
+    public var type: String?
+    /// The ID of a File upload.
+    public var file: String?
+    /// The URL of the image.
+    public var url: String?
+
+    public init(type: String? = nil, file: String? = nil, url: String? = nil) {
+        self.type = type
+        self.file = file
+        self.url = url
+    }
+}
+
+// MARK: Collected Information
+public struct SessionCollectedInformation: Codable {
+    /// The business name collected during the session.
+    public var businessName: String?
+    /// The individual name collected during the session.
+    public var individualName: String?
+    /// Shipping information for this Checkout Session.
+    public var shippingDetails: ShippingLabel?
+
+    public init(businessName: String? = nil,
+                individualName: String? = nil,
+                shippingDetails: ShippingLabel? = nil) {
+        self.businessName = businessName
+        self.individualName = individualName
+        self.shippingDetails = shippingDetails
+    }
+}
+
+// MARK: Discounts
+public struct SessionDiscount: Codable {
+    /// Coupon attached to the Checkout Session.
+    @Expandable<Coupon> public var coupon: String?
+    /// Promotion code attached to the Checkout Session.
+    @Expandable<PromotionCode> public var promotionCode: String?
+
+    public init(coupon: String? = nil, promotionCode: String? = nil) {
+        self._coupon = Expandable(id: coupon)
+        self._promotionCode = Expandable(id: promotionCode)
+    }
+}
+
+// MARK: Managed Payments
+public struct SessionManagedPayments: Codable {
+    /// Whether Managed Payments is enabled for this Checkout Session.
+    public var enabled: Bool?
+
+    public init(enabled: Bool? = nil) {
+        self.enabled = enabled
+    }
+}
+
+// MARK: Name Collection
+public struct SessionNameCollection: Codable {
+    /// Settings for collecting the customer's business name.
+    public var business: SessionNameCollectionBusiness?
+    /// Settings for collecting the customer's individual name.
+    public var individual: SessionNameCollectionIndividual?
+
+    public init(business: SessionNameCollectionBusiness? = nil,
+                individual: SessionNameCollectionIndividual? = nil) {
+        self.business = business
+        self.individual = individual
+    }
+}
+
+public struct SessionNameCollectionBusiness: Codable {
+    /// Indicates whether business name collection is enabled for the session.
+    public var enabled: Bool?
+    /// Whether the customer is required to provide a business name before completing the Checkout Session. Defaults to `false`.
+    public var optional: Bool?
+
+    public init(enabled: Bool? = nil, optional: Bool? = nil) {
+        self.enabled = enabled
+        self.optional = optional
+    }
+}
+
+public struct SessionNameCollectionIndividual: Codable {
+    /// Indicates whether individual name collection is enabled for the session.
+    public var enabled: Bool?
+    /// Whether the customer is required to provide their name before completing the Checkout Session. Defaults to `false`.
+    public var optional: Bool?
+
+    public init(enabled: Bool? = nil, optional: Bool? = nil) {
+        self.enabled = enabled
+        self.optional = optional
+    }
+}
+
+// MARK: Optional Items
+public struct SessionOptionalItem: Codable {
+    /// Settings for the adjustable quantity behavior for this optional item.
+    public var adjustableQuantity: SessionOptionalItemAdjustableQuantity?
+    /// The ID of the Price used to generate this optional item.
+    public var price: String?
+    /// The quantity of the optional item being purchased.
+    public var quantity: Int?
+
+    public init(adjustableQuantity: SessionOptionalItemAdjustableQuantity? = nil,
+                price: String? = nil,
+                quantity: Int? = nil) {
+        self.adjustableQuantity = adjustableQuantity
+        self.price = price
+        self.quantity = quantity
+    }
+}
+
+public struct SessionOptionalItemAdjustableQuantity: Codable {
+    /// Set to `true` if the quantity can be adjusted to any non-negative integer.
+    public var enabled: Bool?
+    /// The maximum quantity of this item the customer can purchase.
+    public var maximum: Int?
+    /// The minimum quantity of this item the customer must purchase, if they choose to purchase it.
+    public var minimum: Int?
+
+    public init(enabled: Bool? = nil, maximum: Int? = nil, minimum: Int? = nil) {
+        self.enabled = enabled
+        self.maximum = maximum
+        self.minimum = minimum
+    }
+}
+
+// MARK: Origin Context
+public enum SessionOriginContext: String, Codable {
+    case mobileApp = "mobile_app"
+    case web
+}
+
+// MARK: Payment Method Configuration Details
+public struct SessionPaymentMethodConfigurationDetails: Codable {
+    /// ID of the payment method configuration used.
+    public var id: String?
+    /// ID of the parent payment method configuration used.
+    public var parent: String?
+
+    public init(id: String? = nil, parent: String? = nil) {
+        self.id = id
+        self.parent = parent
+    }
+}
+
+// MARK: Permissions
+public struct SessionPermissions: Codable {
+    /// Determines which entity is allowed to update the shipping details.
+    public var updateShippingDetails: String?
+
+    public init(updateShippingDetails: String? = nil) {
+        self.updateShippingDetails = updateShippingDetails
+    }
+}
+
+// MARK: Presentment Details
+public struct SessionPresentmentDetails: Codable {
+    /// Amount intended to be collected by this payment, denominated in `presentment_currency`.
+    public var presentmentAmount: Int?
+    /// Currency presented to the customer during payment.
+    public var presentmentCurrency: Currency?
+
+    public init(presentmentAmount: Int? = nil, presentmentCurrency: Currency? = nil) {
+        self.presentmentAmount = presentmentAmount
+        self.presentmentCurrency = presentmentCurrency
+    }
+}
+
+// MARK: Redirect On Completion
+public enum SessionRedirectOnCompletion: String, Codable {
+    /// The Session will always redirect to the `return_url` after successful confirmation.
+    case always
+    /// The Session will only redirect to the `return_url` after a redirect-based payment method is used.
+    case ifRequired = "if_required"
+    /// The Session will never redirect to the `return_url`, and redirect-based payment methods will be disabled.
+    case never
+}
+
+// MARK: Saved Payment Method Options
+public struct SessionSavedPaymentMethodOptions: Codable {
+    /// Uses the `allow_redisplay` value of each saved payment method to filter the list of payment methods.
+    public var allowRedisplayFilters: [String]?
+    /// Enable customers to choose if they wish to remove their saved payment methods.
+    public var paymentMethodRemove: String?
+    /// Enable customers to choose if they wish to save their payment method for future use.
+    public var paymentMethodSave: String?
+
+    public init(allowRedisplayFilters: [String]? = nil,
+                paymentMethodRemove: String? = nil,
+                paymentMethodSave: String? = nil) {
+        self.allowRedisplayFilters = allowRedisplayFilters
+        self.paymentMethodRemove = paymentMethodRemove
+        self.paymentMethodSave = paymentMethodSave
+    }
+}
+
+// MARK: UI Mode
+public enum SessionUIMode: String, Codable {
+    /// The Checkout Session will be displayed using embedded UI.
+    case embedded
+    /// The Checkout Session will be displayed as a hosted page that the customer is redirected to.
+    case hosted
+    /// The Checkout Session will be displayed using embedded components on your website.
+    case custom
 }
 
 public struct SessionList: Codable {

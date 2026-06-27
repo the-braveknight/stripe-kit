@@ -34,6 +34,8 @@ public struct Refund: Codable {
     @Expandable<BalanceTransaction> public var balanceTransaction: String?
     /// Time at which the object was created. Measured in seconds since the Unix epoch.
     public var created: Date
+    /// An arbitrary string attached to the object. This will be displayed on email receipts and bank statements.
+    public var destinationDetails: RefundDestinationDetails?
     /// If the refund failed, this balance transaction describes the adjustment made on your account balance that reverses the initial balance transaction.
     @Expandable<BalanceTransaction> public var failureBalanceTransaction: String?
     ///  the refund failed, the reason for refund failure if known. Possible values are `lost_or_stolen_card`, `expired_or_canceled_card`, `charge_for_pending_refund_disputed`, `insufficient_funds`, `declined`, `merchant_request` or `unknown`.
@@ -42,6 +44,8 @@ public struct Refund: Codable {
     public var instructionsEmail: String?
     /// If the refund has a status of `requires_action`, this property will describe what the refund needs in order to continue processing.
     public var nextAction: RefundNextAction?
+    /// Provides the reason for the refund status. Possible values are `processing`, `insufficient_funds`, or `charge_pending`.
+    public var pendingReason: RefundPendingReason?
     /// This is the transaction number that appears on email receipts sent for this refund.
     public var receiptNumber: String?
     /// The transfer reversal that is associated with the refund. Only present if the charge came from another Stripe account. See the Connect documentation for details.
@@ -61,10 +65,12 @@ public struct Refund: Codable {
                 object: String,
                 balanceTransaction: String? = nil,
                 created: Date,
+                destinationDetails: RefundDestinationDetails? = nil,
                 failureBalanceTransaction: String? = nil,
                 failureReason: RefundFailureReason? = nil,
                 instructionsEmail: String? = nil,
                 nextAction: RefundNextAction? = nil,
+                pendingReason: RefundPendingReason? = nil,
                 receiptNumber: String? = nil,
                 sourceTransferReversal: String? = nil,
                 transferReversal: String? = nil) {
@@ -80,10 +86,12 @@ public struct Refund: Codable {
         self.object = object
         self._balanceTransaction = Expandable(id: balanceTransaction)
         self.created = created
+        self.destinationDetails = destinationDetails
         self._failureBalanceTransaction = Expandable(id: failureBalanceTransaction)
         self.failureReason = failureReason
         self.instructionsEmail = instructionsEmail
         self.nextAction = nextAction
+        self.pendingReason = pendingReason
         self.receiptNumber = receiptNumber
         self._sourceTransferReversal = Expandable(id: sourceTransferReversal)
         self._transferReversal = Expandable(id: transferReversal)
@@ -102,9 +110,16 @@ public enum RefundFailureReason: String, Codable {
 
 public enum RefundStatus: String, Codable {
     case pending
+    case requiresAction = "requires_action"
     case succeeded
     case failed
     case canceled
+}
+
+public enum RefundPendingReason: String, Codable {
+    case processing
+    case insufficientFunds = "insufficient_funds"
+    case chargePending = "charge_pending"
 }
 
 public enum RefundReason: String, Codable {
@@ -151,6 +166,46 @@ public struct RefundNextActionDisplayDetailsEmailSent: Codable {
         self.emailSentAt = emailSentAt
         self.emailSentTo = emailSentTo
     }
+}
+
+public struct RefundDestinationDetails: Codable {
+    /// Type of the destination, indicating the payment method the refund was sent to. Common values include `card`, `bank_account`, `paypal`, etc.
+    public var type: String?
+    /// If this is a `card` refund, this hash contains the transaction-specific details of the refund.
+    public var card: RefundDestinationDetailsCard?
+
+    public init(type: String? = nil,
+                card: RefundDestinationDetailsCard? = nil) {
+        self.type = type
+        self.card = card
+    }
+}
+
+public struct RefundDestinationDetailsCard: Codable {
+    /// Value of the reference number assigned to the refund.
+    public var reference: String?
+    /// Status of the reference number on the refund. This can be `pending`, `available` or `unavailable`.
+    public var referenceStatus: String?
+    /// Type of the reference number assigned to the refund.
+    public var referenceType: String?
+    /// The type of refund. This can be `refund`, `reversal`, or `pending`.
+    public var type: RefundDestinationDetailsCardType?
+
+    public init(reference: String? = nil,
+                referenceStatus: String? = nil,
+                referenceType: String? = nil,
+                type: RefundDestinationDetailsCardType? = nil) {
+        self.reference = reference
+        self.referenceStatus = referenceStatus
+        self.referenceType = referenceType
+        self.type = type
+    }
+}
+
+public enum RefundDestinationDetailsCardType: String, Codable {
+    case pending
+    case refund
+    case reversal
 }
 
 public struct RefundsList: Codable {

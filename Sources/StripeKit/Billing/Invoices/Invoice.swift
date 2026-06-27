@@ -57,7 +57,9 @@ public struct Invoice: Codable {
     /// The amount, in cents, that was paid.
     public var amountPaid: Int?
     /// The amount remaining, in cents, that is due.
-    public var amountRemanining: Int?
+    public var amountRemaining: Int?
+    /// The amount in cents that was overpaid on the invoice. The amount overpaid is credited to the customer's credit balance.
+    public var amountOverpaid: Int?
     /// This is the sum of all the shipping amounts.
     public var amountShipping: Int?
     /// ID of the Connect Application that created the invoice.
@@ -164,7 +166,29 @@ public struct Invoice: Codable {
     public var transferData: InvoiceTransferData?
     /// The time at which webhooks for this invoice were successfully delivered (if the invoice had no webhooks to deliver, this will match `created`). Invoice payment is delayed until webhooks are delivered, or until all webhook delivery attempts have been exhausted.
     public var webhooksDeliveredAt: Date?
-    
+    /// The ID of the account the customer of the invoice belongs to, if the customer is represented by an Account.
+    public var customerAccount: String?
+    /// The discounts applied to the invoice. Line item discounts are applied to line items. Use `expand[]=discounts` to expand each discount.
+    @ExpandableCollection<Discount> public var discounts: [String]?
+    /// The date when this invoice is in effect. Same as `finalized_at` unless overwritten. When defined, this value replaces the system-generated 'Date of issue' printed on the invoice PDF and receipt.
+    public var effectiveAt: Date?
+    /// The time when this invoice is currently scheduled to be automatically finalized. The field will be `null` if the invoice is not scheduled to finalize in the future.
+    public var automaticallyFinalizesAt: Date?
+    /// The connected account that issues the invoice. The invoice is presented with the branding and support information of the specified account.
+    public var issuer: InvoiceIssuer?
+    /// The parent that generated this invoice.
+    public var parent: InvoiceParent?
+    /// The rendering-related settings that control how the invoice is displayed on customer-facing surfaces such as PDF and Hosted Invoice Page.
+    public var rendering: InvoiceRendering?
+    /// Shipping details for the invoice. The Invoice PDF will use the `shipping_details` value if it is set, otherwise the PDF will render the shipping address from the customer.
+    public var shippingDetails: ShippingLabel?
+    /// The aggregate tax information of all line items.
+    public var totalTaxes: [InvoiceTotalTax]?
+    /// The aggregate pretax credit amounts (i.e., discounts and credit grants) for all line items.
+    public var totalPretaxCreditAmounts: [InvoicePretaxCreditAmount]?
+    /// The confirmation secret associated with this invoice. Currently, this contains the `client_secret` of the PaymentIntent that Stripe creates during invoice finalization.
+    public var confirmationSecret: InvoiceConfirmationSecret?
+
     public init(id: String? = nil,
                 autoAdvance: Bool? = nil,
                 charge: String? = nil,
@@ -188,7 +212,8 @@ public struct Invoice: Codable {
                 accountTaxIds: [String]? = nil,
                 amountDue: Int? = nil,
                 amountPaid: Int? = nil,
-                amountRemanining: Int? = nil,
+                amountRemaining: Int? = nil,
+                amountOverpaid: Int? = nil,
                 amountShipping: Int? = nil,
                 application: String? = nil,
                 applicationFeeAmount: Int? = nil,
@@ -241,7 +266,18 @@ public struct Invoice: Codable {
                 totalExcludingTax: Int? = nil,
                 totalTaxAmounts: [InvoiceTotalTaxAmount]? = nil,
                 transferData: InvoiceTransferData? = nil,
-                webhooksDeliveredAt: Date? = nil) {
+                webhooksDeliveredAt: Date? = nil,
+                customerAccount: String? = nil,
+                discounts: [String]? = nil,
+                effectiveAt: Date? = nil,
+                automaticallyFinalizesAt: Date? = nil,
+                issuer: InvoiceIssuer? = nil,
+                parent: InvoiceParent? = nil,
+                rendering: InvoiceRendering? = nil,
+                shippingDetails: ShippingLabel? = nil,
+                totalTaxes: [InvoiceTotalTax]? = nil,
+                totalPretaxCreditAmounts: [InvoicePretaxCreditAmount]? = nil,
+                confirmationSecret: InvoiceConfirmationSecret? = nil) {
         self.id = id
         self.autoAdvance = autoAdvance
         self._charge = Expandable(id: charge)
@@ -265,7 +301,8 @@ public struct Invoice: Codable {
         self._accountTaxIds = ExpandableCollection(ids: accountTaxIds)
         self.amountDue = amountDue
         self.amountPaid = amountPaid
-        self.amountRemanining = amountRemanining
+        self.amountRemaining = amountRemaining
+        self.amountOverpaid = amountOverpaid
         self.amountShipping = amountShipping
         self.application = application
         self.applicationFeeAmount = applicationFeeAmount
@@ -319,6 +356,17 @@ public struct Invoice: Codable {
         self.totalTaxAmounts = totalTaxAmounts
         self.transferData = transferData
         self.webhooksDeliveredAt = webhooksDeliveredAt
+        self.customerAccount = customerAccount
+        self._discounts = ExpandableCollection(ids: discounts)
+        self.effectiveAt = effectiveAt
+        self.automaticallyFinalizesAt = automaticallyFinalizesAt
+        self.issuer = issuer
+        self.parent = parent
+        self.rendering = rendering
+        self.shippingDetails = shippingDetails
+        self.totalTaxes = totalTaxes
+        self.totalPretaxCreditAmounts = totalPretaxCreditAmounts
+        self.confirmationSecret = confirmationSecret
     }
 }
 
@@ -340,12 +388,51 @@ public struct InvoiceAutomaticTax: Codable {
     /// Whether Stripe automatically computes tax on this invoice. Note that incompatible invoice items (invoice items with manually specified tax rates, negative amounts, or t`ax_behavior=unspecified`) cannot be added to automatic tax invoices.
     public var enabled: Bool?
     /// The status of the most recent automated tax calculation for this invoice.
-    public var statis: InvoiceAutomaticTaxStatus?
-    
-    public init(enabled: Bool? = nil, statis: InvoiceAutomaticTaxStatus? = nil) {
+    public var status: InvoiceAutomaticTaxStatus?
+    /// The account that's liable for tax. If set, the business address and tax registrations required to perform the tax calculation are loaded from this account. The tax transaction is returned in the report of the connected account.
+    public var liability: InvoiceAutomaticTaxLiability?
+    /// The tax provider powering automatic tax.
+    public var provider: String?
+    /// If Stripe disabled automatic tax, this enum describes why.
+    public var disabledReason: InvoiceAutomaticTaxDisabledReason?
+
+    public init(enabled: Bool? = nil,
+                status: InvoiceAutomaticTaxStatus? = nil,
+                liability: InvoiceAutomaticTaxLiability? = nil,
+                provider: String? = nil,
+                disabledReason: InvoiceAutomaticTaxDisabledReason? = nil) {
         self.enabled = enabled
-        self.statis = statis
+        self.status = status
+        self.liability = liability
+        self.provider = provider
+        self.disabledReason = disabledReason
     }
+}
+
+public struct InvoiceAutomaticTaxLiability: Codable {
+    /// The connected account being referenced when `type` is `account`.
+    @Expandable<ConnectAccount> public var account: String?
+    /// Type of the account referenced.
+    public var type: InvoiceAutomaticTaxLiabilityType?
+
+    public init(account: String? = nil, type: InvoiceAutomaticTaxLiabilityType? = nil) {
+        self._account = Expandable(id: account)
+        self.type = type
+    }
+}
+
+public enum InvoiceAutomaticTaxLiabilityType: String, Codable {
+    /// The connected account is liable for tax.
+    case account
+    /// The platform/account that issued the invoice is liable for tax.
+    case `self`
+}
+
+public enum InvoiceAutomaticTaxDisabledReason: String, Codable {
+    /// The customer location couldn't be determined, so tax calculation can't be performed at finalization.
+    case finalizationRequiresLocationInputs = "finalization_requires_location_inputs"
+    /// A system error occurred when calculating tax at finalization.
+    case finalizationSystemError = "finalization_system_error"
 }
 
 public enum InvoiceAutomaticTaxStatus: String, Codable {
@@ -355,6 +442,184 @@ public enum InvoiceAutomaticTaxStatus: String, Codable {
     case complete
     /// The Stripe Tax service failed, please try again later.
     case failed
+}
+
+public struct InvoiceIssuer: Codable {
+    /// The connected account being referenced when `type` is `account`.
+    @Expandable<ConnectAccount> public var account: String?
+    /// Type of the account referenced.
+    public var type: InvoiceIssuerType?
+
+    public init(account: String? = nil, type: InvoiceIssuerType? = nil) {
+        self._account = Expandable(id: account)
+        self.type = type
+    }
+}
+
+public enum InvoiceIssuerType: String, Codable {
+    /// The invoice is issued by a connected account.
+    case account
+    /// The invoice is issued by the account that owns the API key.
+    case `self`
+}
+
+public struct InvoiceParent: Codable {
+    /// The type of parent that generated this invoice.
+    public var type: InvoiceParentType?
+    /// Details about the quote that generated this invoice.
+    public var quoteDetails: InvoiceParentQuoteDetails?
+    /// Details about the subscription that generated this invoice.
+    public var subscriptionDetails: InvoiceParentSubscriptionDetails?
+
+    public init(type: InvoiceParentType? = nil,
+                quoteDetails: InvoiceParentQuoteDetails? = nil,
+                subscriptionDetails: InvoiceParentSubscriptionDetails? = nil) {
+        self.type = type
+        self.quoteDetails = quoteDetails
+        self.subscriptionDetails = subscriptionDetails
+    }
+}
+
+public enum InvoiceParentType: String, Codable {
+    case quoteDetails = "quote_details"
+    case subscriptionDetails = "subscription_details"
+}
+
+public struct InvoiceParentQuoteDetails: Codable {
+    /// The quote that generated this invoice.
+    public var quote: String?
+
+    public init(quote: String? = nil) {
+        self.quote = quote
+    }
+}
+
+public struct InvoiceParentSubscriptionDetails: Codable {
+    /// The subscription that generated this invoice.
+    @Expandable<Subscription> public var subscription: String?
+    /// Only set for upcoming invoices that preview prorations. The time used to calculate prorations.
+    public var subscriptionProrationDate: Date?
+    /// Set of key-value pairs that you can attach to an object. This will be copied to the invoice from the subscription when the invoice is created.
+    public var metadata: [String: String]?
+
+    public init(subscription: String? = nil,
+                subscriptionProrationDate: Date? = nil,
+                metadata: [String: String]? = nil) {
+        self._subscription = Expandable(id: subscription)
+        self.subscriptionProrationDate = subscriptionProrationDate
+        self.metadata = metadata
+    }
+}
+
+public struct InvoiceRendering: Codable {
+    /// How line-item prices and amounts will be displayed with respect to tax on invoice PDFs. One of `exclude_tax` or `include_inclusive_tax`.
+    public var amountTaxDisplay: String?
+    /// Invoice pdf rendering options.
+    public var pdf: InvoiceRenderingPDF?
+    /// ID of the rendering template that the invoice is formatted by.
+    public var template: String?
+    /// Version of the rendering template that the invoice is using.
+    public var templateVersion: Int?
+
+    public init(amountTaxDisplay: String? = nil,
+                pdf: InvoiceRenderingPDF? = nil,
+                template: String? = nil,
+                templateVersion: Int? = nil) {
+        self.amountTaxDisplay = amountTaxDisplay
+        self.pdf = pdf
+        self.template = template
+        self.templateVersion = templateVersion
+    }
+}
+
+public struct InvoiceRenderingPDF: Codable {
+    /// Page size of invoice pdf. One of `a4`, `letter`, or `auto`.
+    public var pageSize: String?
+
+    public init(pageSize: String? = nil) {
+        self.pageSize = pageSize
+    }
+}
+
+public struct InvoiceConfirmationSecret: Codable {
+    /// The client_secret of the payment that Stripe creates for the invoice after finalization.
+    public var clientSecret: String?
+    /// The type of client_secret. Currently this is always `payment_intent`, referencing the default payment_intent that Stripe creates during invoice finalization.
+    public var type: String?
+
+    public init(clientSecret: String? = nil, type: String? = nil) {
+        self.clientSecret = clientSecret
+        self.type = type
+    }
+}
+
+public struct InvoiceTotalTax: Codable {
+    /// The amount of the tax, in cents.
+    public var amount: Int?
+    /// Whether this tax is inclusive or exclusive.
+    public var taxBehavior: InvoiceTaxBehavior?
+    /// The reasoning behind this tax, for example, if the product is tax exempt.
+    public var taxabilityReason: InvoiceTotalTaxAmountTaxabilityReason?
+    /// Additional details about the tax rate. Only present when `type` is `tax_rate_details`.
+    public var taxRateDetails: InvoiceTotalTaxRateDetails?
+    /// The amount on which tax is calculated, in cents.
+    public var taxableAmount: Int?
+    /// The type of tax information.
+    public var type: String?
+
+    public init(amount: Int? = nil,
+                taxBehavior: InvoiceTaxBehavior? = nil,
+                taxabilityReason: InvoiceTotalTaxAmountTaxabilityReason? = nil,
+                taxRateDetails: InvoiceTotalTaxRateDetails? = nil,
+                taxableAmount: Int? = nil,
+                type: String? = nil) {
+        self.amount = amount
+        self.taxBehavior = taxBehavior
+        self.taxabilityReason = taxabilityReason
+        self.taxRateDetails = taxRateDetails
+        self.taxableAmount = taxableAmount
+        self.type = type
+    }
+}
+
+public struct InvoiceTotalTaxRateDetails: Codable {
+    /// The tax rate that was applied to get this tax amount.
+    @Expandable<TaxRate> public var taxRate: String?
+
+    public init(taxRate: String? = nil) {
+        self._taxRate = Expandable(id: taxRate)
+    }
+}
+
+public enum InvoiceTaxBehavior: String, Codable {
+    case inclusive
+    case exclusive
+}
+
+public struct InvoicePretaxCreditAmount: Codable {
+    /// The amount, in cents, of the pretax credit amount.
+    public var amount: Int?
+    /// The ID of the credit balance transaction that was applied to get this pretax credit amount.
+    public var creditBalanceTransaction: String?
+    /// The discount that was applied to get this pretax credit amount.
+    @Expandable<Discount> public var discount: String?
+    /// Type of the pretax credit amount referenced.
+    public var type: InvoicePretaxCreditAmountType?
+
+    public init(amount: Int? = nil,
+                creditBalanceTransaction: String? = nil,
+                discount: String? = nil,
+                type: InvoicePretaxCreditAmountType? = nil) {
+        self.amount = amount
+        self.creditBalanceTransaction = creditBalanceTransaction
+        self._discount = Expandable(id: discount)
+        self.type = type
+    }
+}
+
+public enum InvoicePretaxCreditAmountType: String, Codable {
+    case creditBalanceTransaction = "credit_balance_transaction"
+    case discount
 }
 
 public enum InvoiceBillingReason: String, Codable {

@@ -24,7 +24,9 @@ public struct TestClock: Codable {
     public var name: String?
     /// The status of the Test Clock.
     public var status: TestClockStatus?
-    
+    /// Details on the current Test Clock state.
+    public var statusDetails: TestClockStatusDetails?
+
     public init(id: String,
                 object: String,
                 created: Date,
@@ -32,7 +34,8 @@ public struct TestClock: Codable {
                 frozenTime: Date? = nil,
                 livemode: Bool,
                 name: String? = nil,
-                status: TestClockStatus? = nil) {
+                status: TestClockStatus? = nil,
+                statusDetails: TestClockStatusDetails? = nil) {
         self.id = id
         self.object = object
         self.created = created
@@ -41,6 +44,7 @@ public struct TestClock: Codable {
         self.livemode = livemode
         self.name = name
         self.status = status
+        self.statusDetails = statusDetails
     }
 }
 
@@ -50,7 +54,25 @@ public enum TestClockStatus: String, Codable {
     /// In the process of advancing time for the test clock objects.
     case advancing
     /// Failed to advance time. Future requests to advance time will fail.
-    case intervalFailure = "interval_failure"
+    case internalFailure = "internal_failure"
+}
+
+public struct TestClockStatusDetails: Codable {
+    /// Present if the status of the test clock is `advancing`.
+    public var advancing: TestClockStatusDetailsAdvancing?
+
+    public init(advancing: TestClockStatusDetailsAdvancing? = nil) {
+        self.advancing = advancing
+    }
+}
+
+public struct TestClockStatusDetailsAdvancing: Codable {
+    /// The `frozen_time` that the Test Clock is advancing towards.
+    public var targetFrozenTime: Date?
+
+    public init(targetFrozenTime: Date? = nil) {
+        self.targetFrozenTime = targetFrozenTime
+    }
 }
 
 public struct TestClockList: Codable {

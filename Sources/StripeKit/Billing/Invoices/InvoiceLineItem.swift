@@ -55,7 +55,21 @@ public struct InvoiceLineItem: Codable {
     public var taxRates: [TaxRate]?
     /// The amount in cents representing the unit amount for this line item, excluding all tax and discounts.
     public var unitAmountExcludingTax: String?
-    
+    /// The ID of the invoice that contains this line item.
+    public var invoice: String?
+    /// The amount of the line item before any taxes or discounts are applied, in cents.
+    public var subtotal: Int?
+    /// The pricing information of the line item.
+    public var pricing: InvoiceLineItemPricing?
+    /// The quantity of the subscription, if the line item is a subscription or a proration, expressed as a decimal string. This is used for prices with `usage_type=metered`.
+    public var quantityDecimal: String?
+    /// The tax information of the line item.
+    public var taxes: [InvoiceLineItemTax]?
+    /// Contains pretax credit amounts (ex: discount, credit grants, etc) that apply to this line item.
+    public var pretaxCreditAmounts: [InvoicePretaxCreditAmount]?
+    /// The parent that generated this line item.
+    public var parent: InvoiceLineItemParent?
+
     public init(id: String? = nil,
                 amount: Int? = nil,
                 currency: Currency? = nil,
@@ -78,7 +92,14 @@ public struct InvoiceLineItem: Codable {
                 subscriptionItem: String? = nil,
                 taxAmounts: [InvoiceTotalTaxAmount]? = nil,
                 taxRates: [TaxRate]? = nil,
-                unitAmountExcludingTax: String? = nil) {
+                unitAmountExcludingTax: String? = nil,
+                invoice: String? = nil,
+                subtotal: Int? = nil,
+                pricing: InvoiceLineItemPricing? = nil,
+                quantityDecimal: String? = nil,
+                taxes: [InvoiceLineItemTax]? = nil,
+                pretaxCreditAmounts: [InvoicePretaxCreditAmount]? = nil,
+                parent: InvoiceLineItemParent? = nil) {
         self.id = id
         self.amount = amount
         self.currency = currency
@@ -102,6 +123,139 @@ public struct InvoiceLineItem: Codable {
         self.taxAmounts = taxAmounts
         self.taxRates = taxRates
         self.unitAmountExcludingTax = unitAmountExcludingTax
+        self.invoice = invoice
+        self.subtotal = subtotal
+        self.pricing = pricing
+        self.quantityDecimal = quantityDecimal
+        self.taxes = taxes
+        self.pretaxCreditAmounts = pretaxCreditAmounts
+        self.parent = parent
+    }
+}
+
+public struct InvoiceLineItemPricing: Codable {
+    /// The type of the pricing details. Currently this is always `price_details`.
+    public var type: String?
+    /// Details about the price the line item is based on.
+    public var priceDetails: InvoiceLineItemPricingPriceDetails?
+    /// The unit amount (in cents) of the line item, excluding all tax and discounts, as a decimal string with at most 12 decimal places.
+    public var unitAmountDecimal: String?
+
+    public init(type: String? = nil,
+                priceDetails: InvoiceLineItemPricingPriceDetails? = nil,
+                unitAmountDecimal: String? = nil) {
+        self.type = type
+        self.priceDetails = priceDetails
+        self.unitAmountDecimal = unitAmountDecimal
+    }
+}
+
+public struct InvoiceLineItemPricingPriceDetails: Codable {
+    /// The ID of the price this item is associated with.
+    @Expandable<Price> public var price: String?
+    /// The ID of the product this item is associated with.
+    @Expandable<Product> public var product: String?
+
+    public init(price: String? = nil, product: String? = nil) {
+        self._price = Expandable(id: price)
+        self._product = Expandable(id: product)
+    }
+}
+
+public struct InvoiceLineItemTax: Codable {
+    /// The amount of the tax, in cents.
+    public var amount: Int?
+    /// Whether this tax is inclusive or exclusive.
+    public var taxBehavior: InvoiceTaxBehavior?
+    /// The reasoning behind this tax, for example, if the product is tax exempt.
+    public var taxabilityReason: InvoiceTotalTaxAmountTaxabilityReason?
+    /// Additional details about the tax rate. Only present when `type` is `tax_rate_details`.
+    public var taxRateDetails: InvoiceTotalTaxRateDetails?
+    /// The amount on which tax is calculated, in cents.
+    public var taxableAmount: Int?
+    /// The type of tax information.
+    public var type: String?
+
+    public init(amount: Int? = nil,
+                taxBehavior: InvoiceTaxBehavior? = nil,
+                taxabilityReason: InvoiceTotalTaxAmountTaxabilityReason? = nil,
+                taxRateDetails: InvoiceTotalTaxRateDetails? = nil,
+                taxableAmount: Int? = nil,
+                type: String? = nil) {
+        self.amount = amount
+        self.taxBehavior = taxBehavior
+        self.taxabilityReason = taxabilityReason
+        self.taxRateDetails = taxRateDetails
+        self.taxableAmount = taxableAmount
+        self.type = type
+    }
+}
+
+public struct InvoiceLineItemParent: Codable {
+    /// The type of parent that generated this line item.
+    public var type: InvoiceLineItemParentType?
+    /// Details about the invoice item that generated this line item.
+    public var invoiceItemDetails: InvoiceLineItemParentInvoiceItemDetails?
+    /// Details about the subscription item that generated this line item.
+    public var subscriptionItemDetails: InvoiceLineItemParentSubscriptionItemDetails?
+
+    public init(type: InvoiceLineItemParentType? = nil,
+                invoiceItemDetails: InvoiceLineItemParentInvoiceItemDetails? = nil,
+                subscriptionItemDetails: InvoiceLineItemParentSubscriptionItemDetails? = nil) {
+        self.type = type
+        self.invoiceItemDetails = invoiceItemDetails
+        self.subscriptionItemDetails = subscriptionItemDetails
+    }
+}
+
+public enum InvoiceLineItemParentType: String, Codable {
+    case invoiceItemDetails = "invoice_item_details"
+    case subscriptionItemDetails = "subscription_item_details"
+}
+
+public struct InvoiceLineItemParentInvoiceItemDetails: Codable {
+    /// The ID of the invoice item associated with this line item.
+    @Expandable<InvoiceItem> public var invoiceItem: String?
+    /// Whether this is a proration.
+    public var proration: Bool?
+    /// Additional details for proration line items.
+    public var prorationDetails: InvoiceLineItemProrationDetails?
+    /// The subscription that the invoice item belongs to, if any.
+    @Expandable<Subscription> public var subscription: String?
+
+    public init(invoiceItem: String? = nil,
+                proration: Bool? = nil,
+                prorationDetails: InvoiceLineItemProrationDetails? = nil,
+                subscription: String? = nil) {
+        self._invoiceItem = Expandable(id: invoiceItem)
+        self.proration = proration
+        self.prorationDetails = prorationDetails
+        self._subscription = Expandable(id: subscription)
+    }
+}
+
+public struct InvoiceLineItemParentSubscriptionItemDetails: Codable {
+    /// The invoice item that generated this line item, if any.
+    @Expandable<InvoiceItem> public var invoiceItem: String?
+    /// Whether this is a proration.
+    public var proration: Bool?
+    /// Additional details for proration line items.
+    public var prorationDetails: InvoiceLineItemProrationDetails?
+    /// The subscription that the line item belongs to.
+    @Expandable<Subscription> public var subscription: String?
+    /// The subscription item that generated this line item.
+    @Expandable<SubscriptionItem> public var subscriptionItem: String?
+
+    public init(invoiceItem: String? = nil,
+                proration: Bool? = nil,
+                prorationDetails: InvoiceLineItemProrationDetails? = nil,
+                subscription: String? = nil,
+                subscriptionItem: String? = nil) {
+        self._invoiceItem = Expandable(id: invoiceItem)
+        self.proration = proration
+        self.prorationDetails = prorationDetails
+        self._subscription = Expandable(id: subscription)
+        self._subscriptionItem = Expandable(id: subscriptionItem)
     }
 }
 

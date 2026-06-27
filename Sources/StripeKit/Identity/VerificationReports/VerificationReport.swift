@@ -12,42 +12,58 @@ public struct VerificationReport: Codable {
     public var id: String
     /// String representing the object’s type. Objects of the same type share the same value.
     public var object: String
+    /// A string to reference this user. This can be a customer ID, a session ID, or similar, and can be used to reconcile this verification with your internal systems.
+    public var clientReferenceId: String?
     /// Time at which the object was created. Measured in seconds since the Unix epoch.
     public var created: Date
     /// Result of the document check for this report.
     public var document: VerificationReportDocument?
+    /// Result of the email check for this report.
+    public var email: VerificationReportEmail?
     /// Result of the id number check for this report.
     public var idNumber: VerificationReportIdNumber?
     /// Has the value true if the object exists in live mode or the value false if the object exists in test mode.
     public var livemode: Bool
     /// Configuration options for this report.
     public var options: VerificationReportOptions?
+    /// Result of the phone check for this report.
+    public var phone: VerificationReportPhone?
     /// Result of the selfie check for this report.
     public var selfie: VerificationReportSelfie?
     /// Type of report.
     public var type: VerificationReportType?
+    /// The configuration token of a verification flow from the dashboard.
+    public var verificationFlow: String?
     /// ID of the VerificationSession that created this report.
     public var verificationSession: String?
-    
+
     public init(id: String,
                 object: String,
+                clientReferenceId: String? = nil,
                 created: Date,
                 document: VerificationReportDocument? = nil,
+                email: VerificationReportEmail? = nil,
                 idNumber: VerificationReportIdNumber? = nil,
                 livemode: Bool,
                 options: VerificationReportOptions? = nil,
+                phone: VerificationReportPhone? = nil,
                 selfie: VerificationReportSelfie? = nil,
                 type: VerificationReportType? = nil,
+                verificationFlow: String? = nil,
                 verificationSession: String? = nil) {
         self.id = id
         self.object = object
+        self.clientReferenceId = clientReferenceId
         self.created = created
         self.document = document
+        self.email = email
         self.idNumber = idNumber
         self.livemode = livemode
         self.options = options
+        self.phone = phone
         self.selfie = selfie
         self.type = type
+        self.verificationFlow = verificationFlow
         self.verificationSession = verificationSession
     }
 }
@@ -76,11 +92,20 @@ public struct VerificationReportDocument: Codable {
     /// Document ID number.
     /// This field is not included by default. To include it in the response, expand the `number` field.
     public var number: String?
+    /// Sex of the person in the document.
+    /// This field is not included by default. To include it in the response, expand the `sex` field.
+    public var sex: VerificationReportDocumentSex?
     /// Status of this `document` check.
     public var status: VerificationReportDocumentStatus?
     /// The type of the document.
     public var type: VerificationReportDocumentType?
-    
+    /// Place of birth as it appears in the document.
+    /// This field is not included by default. To include it in the response, expand the `unparsed_place_of_birth` field.
+    public var unparsedPlaceOfBirth: String?
+    /// Sex as it appears in the document.
+    /// This field is not included by default. To include it in the response, expand the `unparsed_sex` field.
+    public var unparsedSex: String?
+
     public init(address: Address? = nil,
                 dob: PersonDOB? = nil,
                 error: VerificationReportDocumentError? = nil,
@@ -91,8 +116,11 @@ public struct VerificationReportDocument: Codable {
                 issuingCountry: String? = nil,
                 lastName: String? = nil,
                 number: String? = nil,
+                sex: VerificationReportDocumentSex? = nil,
                 status: VerificationReportDocumentStatus? = nil,
-                type: VerificationReportDocumentType? = nil) {
+                type: VerificationReportDocumentType? = nil,
+                unparsedPlaceOfBirth: String? = nil,
+                unparsedSex: String? = nil) {
         self.address = address
         self.dob = dob
         self.error = error
@@ -103,9 +131,19 @@ public struct VerificationReportDocument: Codable {
         self.issuingCountry = issuingCountry
         self.lastName = lastName
         self.number = number
+        self.sex = sex
         self.status = status
         self.type = type
+        self.unparsedPlaceOfBirth = unparsedPlaceOfBirth
+        self.unparsedSex = unparsedSex
     }
+}
+
+public enum VerificationReportDocumentSex: String, Codable {
+    case redacted = "[redacted]"
+    case female
+    case male
+    case unknown
 }
 
 public struct VerificationReportDocumentError: Codable {
@@ -319,6 +357,94 @@ public enum VerificationReportType: String, Codable {
     case document
     /// Perform an ID number check.
     case idNumber = "id_number"
+    /// Configuration provided by a verification flow.
+    case verificationFlow = "verification_flow"
+}
+
+public struct VerificationReportEmail: Codable {
+    /// Email to be verified.
+    public var email: String?
+    /// Details on the verification error. Present when status is `unverified`.
+    public var error: VerificationReportEmailError?
+    /// Status of this `email` check.
+    public var status: VerificationReportEmailStatus?
+
+    public init(email: String? = nil,
+                error: VerificationReportEmailError? = nil,
+                status: VerificationReportEmailStatus? = nil) {
+        self.email = email
+        self.error = error
+        self.status = status
+    }
+}
+
+public struct VerificationReportEmailError: Codable {
+    /// A short machine-readable string giving the reason for the verification failure.
+    public var code: VerificationReportEmailErrorCode?
+    /// A human-readable message giving the reason for the failure. These messages can be shown to your users.
+    public var reason: String?
+
+    public init(code: VerificationReportEmailErrorCode? = nil, reason: String? = nil) {
+        self.code = code
+        self.reason = reason
+    }
+}
+
+public enum VerificationReportEmailErrorCode: String, Codable {
+    /// The provided email could not be verified for any other reason.
+    case emailUnverifiedOther = "email_unverified_other"
+    /// The user declined to verify their email.
+    case emailVerificationDeclined = "email_verification_declined"
+}
+
+public enum VerificationReportEmailStatus: String, Codable {
+    /// The check resulted in a successful verification.
+    case verified
+    /// The data being checked was not able to be verified.
+    case unverified
+}
+
+public struct VerificationReportPhone: Codable {
+    /// Details on the verification error. Present when status is `unverified`.
+    public var error: VerificationReportPhoneError?
+    /// Phone to be verified.
+    public var phone: String?
+    /// Status of this `phone` check.
+    public var status: VerificationReportPhoneStatus?
+
+    public init(error: VerificationReportPhoneError? = nil,
+                phone: String? = nil,
+                status: VerificationReportPhoneStatus? = nil) {
+        self.error = error
+        self.phone = phone
+        self.status = status
+    }
+}
+
+public struct VerificationReportPhoneError: Codable {
+    /// A short machine-readable string giving the reason for the verification failure.
+    public var code: VerificationReportPhoneErrorCode?
+    /// A human-readable message giving the reason for the failure. These messages can be shown to your users.
+    public var reason: String?
+
+    public init(code: VerificationReportPhoneErrorCode? = nil, reason: String? = nil) {
+        self.code = code
+        self.reason = reason
+    }
+}
+
+public enum VerificationReportPhoneErrorCode: String, Codable {
+    /// The provided phone number could not be verified for any other reason.
+    case phoneUnverifiedOther = "phone_unverified_other"
+    /// The user declined to verify their phone number.
+    case phoneVerificationDeclined = "phone_verification_declined"
+}
+
+public enum VerificationReportPhoneStatus: String, Codable {
+    /// The check resulted in a successful verification.
+    case verified
+    /// The data being checked was not able to be verified.
+    case unverified
 }
 
 public struct VerificationReportList: Codable {

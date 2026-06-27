@@ -18,6 +18,8 @@ public struct BalanceTransaction: Codable {
     public var amount: Int?
     /// The date the transaction’s net funds will become available in the Stripe balance.
     public var availableOn: Date?
+    /// The balance that this transaction impacts.
+    public var balanceType: BalanceTransactionBalanceType?
     /// Time at which the object was created. Measured in seconds since the Unix epoch.
     public var created: Date
     /// Three-letter ISO currency code, in lowercase. Must be a supported currency.
@@ -45,6 +47,7 @@ public struct BalanceTransaction: Codable {
                 object: String,
                 amount: Int? = nil,
                 availableOn: Date? = nil,
+                balanceType: BalanceTransactionBalanceType? = nil,
                 created: Date,
                 currency: Currency? = nil,
                 description: String? = nil,
@@ -60,6 +63,7 @@ public struct BalanceTransaction: Codable {
         self.object = object
         self.amount = amount
         self.availableOn = availableOn
+        self.balanceType = balanceType
         self.created = created
         self.currency = currency
         self.description = description
@@ -101,13 +105,22 @@ public struct BalanceTransactionFeeDetails: Codable {
 
 public enum BalanceTransactionFeeDetailsType: String, Codable {
     case applicationFee = "application_fee"
+    case paymentMethodPassthroughFee = "payment_method_passthrough_fee"
     case stripeFee = "stripe_fee"
     case tax
+    case withheldTax = "withheld_tax"
 }
 
 public enum BalanceTransactionStatus: String, Codable {
     case available
     case pending
+}
+
+public enum BalanceTransactionBalanceType: String, Codable {
+    case issuing
+    case payments
+    case refundAndDisputePrefunding = "refund_and_dispute_prefunding"
+    case riskReserved = "risk_reserved"
 }
 
 public enum BalanceTransactionType: String, Codable {
@@ -118,25 +131,43 @@ public enum BalanceTransactionType: String, Codable {
     case applicationFee = "application_fee"
     case applicationFeeRefund = "application_fee_refund"
     case charge
+    case climateOrderPurchase = "climate_order_purchase"
+    case climateOrderRefund = "climate_order_refund"
     case connectCollectionTransfer = "connect_collection_transfer"
     case contribution
+    case feeCreditFunding = "fee_credit_funding"
+    case inboundTransfer = "inbound_transfer"
+    case inboundTransferReversal = "inbound_transfer_reversal"
     case issuingAuthorizationHold = "issuing_authorization_hold"
     case issuingAuthorizationRelease = "issuing_authorization_release"
     case issuingDispute = "issuing_dispute"
     case issuingTransaction = "issuing_transaction"
+    case obligationOutbound = "obligation_outbound"
+    case obligationReversalInbound = "obligation_reversal_inbound"
     case payment
     case paymentFailureRefund = "payment_failure_refund"
+    case paymentNetworkReserveHold = "payment_network_reserve_hold"
+    case paymentNetworkReserveRelease = "payment_network_reserve_release"
     case paymentRefund = "payment_refund"
+    case paymentReversal = "payment_reversal"
+    case paymentUnreconciled = "payment_unreconciled"
     case payout
     case payoutCancel = "payout_cancel"
     case payoutFailure = "payout_failure"
+    case payoutMinimumBalanceHold = "payout_minimum_balance_hold"
+    case payoutMinimumBalanceRelease = "payout_minimum_balance_release"
     case refund
     case refundFailure = "refund_failure"
+    case reserveHold = "reserve_hold"
+    case reserveRelease = "reserve_release"
     case reserveTransaction = "reserve_transaction"
     case reservedFunds = "reserved_funds"
+    case stripeBalancePaymentDebit = "stripe_balance_payment_debit"
+    case stripeBalancePaymentDebitReversal = "stripe_balance_payment_debit_reversal"
     case stripeFee = "stripe_fee"
     case stripeFxFee = "stripe_fx_fee"
     case taxFee = "tax_fee"
+    case taxFund = "tax_fund"
     case topup
     case topupReversal = "topup_reversal"
     case transfer

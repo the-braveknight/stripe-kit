@@ -14,6 +14,8 @@ public struct PromotionCode: Codable {
     public var code: String?
     /// Hash describing the coupon for this promotion code.
     public var coupon: Coupon?
+    /// The promotion that this promotion code applies. Describes the coupon for this promotion code.
+    public var promotion: PromotionCodePromotion?
     /// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
     public var metadata: [String: String]?
     /// String representing the object’s type. Objects of the same type share the same value.
@@ -24,6 +26,8 @@ public struct PromotionCode: Codable {
     public var created: Date
     /// The customer that this promotion code can be used by.
     @Expandable<Customer> public var customer: String?
+    /// The account representing the customer that this promotion code can be used by.
+    public var customerAccount: String?
     /// Date at which the promotion code can no longer be redeemed.
     public var expiresAt: Date?
     /// Has the value true if the object exists in live mode or the value false if the object exists in test mode.
@@ -38,11 +42,13 @@ public struct PromotionCode: Codable {
     public init(id: String,
                 code: String? = nil,
                 coupon: Coupon? = nil,
+                promotion: PromotionCodePromotion? = nil,
                 metadata: [String : String]? = nil,
                 object: String,
                 active: Bool? = nil,
                 created: Date,
                 customer: String? = nil,
+                customerAccount: String? = nil,
                 expiresAt: Date? = nil,
                 livemode: Bool? = nil,
                 maxRedemptions: Int? = nil,
@@ -51,17 +57,36 @@ public struct PromotionCode: Codable {
         self.id = id
         self.code = code
         self.coupon = coupon
+        self.promotion = promotion
         self.metadata = metadata
         self.object = object
         self.active = active
         self.created = created
         self._customer = Expandable(id: customer)
+        self.customerAccount = customerAccount
         self.expiresAt = expiresAt
         self.livemode = livemode
         self.maxRedemptions = maxRedemptions
         self.restrictions = restrictions
         self.timesRedeemed = timesRedeemed
     }
+}
+
+public struct PromotionCodePromotion: Codable {
+    /// The type of promotion.
+    public var type: PromotionCodePromotionType?
+    /// If `promotion.type` is `coupon`, the coupon for this promotion code.
+    @Expandable<Coupon> public var coupon: String?
+
+    public init(type: PromotionCodePromotionType? = nil,
+                coupon: String? = nil) {
+        self.type = type
+        self._coupon = Expandable(id: coupon)
+    }
+}
+
+public enum PromotionCodePromotionType: String, Codable {
+    case coupon
 }
 
 public struct PromotionCodeRestrictions: Codable {

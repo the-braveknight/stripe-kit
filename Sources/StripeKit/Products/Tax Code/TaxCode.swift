@@ -16,16 +16,36 @@ public struct TaxCode: Codable {
     public var description: String
     /// A short name for the tax code.
     public var name: String
-    
+    /// Describes tax location requirements for this tax code.
+    public var requirements: TaxCodeRequirements?
+
     public init(id: String,
                 object: String,
                 description: String,
-                name: String) {
+                name: String,
+                requirements: TaxCodeRequirements? = nil) {
         self.id = id
         self.object = object
         self.description = description
         self.name = name
+        self.requirements = requirements
     }
+}
+
+public struct TaxCodeRequirements: Codable {
+    /// Describes if a performance location is required to determine the correct tax for products using this tax code.
+    public var performanceLocation: TaxCodeRequirementsPerformanceLocation?
+
+    public init(performanceLocation: TaxCodeRequirementsPerformanceLocation? = nil) {
+        self.performanceLocation = performanceLocation
+    }
+}
+
+public enum TaxCodeRequirementsPerformanceLocation: String, Codable {
+    /// Performance location can be passed but is not required; the customer's address is used if not provided.
+    case optional
+    /// Performance location must be provided for successful tax calculation.
+    case required
 }
 
 public struct TaxCodeList: Codable {

@@ -22,6 +22,8 @@ public struct TerminalHardwareSKU: Codable {
     public var orderable: Int?
     /// ID of the product for this SKU.
     @Expandable<TerminalHardwareProduct> public var product: String?
+    /// The hardware provider for this SKU.
+    public var provider: TerminalHardwareSKUProvider?
     /// The SKU’s status.
     public var status: TerminalHardwareSKUStatus?
     /// A UNIX timestamp, after which time this SKU has a status of unavailable and it can’t be used for order creation. If absent, we have no plans to make this SKU unavailable.
@@ -34,6 +36,7 @@ public struct TerminalHardwareSKU: Codable {
                 country: String? = nil,
                 orderable: Int? = nil,
                 product: String? = nil,
+                provider: TerminalHardwareSKUProvider? = nil,
                 status: TerminalHardwareSKUStatus? = nil,
                 unavailableAfter: Date? = nil) {
         self.id = id
@@ -43,9 +46,15 @@ public struct TerminalHardwareSKU: Codable {
         self.country = country
         self.orderable = orderable
         self._product = Expandable(id: product)
+        self.provider = provider
         self.status = status
         self.unavailableAfter = unavailableAfter
     }
+}
+
+public enum TerminalHardwareSKUProvider: String, Codable {
+    /// The hardware is provided by Stripe.
+    case stripe
 }
 
 public enum TerminalHardwareSKUStatus: String, Codable {

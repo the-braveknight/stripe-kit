@@ -14,14 +14,18 @@ public struct BillingDetails: Codable {
     public var name: String?
     /// Billing phone number (including extension).
     public var phone: String?
-    
+    /// Taxpayer identification number. Used only for transactions between LATAM buyers and non-LATAM sellers.
+    public var taxId: String?
+
     public init(address: Address? = nil,
                 email: String? = nil,
                 name: String? = nil,
-                phone: String? = nil) {
+                phone: String? = nil,
+                taxId: String? = nil) {
         self.address = address
         self.email = email
         self.name = name
         self.phone = phone
+        self.taxId = taxId
     }
 }

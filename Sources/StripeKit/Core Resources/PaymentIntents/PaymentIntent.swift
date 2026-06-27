@@ -21,8 +21,12 @@ public struct PaymentIntent: Codable {
     public var currency: Currency?
     /// ID of the Customer this PaymentIntent is for if one exists.
     @Expandable<Customer> public var customer: String?
+    /// The account (if any) for which the funds of the PaymentIntent are intended.
+    public var customerAccount: String?
     /// An arbitrary string attached to the object. Often useful for displaying to users.
     public var description: String?
+    /// The list of payment method types to exclude from use with this payment.
+    public var excludedPaymentMethodTypes: [String]?
     /// The payment error encountered in the previous PaymentIntent confirmation.
     public var lastPaymentError: StripeError?
     /// The latest charge created by this payment intent.
@@ -33,6 +37,10 @@ public struct PaymentIntent: Codable {
     public var nextAction: PaymentIntentNextAction?
     /// ID of the payment method used in this PaymentIntent.
     @Expandable<PaymentMethod> public var paymentMethod: String?
+    /// Information about the payment method configuration used for this PaymentIntent.
+    public var paymentMethodConfigurationDetails: PaymentIntentPaymentMethodConfigurationDetails?
+    /// Details about the PaymentMethod for a PaymentIntent.
+    public var presentmentDetails: PaymentIntentPresentmentDetails?
     /// Email address that the receipt for the resulting payment will be sent to.
     public var receiptEmail: String?
     /// Indicates that you intend to make future payments with this PaymentIntent’s payment method. If present, the payment method used with this PaymentIntent can be attached to a Customer, even after the transaction completes. Use `on_session` if you intend to only reuse the payment method when your customer is present in your checkout flow. Use `off_session` if your customer may or may not be in your checkout flow. For more, learn to save card details after a payment. Stripe uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules. For example, if your customer is impacted by SCA, using `off_session` will ensure that they are authenticated while processing this PaymentIntent. You will then be able to collect off-session payments for this customer.
@@ -81,6 +89,8 @@ public struct PaymentIntent: Codable {
     public var processing: PaymentIntentProcessing?
     /// ID of the review associated with this PaymentIntent, if any.
     @Expandable<Review> public var review: String?
+    /// This is a legacy field that will be removed in the future. It is the ID of the Source object that is associated with this PaymentIntent, if one was supplied.
+    public var source: String?
     /// The data with which to automatically create a Transfer when the payment is finalized. See the PaymentIntents Connect usage guide for details.
     public var transferData: PaymentIntentTransferData?
     /// A string that identifies the resulting payment as part of a group. See the PaymentIntents Connect usage guide for details.
@@ -92,12 +102,16 @@ public struct PaymentIntent: Codable {
                 clientSecret: String? = nil,
                 currency: Currency? = nil,
                 customer: String? = nil,
+                customerAccount: String? = nil,
                 description: String? = nil,
+                excludedPaymentMethodTypes: [String]? = nil,
                 lastPaymentError: StripeError? = nil,
                 latestCharge: String? = nil,
                 metadata: [String : String]? = nil,
                 nextAction: PaymentIntentNextAction? = nil,
                 paymentMethod: String? = nil,
+                paymentMethodConfigurationDetails: PaymentIntentPaymentMethodConfigurationDetails? = nil,
+                presentmentDetails: PaymentIntentPresentmentDetails? = nil,
                 receiptEmail: String? = nil,
                 setupFutureUsage: PaymentIntentSetupFutureUsage? = nil,
                 shipping: ShippingLabel? = nil,
@@ -122,6 +136,7 @@ public struct PaymentIntent: Codable {
                 paymentMethodTypes: [String]? = nil,
                 processing: PaymentIntentProcessing? = nil,
                 review: String? = nil,
+                source: String? = nil,
                 transferData: PaymentIntentTransferData? = nil,
                 transferGroup: String? = nil) {
         self.id = id
@@ -130,12 +145,16 @@ public struct PaymentIntent: Codable {
         self.clientSecret = clientSecret
         self.currency = currency
         self._customer = Expandable(id: customer)
+        self.customerAccount = customerAccount
         self.description = description
+        self.excludedPaymentMethodTypes = excludedPaymentMethodTypes
         self.lastPaymentError = lastPaymentError
         self._latestCharge = Expandable(id: latestCharge)
         self.metadata = metadata
         self.nextAction = nextAction
         self._paymentMethod = Expandable(id: paymentMethod)
+        self.paymentMethodConfigurationDetails = paymentMethodConfigurationDetails
+        self.presentmentDetails = presentmentDetails
         self.receiptEmail = receiptEmail
         self.setupFutureUsage = setupFutureUsage
         self.shipping = shipping
@@ -160,6 +179,7 @@ public struct PaymentIntent: Codable {
         self.paymentMethodTypes = paymentMethodTypes
         self.processing = processing
         self._review = Expandable(id: review)
+        self.source = source
         self.transferData = transferData
         self.transferGroup = transferGroup
     }
@@ -199,13 +219,48 @@ public struct PaymentIntentProcessingCardCustomerNotification: Codable {
 }
 
 
+public struct PaymentIntentPaymentMethodConfigurationDetails: Codable {
+    /// ID of the payment method configuration used.
+    public var id: String?
+    /// ID of the parent payment method configuration used.
+    public var parent: String?
+
+    public init(id: String? = nil, parent: String? = nil) {
+        self.id = id
+        self.parent = parent
+    }
+}
+
+public struct PaymentIntentPresentmentDetails: Codable {
+    /// Amount intended to be collected by this payment, denominated in `presentment_currency`.
+    public var presentmentAmount: Int?
+    /// Currency presented to the customer during payment.
+    public var presentmentCurrency: Currency?
+
+    public init(presentmentAmount: Int? = nil, presentmentCurrency: Currency? = nil) {
+        self.presentmentAmount = presentmentAmount
+        self.presentmentCurrency = presentmentCurrency
+    }
+}
+
 public struct PaymentIntentAutomaticMaymentMethods: Codable {
+    /// Controls whether this PaymentIntent will accept redirect-based payment methods.
+    public var allowRedirects: PaymentIntentAutomaticPaymentMethodsAllowRedirects?
     /// Automatically calculates compatible payment methods
     public var enabled: Bool?
-    
-    public init(enabled: Bool? = nil) {
+
+    public init(allowRedirects: PaymentIntentAutomaticPaymentMethodsAllowRedirects? = nil,
+                enabled: Bool? = nil) {
+        self.allowRedirects = allowRedirects
         self.enabled = enabled
     }
+}
+
+public enum PaymentIntentAutomaticPaymentMethodsAllowRedirects: String, Codable {
+    /// This PaymentIntent will allow redirect-based payment methods.
+    case always
+    /// This PaymentIntent will not allow redirect-based payment methods.
+    case never
 }
 
 public enum PaymentIntentSetupFutureUsage: String, Codable {
@@ -218,10 +273,15 @@ public struct PaymentIntentTransferData: Codable {
     public var amount: Int?
     /// The account (if any) the payment will be attributed to for tax reporting, and where funds from the payment will be transferred to upon payment success.
     @Expandable<ConnectAccount> public var destination: String?
-    
-    public init(amount: Int? = nil, destination: String? = nil) {
+    /// The Account Tokens API token of the account (if any) that the payment is attributed to for tax reporting, and where funds from the payment are transferred to after payment success.
+    @Expandable<ConnectAccount> public var destinationPaymentAccount: String?
+
+    public init(amount: Int? = nil,
+                destination: String? = nil,
+                destinationPaymentAccount: String? = nil) {
         self.amount = amount
         self._destination = Expandable(id: destination)
+        self._destinationPaymentAccount = Expandable(id: destinationPaymentAccount)
     }
 }
 
@@ -229,6 +289,7 @@ public enum PaymentIntentCancellationReason: String, Codable {
     case abandoned
     case automatic
     case duplicate
+    case expired
     case failedInvoice = "failed_invoice"
     case fraudulent
     case requestedByCustomer = "requested_by_customer"
@@ -322,18 +383,56 @@ public enum PaymentIntentStatus: String, Codable {
 }
 
 public struct PaymentIntentAmountDetails: Codable {
+    /// The amount of the discount applied to the order.
+    public var discountAmount: Int?
+    /// Details about the shipping amount.
+    public var shipping: PaymentIntentAmountDetailsShipping?
+    /// Details about the tax amount.
+    public var tax: PaymentIntentAmountDetailsTax?
     /// Portion of the amount that corresponds to a tip.
     public var tip: PaymentIntentAmountDetailsTip?
-    
-    public init(tip: PaymentIntentAmountDetailsTip? = nil) {
+
+    public init(discountAmount: Int? = nil,
+                shipping: PaymentIntentAmountDetailsShipping? = nil,
+                tax: PaymentIntentAmountDetailsTax? = nil,
+                tip: PaymentIntentAmountDetailsTip? = nil) {
+        self.discountAmount = discountAmount
+        self.shipping = shipping
+        self.tax = tax
         self.tip = tip
+    }
+}
+
+public struct PaymentIntentAmountDetailsShipping: Codable {
+    /// Portion of the amount that corresponds to shipping.
+    public var amount: Int?
+    /// The postal code that represents the shipping source.
+    public var fromPostalCode: String?
+    /// The postal code that represents the shipping destination.
+    public var toPostalCode: String?
+
+    public init(amount: Int? = nil,
+                fromPostalCode: String? = nil,
+                toPostalCode: String? = nil) {
+        self.amount = amount
+        self.fromPostalCode = fromPostalCode
+        self.toPostalCode = toPostalCode
+    }
+}
+
+public struct PaymentIntentAmountDetailsTax: Codable {
+    /// Total portion of the amount that is for tax.
+    public var totalTaxAmount: Int?
+
+    public init(totalTaxAmount: Int? = nil) {
+        self.totalTaxAmount = totalTaxAmount
     }
 }
 
 public struct PaymentIntentAmountDetailsTip: Codable {
     /// Portion of the amount that corresponds to a tip.
     public var amount: Int?
-    
+
     public init(amount: Int? = nil) {
         self.amount = amount
     }
@@ -362,6 +461,8 @@ public struct PaymentIntentPaymentMethodOptions: Codable {
     public var card: PaymentIntentPaymentMethodOptionsCard?
     /// If the PaymentIntent’s `payment_method_types` includes `card_present`, this hash contains the configurations that will be applied to each payment attempt of that type.
     public var cardPresent: PaymentIntentPaymentMethodOptionsCardPresent?
+    /// If the PaymentIntent’s `payment_method_types` includes `cashapp`, this hash contains the configurations that will be applied to each payment attempt of that type.
+    public var cashapp: PaymentIntentPaymentMethodOptionsCashApp?
     /// If the PaymentIntent’s `payment_method_types` includes `customer_balance`, this hash contains the configurations that will be applied to each payment attempt of that type.
     public var customerBalance: PaymentIntentPaymentMethodOptionsCustomerBalance?
     /// If the PaymentIntent’s `payment_method_types` includes `eps`, this hash contains the configurations that will be applied to each payment attempt of that type.
@@ -388,6 +489,8 @@ public struct PaymentIntentPaymentMethodOptions: Codable {
     public var p24: PaymentIntentPaymentMethodOptionsP24?
     /// If the PaymentIntent’s `payment_method_types` includes `paynow`, this hash contains the configurations that will be applied to each payment attempt of that type.
     public var paynow: PaymentIntentPaymentMethodOptionsPaynow?
+    /// If the PaymentIntent’s `payment_method_types` includes `paypal`, this hash contains the configurations that will be applied to each payment attempt of that type.
+    public var paypal: PaymentIntentPaymentMethodOptionsPaypal?
     /// If the PaymentIntent’s `payment_method_types` includes `pix`, this hash contains the configurations that will be applied to each payment attempt of that type.
     public var pix: PaymentIntentPaymentMethodOptionsPix?
     /// If the PaymentIntent’s `payment_method_types` includes `promptpay`, this hash contains the configurations that will be applied to each payment attempt of that type.
@@ -412,6 +515,7 @@ public struct PaymentIntentPaymentMethodOptions: Codable {
                 boleto: PaymentIntentPaymentMethodOptionsBoleto? = nil,
                 card: PaymentIntentPaymentMethodOptionsCard? = nil,
                 cardPresent: PaymentIntentPaymentMethodOptionsCardPresent? = nil,
+                cashapp: PaymentIntentPaymentMethodOptionsCashApp? = nil,
                 customerBalance: PaymentIntentPaymentMethodOptionsCustomerBalance? = nil,
                 eps: PaymentIntentPaymentMethodOptionsEPS? = nil,
                 fpx: PaymentIntentPaymentMethodOptionsFPX? = nil,
@@ -425,6 +529,7 @@ public struct PaymentIntentPaymentMethodOptions: Codable {
                 oxxo: PaymentIntentPaymentMethodOptionsOXXO? = nil,
                 p24: PaymentIntentPaymentMethodOptionsP24? = nil,
                 paynow: PaymentIntentPaymentMethodOptionsPaynow? = nil,
+                paypal: PaymentIntentPaymentMethodOptionsPaypal? = nil,
                 pix: PaymentIntentPaymentMethodOptionsPix? = nil,
                 promptpay: PaymentIntentPaymentMethodOptionsPromptPay? = nil,
                 sepaDebit: PaymentIntentPaymentMethodOptionsSepaDebit? = nil,
@@ -442,6 +547,7 @@ public struct PaymentIntentPaymentMethodOptions: Codable {
         self.boleto = boleto
         self.card = card
         self.cardPresent = cardPresent
+        self.cashapp = cashapp
         self.customerBalance = customerBalance
         self.eps = eps
         self.fpx = fpx
@@ -455,6 +561,7 @@ public struct PaymentIntentPaymentMethodOptions: Codable {
         self.oxxo = oxxo
         self.p24 = p24
         self.paynow = paynow
+        self.paypal = paypal
         self.pix = pix
         self.promptpay = promptpay
         self.sepaDebit = sepaDebit

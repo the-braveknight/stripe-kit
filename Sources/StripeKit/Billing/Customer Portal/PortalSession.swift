@@ -18,6 +18,8 @@ public struct PortalSession: Codable {
     public var created: Date
     /// The ID of the customer for this session.
     public var customer: String?
+    /// The ID of the account for this session.
+    public var customerAccount: String?
     /// Information about a specific flow for the customer to go through. See the docs to learn more about using customer portal deep links and flows.
     public var flow: PortalSessionFlow?
     /// Has the value true if the object exists in live mode or the value false if the object exists in test mode.
@@ -36,6 +38,7 @@ public struct PortalSession: Codable {
                 configuration: String? = nil,
                 created: Date,
                 customer: String? = nil,
+                customerAccount: String? = nil,
                 flow: PortalSessionFlow? = nil,
                 livemode: Bool? = nil,
                 locale: String? = nil,
@@ -47,6 +50,7 @@ public struct PortalSession: Codable {
         self._configuration = Expandable(id: configuration)
         self.created = created
         self.customer = customer
+        self.customerAccount = customerAccount
         self.flow = flow
         self.livemode = livemode
         self.locale = locale
@@ -61,14 +65,22 @@ public struct PortalSessionFlow: Codable {
     public var afterCompletion: PortalSessionFlowAfterCompletion?
     /// Configuration when `flow.type=subscription_cancel`.
     public var subscriptionCancel: PortalSessionFlowSubscriptionCancel?
+    /// Configuration when `flow.type=subscription_update`.
+    public var subscriptionUpdate: PortalSessionFlowSubscriptionUpdate?
+    /// Configuration when `flow.type=subscription_update_confirm`.
+    public var subscriptionUpdateConfirm: PortalSessionFlowSubscriptionUpdateConfirm?
     /// Type of flow that the customer will go through.
     public var type: PortalSessionFlowType?
-    
+
     public init(afterCompletion: PortalSessionFlowAfterCompletion? = nil,
                 subscriptionCancel: PortalSessionFlowSubscriptionCancel? = nil,
+                subscriptionUpdate: PortalSessionFlowSubscriptionUpdate? = nil,
+                subscriptionUpdateConfirm: PortalSessionFlowSubscriptionUpdateConfirm? = nil,
                 type: PortalSessionFlowType? = nil) {
         self.afterCompletion = afterCompletion
         self.subscriptionCancel = subscriptionCancel
+        self.subscriptionUpdate = subscriptionUpdate
+        self.subscriptionUpdateConfirm = subscriptionUpdateConfirm
         self.type = type
     }
 }
@@ -118,11 +130,95 @@ public enum PortalSessionFlowAfterCompletionType: String, Codable {
 }
 
 public struct PortalSessionFlowSubscriptionCancel: Codable {
+    /// Specify a retention strategy to be used in the cancellation flow.
+    public var retention: PortalSessionFlowSubscriptionCancelRetention?
     /// The ID of the subscription to be canceled.
     public var subscription: String?
-    
+
+    public init(retention: PortalSessionFlowSubscriptionCancelRetention? = nil,
+                subscription: String? = nil) {
+        self.retention = retention
+        self.subscription = subscription
+    }
+}
+
+public struct PortalSessionFlowSubscriptionCancelRetention: Codable {
+    /// Configuration when `retention.type=coupon_offer`.
+    public var couponOffer: PortalSessionFlowSubscriptionCancelRetentionCouponOffer?
+    /// Type of retention strategy that will be used.
+    public var type: PortalSessionFlowSubscriptionCancelRetentionType?
+
+    public init(couponOffer: PortalSessionFlowSubscriptionCancelRetentionCouponOffer? = nil,
+                type: PortalSessionFlowSubscriptionCancelRetentionType? = nil) {
+        self.couponOffer = couponOffer
+        self.type = type
+    }
+}
+
+public struct PortalSessionFlowSubscriptionCancelRetentionCouponOffer: Codable {
+    /// The ID of the coupon to be offered.
+    public var coupon: String?
+
+    public init(coupon: String? = nil) {
+        self.coupon = coupon
+    }
+}
+
+public enum PortalSessionFlowSubscriptionCancelRetentionType: String, Codable {
+    /// Offer a coupon to the customer as a retention strategy.
+    case couponOffer = "coupon_offer"
+}
+
+public struct PortalSessionFlowSubscriptionUpdate: Codable {
+    /// The ID of the subscription to be updated.
+    public var subscription: String?
+
     public init(subscription: String? = nil) {
         self.subscription = subscription
+    }
+}
+
+public struct PortalSessionFlowSubscriptionUpdateConfirm: Codable {
+    /// The coupon or promotion code to apply to this subscription update.
+    public var discounts: [PortalSessionFlowSubscriptionUpdateConfirmDiscount]?
+    /// The subscription item to be updated through this flow.
+    public var items: [PortalSessionFlowSubscriptionUpdateConfirmItem]?
+    /// The ID of the subscription to be updated.
+    public var subscription: String?
+
+    public init(discounts: [PortalSessionFlowSubscriptionUpdateConfirmDiscount]? = nil,
+                items: [PortalSessionFlowSubscriptionUpdateConfirmItem]? = nil,
+                subscription: String? = nil) {
+        self.discounts = discounts
+        self.items = items
+        self.subscription = subscription
+    }
+}
+
+public struct PortalSessionFlowSubscriptionUpdateConfirmDiscount: Codable {
+    /// The ID of the coupon to apply to this subscription update.
+    public var coupon: String?
+    /// The ID of a promotion code to apply to this subscription update.
+    public var promotionCode: String?
+
+    public init(coupon: String? = nil, promotionCode: String? = nil) {
+        self.coupon = coupon
+        self.promotionCode = promotionCode
+    }
+}
+
+public struct PortalSessionFlowSubscriptionUpdateConfirmItem: Codable {
+    /// The ID of the subscription item to be updated.
+    public var id: String?
+    /// The price the customer should subscribe to through this flow. The price must also be included in the configuration's `features.subscription_update.products`.
+    public var price: String?
+    /// Quantity for this item that the customer should subscribe to through this flow.
+    public var quantity: Int?
+
+    public init(id: String? = nil, price: String? = nil, quantity: Int? = nil) {
+        self.id = id
+        self.price = price
+        self.quantity = quantity
     }
 }
 
@@ -131,4 +227,8 @@ public enum PortalSessionFlowType: String, Codable {
     case subscriptionCancel = "subscription_cancel"
     /// Customer will be able to add a new payment method. The payment method will be set as the `customer.invoice_settings.default_payment_method`.
     case paymentMethodUpdate = "payment_method_update"
+    /// Customer will be able to initiate an update of a particular subscription.
+    case subscriptionUpdate = "subscription_update"
+    /// Customer will be able to confirm a particular update of a subscription.
+    case subscriptionUpdateConfirm = "subscription_update_confirm"
 }

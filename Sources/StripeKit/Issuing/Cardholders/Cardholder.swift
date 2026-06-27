@@ -21,6 +21,10 @@ public struct Cardholder: Codable {
     public var name: String?
     /// The cardholder’s phone number.
     public var phoneNumber: String?
+    /// The cardholder’s preferred locales (languages), ordered by preference. Locales can be `de`, `en`, `es`, `fr`, or `it`. This changes the language of the [3D Secure flow](https://stripe.com/docs/issuing/3d-secure) and one-time password messages sent to the cardholder.
+    public var preferredLocales: [CardholderPreferredLocale]?
+    /// Information about the redaction of this cardholder.
+    public var redaction: CardholderRedaction?
     /// String representing the object’s type. Objects of the same type share the same value.
     public var object: String
     /// One of `individual` or `business_entity`.
@@ -46,6 +50,8 @@ public struct Cardholder: Codable {
                 metadata: [String : String]? = nil,
                 name: String? = nil,
                 phoneNumber: String? = nil,
+                preferredLocales: [CardholderPreferredLocale]? = nil,
+                redaction: CardholderRedaction? = nil,
                 object: String,
                 type: CardholderType? = nil,
                 company: CardholderCompany? = nil,
@@ -61,6 +67,8 @@ public struct Cardholder: Codable {
         self.metadata = metadata
         self.name = name
         self.phoneNumber = phoneNumber
+        self.preferredLocales = preferredLocales
+        self.redaction = redaction
         self.object = object
         self.type = type
         self.company = company
@@ -78,17 +86,25 @@ public struct CardholderSpendingControls: Codable {
     public var allowedCategories: [String]?
     /// Array of strings containing categories of authorizations to decline. All other categories will be allowed. Cannot be set with `allowed_categories`.
     public var blockedCategories: [String]?
+    /// Array of strings containing representing countries from which authorizations will be allowed. Authorizations from merchants in all other countries will be declined. Country codes should be ISO 3166 alpha-2 country codes (e.g. `US`). Cannot be set with `blocked_merchant_countries`.
+    public var allowedMerchantCountries: [String]?
+    /// Array of strings containing representing countries from which authorizations will be declined. Country codes should be ISO 3166 alpha-2 country codes (e.g. `US`). Cannot be set with `allowed_merchant_countries`.
+    public var blockedMerchantCountries: [String]?
     /// Limit spending with amount-based rules that apply across this cardholder’s cards.
     public var spendingLimits: [CardholderSpendingControlSpendingLimit]?
     /// Currency of the amounts within `spending_limits`.
     public var spendingLimitsCurrency: Currency?
-    
+
     public init(allowedCategories: [String]? = nil,
                 blockedCategories: [String]? = nil,
+                allowedMerchantCountries: [String]? = nil,
+                blockedMerchantCountries: [String]? = nil,
                 spendingLimits: [CardholderSpendingControlSpendingLimit]? = nil,
                 spendingLimitsCurrency: Currency? = nil) {
         self.allowedCategories = allowedCategories
         self.blockedCategories = blockedCategories
+        self.allowedMerchantCountries = allowedMerchantCountries
+        self.blockedMerchantCountries = blockedMerchantCountries
         self.spendingLimits = spendingLimits
         self.spendingLimitsCurrency = spendingLimitsCurrency
     }
@@ -233,9 +249,36 @@ public enum CardholderStatus: String, Codable {
 
 public enum CardholderType: String, Codable {
     /// The cardholder is a person, and additional information includes first and last name, date of birth, etc. If you’re issuing Celtic Spend Cards, then Individual cardholders must accept Authorized User Terms prior to activating their card.
-    case individial
+    case individual
     /// The cardholder is a company or business entity, and additional information includes their tax ID. This option may not be available if your use case only supports individual cardholders.
     case company
+}
+
+public enum CardholderPreferredLocale: String, Codable {
+    case da
+    case de
+    case en
+    case es
+    case fr
+    case it
+    case pl
+    case sv
+}
+
+public struct CardholderRedaction: Codable {
+    /// Indicates whether this object and its related objects have been redacted or not.
+    public var status: CardholderRedactionStatus?
+
+    public init(status: CardholderRedactionStatus? = nil) {
+        self.status = status
+    }
+}
+
+public enum CardholderRedactionStatus: String, Codable {
+    /// The cardholder is being redacted.
+    case processing
+    /// The cardholder has been redacted.
+    case redacted
 }
 
 public enum CardholderAuthorizationRequirementsDisabledReason: String, Codable {
