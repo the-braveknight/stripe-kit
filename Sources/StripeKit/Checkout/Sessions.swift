@@ -1247,7 +1247,7 @@ public enum SessionUIMode: String, Codable {
     /// The Checkout Session will be displayed using embedded UI.
     case embedded
     /// The Checkout Session will be displayed as a hosted page that the customer is redirected to.
-    case hosted
+    case hosted = "hosted_page"
     /// The Checkout Session will be displayed using embedded components on your website.
     case custom
 }
