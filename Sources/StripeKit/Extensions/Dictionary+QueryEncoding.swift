@@ -35,15 +35,6 @@ extension Dictionary where Key == String {
     }
 }
 
-private extension CharacterSet {
-    static let queryComponentAllowed: CharacterSet = {
-        var characterSet = CharacterSet.urlQueryAllowed
-        characterSet.remove("&")
-        characterSet.remove("+")
-        return characterSet
-    }()
-}
-
 private extension Sequence where Element == String {
     var queryKeyPercentEncoded: String {
         return enumerated().map { idx, key in
@@ -54,7 +45,36 @@ private extension Sequence where Element == String {
 }
 
 private extension String {
+    private static let hexDigits = Array("0123456789ABCDEF")
+
+    /// Characters allowed in a URL query component: `CharacterSet.urlQueryAllowed`
+    /// (unreserved + sub-delims + `:` `@` `/` `?`) minus `&` and `+`.
+    /// Implemented byte-by-byte so this file depends only on the standard library
+    /// and `FoundationEssentials` — `CharacterSet`/`addingPercentEncoding` live in
+    /// full `Foundation`, which isn't available on the static Linux SDK.
+    private static func isQueryAllowed(_ byte: UInt8) -> Bool {
+        switch byte {
+        case 0x41...0x5A, // A–Z
+             0x61...0x7A, // a–z
+             0x30...0x39: // 0–9
+            return true
+        default:
+            return "-._~!$'()*,;=:@/?".utf8.contains(byte)
+        }
+    }
+
     var queryValuePercentEncoded: String {
-        return addingPercentEncoding(withAllowedCharacters: .queryComponentAllowed) ?? ""
+        var result = ""
+        result.reserveCapacity(utf8.count)
+        for byte in utf8 {
+            if Self.isQueryAllowed(byte) {
+                result.unicodeScalars.append(Unicode.Scalar(byte))
+            } else {
+                result.append("%")
+                result.append(Self.hexDigits[Int(byte >> 4)])
+                result.append(Self.hexDigits[Int(byte & 0x0F)])
+            }
+        }
+        return result
     }
 }
