@@ -54,16 +54,13 @@ All ~96 model/route files were reconciled against the dahlia object schemas usin
 
 These were intentionally deferred and are worth addressing:
 
-- **Strict enums crash on unknown values** (no `unknown` fallback case + custom decoder):
-  - `EventType` and `EventObject` (`Core Resources/Events/Event.swift`) — **highest risk**: Stripe adds webhook event types frequently, and decoding a newer event currently `throw`s. Add a fallback case before relying on webhooks for all event types.
-  - `Currency` (`Shared Models/Currency.swift`) — fails to decode any currency code not in the enum.
-  - **Recommended fix:** give these enums an `unknown(String)` / default case with a custom `init(from:)`.
+- ✅ **Strict-enum unknown-value crashes — RESOLVED.** `EventType`, `EventObject` (`Core Resources/Events/Event.swift`), and `Currency` (`Shared Models/Currency.swift`) now fall back to an `unknown` case via a custom `init(from:)` instead of throwing, so newer webhook event types / object types / currency codes decode safely. `EventObject` preserves the raw discriminator as `unknown(String)`; `EventType`/`Currency` collapse unrecognized values to `.unknownEvent` / `.unknown`. Covered by `UnknownFallbackTests`. **Note:** these enums are now non-exhaustive — `switch` statements over them require a `default` (or explicit `unknown` handling).
 - **Field moves consumers must adopt** (old fields retained but now decode to `nil`):
   - `Subscription.currentPeriodStart/End` moved to the **item** level (`items.data[].currentPeriodStart/End`).
   - `Invoice` top-level `charge`/`paymentIntent`/`subscription`/`tax` → now under the new `parent` / `payments` structures.
   - `Discount` top-level `coupon` → `source.coupon`.
 - **Source-breaking rename:** `intervalFailure` → `internalFailure` (old raw value `interval_failure` was a typo that never decoded real responses).
 - **Conservatively-typed fields:** several payment-method brand/network/funding fields and new APM sub-hashes were modeled as `String?` or empty structs to avoid decode failures on unanticipated values; they can be strengthened to typed enums/structs later.
-- **Not modeled:** legacy `usage_records` schema (Stripe returns 404 for its object reference), and a new top-level `payments` (`InvoicePayment` list) object on invoices — no `InvoicePayment` type exists yet.
+- **Not modeled:** legacy `usage_records` schema (Stripe returns 404 for its object reference). (The invoice `payments` list is now modeled — `InvoicePayment` / `InvoicePaymentList`, wired into `Invoice.payments`.)
 
 > Full per-resource change log and the complete list of ~111 logged uncertainties from the migration run are in the workflow output for run `wf_5e3d2643-c7f`.

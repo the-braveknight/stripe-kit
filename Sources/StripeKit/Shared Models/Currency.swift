@@ -153,5 +153,13 @@ public enum Currency: String, Codable, CaseIterable, Sendable {
     case yer
     case zar
     case zmw
+    /// A currency code returned by the API that this version of the SDK does
+    /// not yet model. Decoding falls back to this case instead of throwing.
+    case unknown
     // TODO: - finish adding stripe currecies
+
+    public init(from decoder: Decoder) throws {
+        let raw = try decoder.singleValueContainer().decode(String.self)
+        self = Currency(rawValue: raw) ?? .unknown
+    }
 }

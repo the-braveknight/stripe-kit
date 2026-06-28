@@ -127,7 +127,10 @@ public enum EventObject: Codable, Sendable {
     case testClock(TestClock)
     case reader(TerminalReader)
     case verificationSession(VerificationSession)
-    
+    /// An object type not modeled by this version of the SDK. The associated
+    /// value is the raw `object` discriminator from the API.
+    case unknown(String)
+
     public init(from decoder: Decoder) throws {
         let object = try decoder
             .container(keyedBy: CodingKeys.self)
@@ -240,9 +243,7 @@ public enum EventObject: Codable, Sendable {
         case "transfer":
             self = try .transfer(Transfer(from: decoder))
         default:
-            throw DecodingError.keyNotFound(CodingKeys.object,
-                                            DecodingError.Context(codingPath: [CodingKeys.object],
-                                                                  debugDescription: "Missing type '\(object)' cannot be decoded."))
+            self = .unknown(object)
         }
     }
     
@@ -354,6 +355,9 @@ public enum EventObject: Codable, Sendable {
             try terminalReader.encode(to: encoder)
         case .verificationSession(let verificationSession):
             try verificationSession.encode(to: encoder)
+        case .unknown(let object):
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(object, forKey: .object)
         }
     }
     
@@ -764,8 +768,15 @@ public enum EventType: String, Codable, Sendable {
     case transferReversed = "transfer.reversed"
     /// Occurs whenever a transfer's description or metadata is updated.
     case transferUpdated = "transfer.updated"
-    /// An event not supported by the event type
+    /// An event type not modeled by this version of the SDK. Stripe adds new
+    /// event types frequently; decoding falls back to this case instead of
+    /// throwing so webhooks of newer types still decode.
     case unknownEvent = "unknown"
+
+    public init(from decoder: Decoder) throws {
+        let raw = try decoder.singleValueContainer().decode(String.self)
+        self = EventType(rawValue: raw) ?? .unknownEvent
+    }
 }
 
 public struct EventList: Codable, Sendable {
