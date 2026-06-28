@@ -12,7 +12,7 @@ import Foundation
 #endif
 
 /// The [Account Link Object](https://stripe.com/docs/api/account_links/object) .
-public struct AccountLink: Codable {
+public struct AccountLink: Codable, Sendable {
     /// String representing the object’s type. Objects of the same type share the same value.
     public var object: String
     /// Time at which the object was created. Measured in seconds since the Unix epoch.
@@ -33,20 +33,20 @@ public struct AccountLink: Codable {
     }
 }
 
-public enum AccountLinkCreationType: String, Codable {
+public enum AccountLinkCreationType: String, Codable, Sendable {
     /// Provides a form for inputting outstanding requirements. Send the user to the form in this mode to just collect the new information you need.
     case accountOnboarding = "account_onboarding"
     /// Displays the fields that are already populated on the account object, and allows your user to edit previously provided information. Consider framing this as “edit my profile” or “update my verification information”.
     case accountUpdate = "account_update"
 }
 
-public enum AccountLinkCreationCollectType: String, Codable {
+public enum AccountLinkCreationCollectType: String, Codable, Sendable {
     case currentlyDue = "currently_due"
     case eventuallyDue = "eventually_due"
 }
 
 /// Specifies the requirements that Stripe collects from connected accounts in the Connect Onboarding flow.
-public struct AccountLinkCollectionOptions: Codable {
+public struct AccountLinkCollectionOptions: Codable, Sendable {
     /// Specifies whether the platform collects only currently_due requirements (`currently_due`) or both currently_due and eventually_due requirements (`eventually_due`). If you don't specify `collection_options`, the default value is `currently_due`.
     public var fields: AccountLinkCreationCollectType?
     /// Specifies whether the platform collects future_requirements in addition to requirements in Connect Onboarding. The default value is `omit`.
@@ -59,7 +59,7 @@ public struct AccountLinkCollectionOptions: Codable {
     }
 }
 
-public enum AccountLinkCollectionOptionsFutureRequirements: String, Codable {
+public enum AccountLinkCollectionOptionsFutureRequirements: String, Codable, Sendable {
     /// Collect future_requirements in addition to current requirements.
     case include
     /// Don't collect future_requirements.

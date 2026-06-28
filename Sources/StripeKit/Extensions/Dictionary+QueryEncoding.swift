@@ -36,7 +36,7 @@ extension Dictionary where Key == String {
 }
 
 private extension CharacterSet {
-    static var queryComponentAllowed: CharacterSet = {
+    static let queryComponentAllowed: CharacterSet = {
         var characterSet = CharacterSet.urlQueryAllowed
         characterSet.remove("&")
         characterSet.remove("+")

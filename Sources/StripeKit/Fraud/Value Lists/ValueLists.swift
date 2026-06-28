@@ -12,7 +12,7 @@ import Foundation
 #endif
 
 /// The [Value List](https://stripe.com/docs/api/radar/value_lists/object)
-public struct ValueList: Codable {
+public struct ValueList: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// The name of the value list for use in rules.
@@ -57,7 +57,7 @@ public struct ValueList: Codable {
     }
 }
 
-public enum ValueListItemType: String, Codable {
+public enum ValueListItemType: String, Codable, Sendable {
     case account
     case cardFingerprint = "card_fingerprint"
     case cardBin = "card_bin"
@@ -72,7 +72,7 @@ public enum ValueListItemType: String, Codable {
     case usBankAccountFingerprint = "us_bank_account_fingerprint"
 }
 
-public struct ValueListList: Codable {
+public struct ValueListList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

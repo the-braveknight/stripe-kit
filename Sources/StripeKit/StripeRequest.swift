@@ -30,16 +30,22 @@ extension HTTPClientRequest.Body {
     }
 }
 
-struct StripeAPIHandler {
+struct StripeAPIHandler: Sendable {
     private let httpClient: HTTPClient
     private let apiKey: String
-    private let decoder = JSONDecoder()
+
+    /// `JSONDecoder` is a non-`Sendable` reference type, so it is created per request
+    /// instead of being stored, keeping `StripeAPIHandler` `Sendable`.
+    private var decoder: JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .secondsSince1970
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return decoder
+    }
 
     init(httpClient: HTTPClient, apiKey: String) {
         self.httpClient = httpClient
         self.apiKey = apiKey
-        decoder.dateDecodingStrategy = .secondsSince1970
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
     
     func send<T: Codable>(method: HTTPMethod,
@@ -61,10 +67,11 @@ struct StripeAPIHandler {
         let response = try await httpClient.execute(request, timeout: .seconds(60))
         let responseData = try await response.body.collect(upTo: 1024 * 1024 * 100) // 500mb to account for data downloads.
         
+        let decoder = self.decoder
         guard response.status == .ok else {
-            let error = try self.decoder.decode(StripeError.self, from: responseData)
+            let error = try decoder.decode(StripeError.self, from: responseData)
             throw error
         }
-        return try self.decoder.decode(T.self, from: responseData)
+        return try decoder.decode(T.self, from: responseData)
     }
 }

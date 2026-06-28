@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct PromotionCode: Codable {
+public struct PromotionCode: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// The customer-facing code. Regardless of case, this code must be unique across all active promotion codes for each customer.
@@ -76,7 +76,7 @@ public struct PromotionCode: Codable {
     }
 }
 
-public struct PromotionCodePromotion: Codable {
+public struct PromotionCodePromotion: Codable, Sendable {
     /// The type of promotion.
     public var type: PromotionCodePromotionType?
     /// If `promotion.type` is `coupon`, the coupon for this promotion code.
@@ -89,11 +89,11 @@ public struct PromotionCodePromotion: Codable {
     }
 }
 
-public enum PromotionCodePromotionType: String, Codable {
+public enum PromotionCodePromotionType: String, Codable, Sendable {
     case coupon
 }
 
-public struct PromotionCodeRestrictions: Codable {
+public struct PromotionCodeRestrictions: Codable, Sendable {
     /// Promotion code restrictions defined in each available currency option. Each key must be a three-letter ISO currency code and a supported currency. For example, to get your promotion code in `eur`, fetch the value of the `eur` key in `currency_options`. This field is not included by default. To include it in the response, expand the `currency_options` field.
     public var currencyOptions: [Currency: PromotionCodeRestrictionsCurrencyOptions]?
     /// A Boolean indicating if the Promotion Code should only be redeemed for Customers without any successful payments or invoices
@@ -114,7 +114,7 @@ public struct PromotionCodeRestrictions: Codable {
     }
 }
 
-public struct PromotionCodeRestrictionsCurrencyOptions: Codable {
+public struct PromotionCodeRestrictionsCurrencyOptions: Codable, Sendable {
     /// Minimum amount required to redeem this Promotion Code into a Coupon (e.g., a purchase must be $100 or more to work).
     public var minimumAmount: Int?
     
@@ -123,7 +123,7 @@ public struct PromotionCodeRestrictionsCurrencyOptions: Codable {
     }
 }
 
-public struct PromotionCodeList: Codable {
+public struct PromotionCodeList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

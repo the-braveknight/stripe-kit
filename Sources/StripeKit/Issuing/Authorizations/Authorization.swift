@@ -12,7 +12,7 @@ import Foundation
 #endif
 
 /// The [Authorization Object](https://stripe.com/docs/api/issuing/authorizations/object)
-public struct Authorization: Codable {
+public struct Authorization: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// The total amount that was authorized or rejected. This amount is in the card’s currency and in the smallest currency unit.
@@ -125,7 +125,7 @@ public struct Authorization: Codable {
     }
 }
 
-public struct AuthorizationAmountDetails: Codable {
+public struct AuthorizationAmountDetails: Codable, Sendable {
     /// The fee charged by the ATM for the cash withdrawal.
     public var atmFee: Int?
     /// The amount of cash requested by the cardholder.
@@ -138,7 +138,7 @@ public struct AuthorizationAmountDetails: Codable {
     }
 }
 
-public struct AuthorizationPendingRequest: Codable {
+public struct AuthorizationPendingRequest: Codable, Sendable {
     /// The additional amount Stripe will hold if the authorization is approved, in the card’s currency and in the smallest currency unit.
     public var amount: Int?
     /// Detailed breakdown of amount components. These amounts are denominated in currency and in the smallest currency unit.
@@ -171,7 +171,7 @@ public struct AuthorizationPendingRequest: Codable {
     }
 }
 
-public struct AuthorizationPendingRequestAmountDetails: Codable {
+public struct AuthorizationPendingRequestAmountDetails: Codable, Sendable {
     /// The fee charged by the ATM for the cash withdrawal.
     public var atmFee: Int?
     /// The amount of cash requested by the cardholder.
@@ -184,7 +184,7 @@ public struct AuthorizationPendingRequestAmountDetails: Codable {
     }
 }
 
-public enum AuthorizationMethod: String, Codable {
+public enum AuthorizationMethod: String, Codable, Sendable {
     /// The card number was manually entered into a terminal.
     case keyedIn = "keyed_in"
     /// The card was physically swiped in a terminal.
@@ -197,7 +197,7 @@ public enum AuthorizationMethod: String, Codable {
     case online
 }
 
-public struct AuthorizationMerchantData: Codable {
+public struct AuthorizationMerchantData: Codable, Sendable {
     // TODO: - Make this an enum once it's solidified. https://stripe.com/docs/issuing/merchant-categories
     /// A categorization of the seller’s type of business. See our merchant categories guide for a list of possible values.
     public var category: String?
@@ -247,7 +247,7 @@ public struct AuthorizationMerchantData: Codable {
     }
 }
 
-public struct AuthorizationNetworkData: Codable {
+public struct AuthorizationNetworkData: Codable, Sendable {
     /// Identifier assigned to the acquirer by the card network. Sometimes this value is not provided by the network; in this case, the value will be `null`.
     public var acquiringInstitutionId: String?
     /// The System Trace Audit Number (STAN) is a 6-digit identifier assigned by the acquirer. Prefer `network_data.transaction_id` if present, unless you have special requirements.
@@ -264,7 +264,7 @@ public struct AuthorizationNetworkData: Codable {
     }
 }
 
-public struct AuthorizationRequestHistory: Codable {
+public struct AuthorizationRequestHistory: Codable, Sendable {
     /// The `pending_request.amount` at the time of the request, presented in your card’s currency and in the smallest currency unit. Stripe held this amount from your account to fund the authorization if the request was approved.
     public var amount: Int?
     /// Detailed breakdown of amount components. These amounts are denominated in currency and in the smallest currency unit.
@@ -313,7 +313,7 @@ public struct AuthorizationRequestHistory: Codable {
     }
 }
 
-public struct AuthorizationRequestHistoryAmountDetails: Codable {
+public struct AuthorizationRequestHistoryAmountDetails: Codable, Sendable {
     /// The fee charged by the ATM for the cash withdrawal.
     public var atmFee: Int?
     /// The amount of cash requested by the cardholder.
@@ -326,7 +326,7 @@ public struct AuthorizationRequestHistoryAmountDetails: Codable {
     }
 }
 
-public enum AuthorizationRequestHistoryReason: String, Codable {
+public enum AuthorizationRequestHistoryReason: String, Codable, Sendable {
     /// The authorization request was declined because your account is disabled. For more information, please contact us at support-issuing@stripe.com. Replaces the deprecated `account_inactive` and `account_compliance_disabled` enums.
     case accountDisabled = "account_disabled"
     /// The authorization was declined because of your spending controls. Documentation for updating your spending controls can be found here. Replaces the deprecated `authorization_controls` enum.
@@ -357,13 +357,13 @@ public enum AuthorizationRequestHistoryReason: String, Codable {
     case verificationFailed = "verification_failed"
 }
 
-public enum AuthorizationStatus: String, Codable {
+public enum AuthorizationStatus: String, Codable, Sendable {
     case pending
     case reversed
     case closed
 }
 
-public struct AuthorizationVerificationData: Codable {
+public struct AuthorizationVerificationData: Codable, Sendable {
     /// Whether the cardholder provided an address first line and if it matched the cardholder’s `billing.address.line1`.
     public var addressLine1Check: AuthorizationVerificationDataCheck?
     /// Whether the cardholder provided a postal code and if it matched the cardholder’s `billing.address.postal_code`.
@@ -396,13 +396,13 @@ public struct AuthorizationVerificationData: Codable {
     }
 }
 
-public enum AuthorizationVerificationDataCheck: String, Codable {
+public enum AuthorizationVerificationDataCheck: String, Codable, Sendable {
     case match
     case mismatch
     case notProvided = "not_provided"
 }
 
-public struct AuthorizationVerificationDataAuthenticationExemption: Codable {
+public struct AuthorizationVerificationDataAuthenticationExemption: Codable, Sendable {
     /// The entity that requested the exemption, either the acquiring merchant or the Issuing user.
     public var claimedBy: AuthorizationVerificationDataAuthenticationExemptionClaimedBy?
     /// The specific exemption claimed for this authorization.
@@ -415,18 +415,18 @@ public struct AuthorizationVerificationDataAuthenticationExemption: Codable {
     }
 }
 
-public enum AuthorizationVerificationDataAuthenticationExemptionClaimedBy: String, Codable {
+public enum AuthorizationVerificationDataAuthenticationExemptionClaimedBy: String, Codable, Sendable {
     case acquirer
     case issuer
 }
 
-public enum AuthorizationVerificationDataAuthenticationExemptionType: String, Codable {
+public enum AuthorizationVerificationDataAuthenticationExemptionType: String, Codable, Sendable {
     case lowValueTransaction = "low_value_transaction"
     case transactionRiskAnalysis = "transaction_risk_analysis"
     case unknown
 }
 
-public struct AuthorizationVerificationDataThreeDSecure: Codable {
+public struct AuthorizationVerificationDataThreeDSecure: Codable, Sendable {
     /// The outcome of the 3D Secure authentication request.
     public var result: AuthorizationVerificationDataThreeDSecureResult?
 
@@ -435,7 +435,7 @@ public struct AuthorizationVerificationDataThreeDSecure: Codable {
     }
 }
 
-public enum AuthorizationVerificationDataThreeDSecureResult: String, Codable {
+public enum AuthorizationVerificationDataThreeDSecureResult: String, Codable, Sendable {
     /// 3D Secure authentication was attempted but did not succeed.
     case attemptAcknowledged = "attempt_acknowledged"
     /// 3D Secure authentication succeeded.
@@ -446,13 +446,13 @@ public enum AuthorizationVerificationDataThreeDSecureResult: String, Codable {
     case required
 }
 
-public enum AuthorizationWallet: String, Codable {
+public enum AuthorizationWallet: String, Codable, Sendable {
     case applePay = "apple_pay"
     case googlePay = "google_pay"
     case samsungPay = "samsung_pay"
 }
 
-public struct AuthorizationFleet: Codable {
+public struct AuthorizationFleet: Codable, Sendable {
     /// Answers to prompts presented to the cardholder at the point of sale. Prompted fields vary depending on the configuration of your physical fleet cards. Typical points of sale support only numeric entry.
     public var cardholderPromptData: AuthorizationFleetCardholderPromptData?
     /// The type of purchase.
@@ -473,7 +473,7 @@ public struct AuthorizationFleet: Codable {
     }
 }
 
-public struct AuthorizationFleetCardholderPromptData: Codable {
+public struct AuthorizationFleetCardholderPromptData: Codable, Sendable {
     /// Driver ID.
     public var driverId: String?
     /// Odometer reading.
@@ -498,19 +498,19 @@ public struct AuthorizationFleetCardholderPromptData: Codable {
     }
 }
 
-public enum AuthorizationFleetPurchaseType: String, Codable {
+public enum AuthorizationFleetPurchaseType: String, Codable, Sendable {
     case fuelPurchase = "fuel_purchase"
     case fuelAndNonFuelPurchase = "fuel_and_non_fuel_purchase"
     case nonFuelPurchase = "non_fuel_purchase"
 }
 
-public enum AuthorizationFleetServiceType: String, Codable {
+public enum AuthorizationFleetServiceType: String, Codable, Sendable {
     case fullService = "full_service"
     case nonFuelTransaction = "non_fuel_transaction"
     case selfService = "self_service"
 }
 
-public struct AuthorizationFleetReportedBreakdown: Codable {
+public struct AuthorizationFleetReportedBreakdown: Codable, Sendable {
     /// Breakdown of fuel portion of the purchase.
     public var fuel: AuthorizationFleetReportedBreakdownFuel?
     /// Breakdown of non-fuel portion of the purchase.
@@ -527,7 +527,7 @@ public struct AuthorizationFleetReportedBreakdown: Codable {
     }
 }
 
-public struct AuthorizationFleetReportedBreakdownFuel: Codable {
+public struct AuthorizationFleetReportedBreakdownFuel: Codable, Sendable {
     /// Gross fuel amount that should equal Fuel Quantity multiplied by Fuel Unit Cost, inclusive of taxes.
     public var grossAmountDecimal: String?
 
@@ -536,7 +536,7 @@ public struct AuthorizationFleetReportedBreakdownFuel: Codable {
     }
 }
 
-public struct AuthorizationFleetReportedBreakdownNonFuel: Codable {
+public struct AuthorizationFleetReportedBreakdownNonFuel: Codable, Sendable {
     /// Gross non-fuel amount that should equal the sum of the line items, inclusive of taxes.
     public var grossAmountDecimal: String?
 
@@ -545,7 +545,7 @@ public struct AuthorizationFleetReportedBreakdownNonFuel: Codable {
     }
 }
 
-public struct AuthorizationFleetReportedBreakdownTax: Codable {
+public struct AuthorizationFleetReportedBreakdownTax: Codable, Sendable {
     /// Amount of state or provincial Sales Tax included in the transaction amount. Null if not reported by merchant or not subject to tax.
     public var localAmountDecimal: String?
     /// Amount of national Sales Tax or VAT included in the transaction amount. Null if not reported by merchant or not subject to tax.
@@ -558,7 +558,7 @@ public struct AuthorizationFleetReportedBreakdownTax: Codable {
     }
 }
 
-public struct AuthorizationFuel: Codable {
+public struct AuthorizationFuel: Codable, Sendable {
     /// [Conexxus Payment System Product Code](https://www.conexxus.org/conexxus-payment-system-product-codes) identifying the primary fuel product purchased.
     public var industryProductCode: String?
     /// The quantity of `unit`s of fuel that was dispensed, represented as a decimal string with at most 12 decimal places.
@@ -583,7 +583,7 @@ public struct AuthorizationFuel: Codable {
     }
 }
 
-public enum AuthorizationFuelType: String, Codable {
+public enum AuthorizationFuelType: String, Codable, Sendable {
     case diesel
     case other
     case unleadedPlus = "unleaded_plus"
@@ -591,7 +591,7 @@ public enum AuthorizationFuelType: String, Codable {
     case unleadedSuper = "unleaded_super"
 }
 
-public enum AuthorizationFuelUnit: String, Codable {
+public enum AuthorizationFuelUnit: String, Codable, Sendable {
     case chargingMinute = "charging_minute"
     case imperialGallon = "imperial_gallon"
     case kilogram
@@ -602,7 +602,7 @@ public enum AuthorizationFuelUnit: String, Codable {
     case usGallon = "us_gallon"
 }
 
-public struct AuthorizationFraudChallenge: Codable {
+public struct AuthorizationFraudChallenge: Codable, Sendable {
     /// The method by which the fraud challenge was delivered to the cardholder.
     public var channel: AuthorizationFraudChallengeChannel?
     /// The status of the fraud challenge.
@@ -619,11 +619,11 @@ public struct AuthorizationFraudChallenge: Codable {
     }
 }
 
-public enum AuthorizationFraudChallengeChannel: String, Codable {
+public enum AuthorizationFraudChallengeChannel: String, Codable, Sendable {
     case sms
 }
 
-public enum AuthorizationFraudChallengeStatus: String, Codable {
+public enum AuthorizationFraudChallengeStatus: String, Codable, Sendable {
     case expired
     case pending
     case rejected
@@ -631,12 +631,12 @@ public enum AuthorizationFraudChallengeStatus: String, Codable {
     case verified
 }
 
-public enum AuthorizationFraudChallengeUndeliverableReason: String, Codable {
+public enum AuthorizationFraudChallengeUndeliverableReason: String, Codable, Sendable {
     case noPhoneNumber = "no_phone_number"
     case unsupportedPhoneNumber = "unsupported_phone_number"
 }
 
-public struct AuthorizationTreasury: Codable {
+public struct AuthorizationTreasury: Codable, Sendable {
     /// The array of [ReceivedCredits](https://stripe.com/docs/api/treasury/received_credits) associated with this authorization
     public var receivedCredits: [String]?
     /// The array of [ReceivedDebits](https://stripe.com/docs/api/treasury/received_debits) associated with this authorization
@@ -653,7 +653,7 @@ public struct AuthorizationTreasury: Codable {
     }
 }
 
-public struct AuthorizationList: Codable {
+public struct AuthorizationList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

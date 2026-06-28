@@ -27,8 +27,8 @@ extension KeyedDecodingContainer {
 
 @propertyWrapper
 public struct Expandable<Model: Codable>: Codable {
-    
-    private enum ExpandableState {
+
+    fileprivate enum ExpandableState {
         case unexpanded(String)
         indirect case expanded(Model)
         case empty
@@ -97,10 +97,10 @@ public struct Expandable<Model: Codable>: Codable {
 }
 
 @propertyWrapper
-public struct DynamicExpandable<A: Codable, B: Codable>: Codable {
+public struct DynamicExpandable<A: Codable & Sendable, B: Codable & Sendable>: Codable, Sendable {
     private enum ExpandableState {
         case unexpanded(String)
-        indirect case expanded(Codable)
+        indirect case expanded(any Codable & Sendable)
         case empty
     }
 
@@ -194,7 +194,7 @@ public struct DynamicExpandable<A: Codable, B: Codable>: Codable {
 
 @propertyWrapper
 public struct ExpandableCollection<Model: Codable>: Codable {
-    private enum ExpandableState {
+    fileprivate enum ExpandableState {
         case unexpanded([String])
         indirect case expanded([Model])
         case empty
@@ -265,6 +265,15 @@ public struct ExpandableCollection<Model: Codable>: Codable {
         }
     }
 }
+
+// The expandable wrappers are `Sendable` whenever their wrapped model is. The
+// private `ExpandableState` storage holds only the generic `Model`, so the
+// conformance is conditional on `Model: Sendable` — declared explicitly on the
+// nested storage enums so the inference propagates to the wrappers.
+extension Expandable.ExpandableState: Sendable where Model: Sendable {}
+extension Expandable: Sendable where Model: Sendable {}
+extension ExpandableCollection.ExpandableState: Sendable where Model: Sendable {}
+extension ExpandableCollection: Sendable where Model: Sendable {}
 
 internal extension Decoder {
     func singleValueContainerIfPresentAndNotNull() throws -> SingleValueDecodingContainer? {

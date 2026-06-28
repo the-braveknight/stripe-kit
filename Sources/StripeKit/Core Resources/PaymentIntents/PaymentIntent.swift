@@ -12,7 +12,7 @@ import Foundation
 #endif
 
 /// The [PaymentIntent Object](https://stripe.com/docs/api/payment_intents/object)
-public struct PaymentIntent: Codable {
+public struct PaymentIntent: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// Amount intended to be collected by this PaymentIntent.
@@ -189,7 +189,7 @@ public struct PaymentIntent: Codable {
     }
 }
 
-public struct PaymentIntentProcessing: Codable {
+public struct PaymentIntentProcessing: Codable, Sendable {
     /// If the PaymentIntent’s `payment_method_types` includes card, this hash contains the details on the processing state of the payment.
     public var card: PaymentIntentProcessingCard?
     /// Type of the payment method for which payment is in processing state, one of `card`.
@@ -201,7 +201,7 @@ public struct PaymentIntentProcessing: Codable {
     }
 }
 
-public struct PaymentIntentProcessingCard: Codable {
+public struct PaymentIntentProcessingCard: Codable, Sendable {
     /// For recurring payments of Indian cards, this hash contains details on whether customer approval is required, and until when the payment will be in `processing` state
     public var customerNotification: PaymentIntentProcessingCardCustomerNotification?
     
@@ -210,7 +210,7 @@ public struct PaymentIntentProcessingCard: Codable {
     }
 }
 
-public struct PaymentIntentProcessingCardCustomerNotification: Codable {
+public struct PaymentIntentProcessingCardCustomerNotification: Codable, Sendable {
     /// Whether customer approval has been requested for this payment. For payments greater than INR 15000 or mandate amount, the customer must provide explicit approval of the payment with their bank.
     public var approvalRequested: Bool?
     /// If customer approval is required, they need to provide approval before this time.
@@ -223,7 +223,7 @@ public struct PaymentIntentProcessingCardCustomerNotification: Codable {
 }
 
 
-public struct PaymentIntentPaymentMethodConfigurationDetails: Codable {
+public struct PaymentIntentPaymentMethodConfigurationDetails: Codable, Sendable {
     /// ID of the payment method configuration used.
     public var id: String?
     /// ID of the parent payment method configuration used.
@@ -235,7 +235,7 @@ public struct PaymentIntentPaymentMethodConfigurationDetails: Codable {
     }
 }
 
-public struct PaymentIntentPresentmentDetails: Codable {
+public struct PaymentIntentPresentmentDetails: Codable, Sendable {
     /// Amount intended to be collected by this payment, denominated in `presentment_currency`.
     public var presentmentAmount: Int?
     /// Currency presented to the customer during payment.
@@ -247,7 +247,7 @@ public struct PaymentIntentPresentmentDetails: Codable {
     }
 }
 
-public struct PaymentIntentAutomaticMaymentMethods: Codable {
+public struct PaymentIntentAutomaticMaymentMethods: Codable, Sendable {
     /// Controls whether this PaymentIntent will accept redirect-based payment methods.
     public var allowRedirects: PaymentIntentAutomaticPaymentMethodsAllowRedirects?
     /// Automatically calculates compatible payment methods
@@ -260,19 +260,19 @@ public struct PaymentIntentAutomaticMaymentMethods: Codable {
     }
 }
 
-public enum PaymentIntentAutomaticPaymentMethodsAllowRedirects: String, Codable {
+public enum PaymentIntentAutomaticPaymentMethodsAllowRedirects: String, Codable, Sendable {
     /// This PaymentIntent will allow redirect-based payment methods.
     case always
     /// This PaymentIntent will not allow redirect-based payment methods.
     case never
 }
 
-public enum PaymentIntentSetupFutureUsage: String, Codable {
+public enum PaymentIntentSetupFutureUsage: String, Codable, Sendable {
     case onSession = "on_session"
     case offSession = "off_session"
 }
 
-public struct PaymentIntentTransferData: Codable {
+public struct PaymentIntentTransferData: Codable, Sendable {
 	/// Amount intended to be collected by this PaymentIntent. A positive integer representing how much to charge in the smallest currency unit (e.g., 100 cents to charge $1.00 or 100 to charge ¥100, a zero-decimal currency). The minimum amount is $0.50 US or equivalent in charge currency. The amount value supports up to eight digits (e.g., a value of 99999999 for a USD charge of $999,999.99).
     public var amount: Int?
     /// The account (if any) the payment will be attributed to for tax reporting, and where funds from the payment will be transferred to upon payment success.
@@ -289,7 +289,7 @@ public struct PaymentIntentTransferData: Codable {
     }
 }
 
-public enum PaymentIntentCancellationReason: String, Codable {
+public enum PaymentIntentCancellationReason: String, Codable, Sendable {
     case abandoned
     case automatic
     case duplicate
@@ -300,7 +300,7 @@ public enum PaymentIntentCancellationReason: String, Codable {
     case voidInvoice = "void_invoice"
 }
 
-public enum PaymentIntentCaptureMethod: String, Codable {
+public enum PaymentIntentCaptureMethod: String, Codable, Sendable {
     /// (Default) Stripe automatically captures funds when the customer authorizes the payment.
     case automatic
     case automaticAsync = "automatic_async"
@@ -308,14 +308,14 @@ public enum PaymentIntentCaptureMethod: String, Codable {
     case manual
 }
 
-public enum PaymentIntentConfirmationMethod: String, Codable {
+public enum PaymentIntentConfirmationMethod: String, Codable, Sendable {
     /// (Default) PaymentIntent can be confirmed using a publishable key. After `next_action`s are handled, no additional confirmation is required to complete the payment.
     case automatic
     /// All payment attempts must be made using a secret key. The PaymentIntent returns to the `requires_confirmation` state after handling `next_action`s, and requires your server to initiate each payment attempt with an explicit confirmation.
     case manual
 }
 
-public struct PaymentIntentNextAction: Codable {
+public struct PaymentIntentNextAction: Codable, Sendable {
     /// Contains instructions for authenticating a payment by redirecting your customer to Alipay App or website.
     public var alipayHandleRedirect: PaymentIntentNextActionAlipayHandleRedirect?
     /// Contains Boleto details necessary for the customer to complete the payment.
@@ -376,7 +376,7 @@ public struct PaymentIntentNextAction: Codable {
     }
 }
 
-public enum PaymentIntentStatus: String, Codable {
+public enum PaymentIntentStatus: String, Codable, Sendable {
     case requiresPaymentMethod = "requires_payment_method"
     case requiresConfirmation = "requires_confirmation"
     case requiresAction = "requires_action"
@@ -386,7 +386,7 @@ public enum PaymentIntentStatus: String, Codable {
     case succeeded
 }
 
-public struct PaymentIntentAmountDetails: Codable {
+public struct PaymentIntentAmountDetails: Codable, Sendable {
     /// The amount of the discount applied to the order.
     public var discountAmount: Int?
     /// Details about the shipping amount.
@@ -407,7 +407,7 @@ public struct PaymentIntentAmountDetails: Codable {
     }
 }
 
-public struct PaymentIntentAmountDetailsShipping: Codable {
+public struct PaymentIntentAmountDetailsShipping: Codable, Sendable {
     /// Portion of the amount that corresponds to shipping.
     public var amount: Int?
     /// The postal code that represents the shipping source.
@@ -424,7 +424,7 @@ public struct PaymentIntentAmountDetailsShipping: Codable {
     }
 }
 
-public struct PaymentIntentAmountDetailsTax: Codable {
+public struct PaymentIntentAmountDetailsTax: Codable, Sendable {
     /// Total portion of the amount that is for tax.
     public var totalTaxAmount: Int?
 
@@ -433,7 +433,7 @@ public struct PaymentIntentAmountDetailsTax: Codable {
     }
 }
 
-public struct PaymentIntentAmountDetailsTip: Codable {
+public struct PaymentIntentAmountDetailsTip: Codable, Sendable {
     /// Portion of the amount that corresponds to a tip.
     public var amount: Int?
 
@@ -442,7 +442,7 @@ public struct PaymentIntentAmountDetailsTip: Codable {
     }
 }
 
-public struct PaymentIntentPaymentMethodOptions: Codable {
+public struct PaymentIntentPaymentMethodOptions: Codable, Sendable {
     /// If the PaymentIntent’s `payment_method_types` includes `acss_debit`, this hash contains the configurations that will be applied to each payment attempt of that type.
     public var acssDebit: PaymentIntentPaymentMethodOptionsAcssDebit?
     /// If the PaymentIntent’s `payment_method_types` includes `affirm`, this hash contains the configurations that will be applied to each payment attempt of that type.
@@ -575,14 +575,14 @@ public struct PaymentIntentPaymentMethodOptions: Codable {
     }
 }
 
-public struct PaymentIntentList: Codable {
+public struct PaymentIntentList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?
     public var data: [PaymentIntent]?
 }
 
-public struct PaymentIntentSearchResult: Codable {
+public struct PaymentIntentSearchResult: Codable, Sendable {
     /// A string describing the object type returned.
     public var object: String
     /// A list of charges, paginated by any request parameters.

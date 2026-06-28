@@ -12,7 +12,7 @@ import Foundation
 #endif
 
 /// The [File Object](https://stripe.com/docs/api/files/object)
-public struct File: Codable {
+public struct File: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// The [purpose](https://stripe.com/docs/file-upload#uploading-a-file) of the uploaded file.
@@ -61,7 +61,7 @@ public struct File: Codable {
     }
 }
 
-public enum FilePurpose: String, Codable {
+public enum FilePurpose: String, Codable, Sendable {
     /// Additional documentation requirements that can be requested for an account.
     case accountRequirement = "account_requirement"
     /// Additional verification for custom accounts.
@@ -105,7 +105,7 @@ public enum FilePurpose: String, Codable {
     case terminalWifiPrivateKey = "terminal_wifi_private_key"
 }
 
-public enum FileType: String, Codable {
+public enum FileType: String, Codable, Sendable {
     case csv
     case docx
     case gif
@@ -116,7 +116,7 @@ public enum FileType: String, Codable {
     case xlsx
 }
 
-public struct FileUploadList: Codable {
+public struct FileUploadList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

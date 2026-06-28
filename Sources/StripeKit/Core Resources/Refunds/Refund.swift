@@ -13,7 +13,7 @@ import Foundation
 #endif
 
 /// The [Refund Object](https://stripe.com/docs/api/refunds/object) .
-public struct Refund: Codable {
+public struct Refund: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// Amount, in cents.
@@ -102,7 +102,7 @@ public struct Refund: Codable {
     }
 }
 
-public enum RefundFailureReason: String, Codable {
+public enum RefundFailureReason: String, Codable, Sendable {
     case lostOrStolenCard = "lost_or_stolen_card"
     case expiredOrCanceledCard = "expired_or_canceled_card"
     case chargeForPendingRefundDisputed = "charge_for_pending_refund_disputed"
@@ -112,7 +112,7 @@ public enum RefundFailureReason: String, Codable {
     case unknown
 }
 
-public enum RefundStatus: String, Codable {
+public enum RefundStatus: String, Codable, Sendable {
     case pending
     case requiresAction = "requires_action"
     case succeeded
@@ -120,20 +120,20 @@ public enum RefundStatus: String, Codable {
     case canceled
 }
 
-public enum RefundPendingReason: String, Codable {
+public enum RefundPendingReason: String, Codable, Sendable {
     case processing
     case insufficientFunds = "insufficient_funds"
     case chargePending = "charge_pending"
 }
 
-public enum RefundReason: String, Codable {
+public enum RefundReason: String, Codable, Sendable {
     case duplicate
     case fraudulent
     case requestedByCustomer = "requested_by_customer"
     case expiredUncapturedCharge = "expired_uncaptured_charge"
 }
 
-public struct RefundNextAction: Codable {
+public struct RefundNextAction: Codable, Sendable {
     /// Contains the refund details.
     public var displayDetails: RefundNextActionDisplayDetails?
     /// Type of the next action to perform.
@@ -146,7 +146,7 @@ public struct RefundNextAction: Codable {
     }
 }
 
-public struct RefundNextActionDisplayDetails: Codable {
+public struct RefundNextActionDisplayDetails: Codable, Sendable {
     /// Contains information about the email sent to the customer.
     public var emailSent: RefundNextActionDisplayDetailsEmailSent?
     /// The expiry timestamp.
@@ -159,7 +159,7 @@ public struct RefundNextActionDisplayDetails: Codable {
     }
 }
 
-public struct RefundNextActionDisplayDetailsEmailSent: Codable {
+public struct RefundNextActionDisplayDetailsEmailSent: Codable, Sendable {
     /// The timestamp when the email was sent.
     public var emailSentAt: Date?
     /// The recipient’s email address.
@@ -172,7 +172,7 @@ public struct RefundNextActionDisplayDetailsEmailSent: Codable {
     }
 }
 
-public struct RefundDestinationDetails: Codable {
+public struct RefundDestinationDetails: Codable, Sendable {
     /// Type of the destination, indicating the payment method the refund was sent to. Common values include `card`, `bank_account`, `paypal`, etc.
     public var type: String?
     /// If this is a `card` refund, this hash contains the transaction-specific details of the refund.
@@ -185,7 +185,7 @@ public struct RefundDestinationDetails: Codable {
     }
 }
 
-public struct RefundDestinationDetailsCard: Codable {
+public struct RefundDestinationDetailsCard: Codable, Sendable {
     /// Value of the reference number assigned to the refund.
     public var reference: String?
     /// Status of the reference number on the refund. This can be `pending`, `available` or `unavailable`.
@@ -206,13 +206,13 @@ public struct RefundDestinationDetailsCard: Codable {
     }
 }
 
-public enum RefundDestinationDetailsCardType: String, Codable {
+public enum RefundDestinationDetailsCardType: String, Codable, Sendable {
     case pending
     case refund
     case reversal
 }
 
-public struct RefundsList: Codable {
+public struct RefundsList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

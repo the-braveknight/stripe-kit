@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct PortalSession: Codable {
+public struct PortalSession: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// String representing the object’s type. Objects of the same type share the same value.
@@ -64,7 +64,7 @@ public struct PortalSession: Codable {
     }
 }
 
-public struct PortalSessionFlow: Codable {
+public struct PortalSessionFlow: Codable, Sendable {
     /// Behavior after the flow is completed.
     public var afterCompletion: PortalSessionFlowAfterCompletion?
     /// Configuration when `flow.type=subscription_cancel`.
@@ -89,7 +89,7 @@ public struct PortalSessionFlow: Codable {
     }
 }
 
-public struct PortalSessionFlowAfterCompletion: Codable {
+public struct PortalSessionFlowAfterCompletion: Codable, Sendable {
     /// Configuration when `after_completion=hosted_confirmation`
     public var hostedConfirmation: PortalSessionFlowAfterCompletionHostedConfirmation?
     /// Configuration when `after_completion=redirect`
@@ -106,7 +106,7 @@ public struct PortalSessionFlowAfterCompletion: Codable {
     }
 }
 
-public struct PortalSessionFlowAfterCompletionHostedConfirmation: Codable {
+public struct PortalSessionFlowAfterCompletionHostedConfirmation: Codable, Sendable {
     /// A custom message to display to the customer after the flow is completed.
     public var customMessage: String?
     
@@ -115,7 +115,7 @@ public struct PortalSessionFlowAfterCompletionHostedConfirmation: Codable {
     }
 }
 
-public struct PortalSessionFlowAfterCompletionRedirect: Codable {
+public struct PortalSessionFlowAfterCompletionRedirect: Codable, Sendable {
     /// The URL the customer will be redirected to after the purchase is complete
     public var returnUrl: String?
     
@@ -124,7 +124,7 @@ public struct PortalSessionFlowAfterCompletionRedirect: Codable {
     }
 }
 
-public enum PortalSessionFlowAfterCompletionType: String, Codable {
+public enum PortalSessionFlowAfterCompletionType: String, Codable, Sendable {
     /// Redirects the customer to the specified `redirect.return_url` after the flow is complete.
     case redirect
     /// Displays a confirmation message on the hosted surface after the flow is complete.
@@ -133,7 +133,7 @@ public enum PortalSessionFlowAfterCompletionType: String, Codable {
     case portalHomepage = "portal_homepage"
 }
 
-public struct PortalSessionFlowSubscriptionCancel: Codable {
+public struct PortalSessionFlowSubscriptionCancel: Codable, Sendable {
     /// Specify a retention strategy to be used in the cancellation flow.
     public var retention: PortalSessionFlowSubscriptionCancelRetention?
     /// The ID of the subscription to be canceled.
@@ -146,7 +146,7 @@ public struct PortalSessionFlowSubscriptionCancel: Codable {
     }
 }
 
-public struct PortalSessionFlowSubscriptionCancelRetention: Codable {
+public struct PortalSessionFlowSubscriptionCancelRetention: Codable, Sendable {
     /// Configuration when `retention.type=coupon_offer`.
     public var couponOffer: PortalSessionFlowSubscriptionCancelRetentionCouponOffer?
     /// Type of retention strategy that will be used.
@@ -159,7 +159,7 @@ public struct PortalSessionFlowSubscriptionCancelRetention: Codable {
     }
 }
 
-public struct PortalSessionFlowSubscriptionCancelRetentionCouponOffer: Codable {
+public struct PortalSessionFlowSubscriptionCancelRetentionCouponOffer: Codable, Sendable {
     /// The ID of the coupon to be offered.
     public var coupon: String?
 
@@ -168,12 +168,12 @@ public struct PortalSessionFlowSubscriptionCancelRetentionCouponOffer: Codable {
     }
 }
 
-public enum PortalSessionFlowSubscriptionCancelRetentionType: String, Codable {
+public enum PortalSessionFlowSubscriptionCancelRetentionType: String, Codable, Sendable {
     /// Offer a coupon to the customer as a retention strategy.
     case couponOffer = "coupon_offer"
 }
 
-public struct PortalSessionFlowSubscriptionUpdate: Codable {
+public struct PortalSessionFlowSubscriptionUpdate: Codable, Sendable {
     /// The ID of the subscription to be updated.
     public var subscription: String?
 
@@ -182,7 +182,7 @@ public struct PortalSessionFlowSubscriptionUpdate: Codable {
     }
 }
 
-public struct PortalSessionFlowSubscriptionUpdateConfirm: Codable {
+public struct PortalSessionFlowSubscriptionUpdateConfirm: Codable, Sendable {
     /// The coupon or promotion code to apply to this subscription update.
     public var discounts: [PortalSessionFlowSubscriptionUpdateConfirmDiscount]?
     /// The subscription item to be updated through this flow.
@@ -199,7 +199,7 @@ public struct PortalSessionFlowSubscriptionUpdateConfirm: Codable {
     }
 }
 
-public struct PortalSessionFlowSubscriptionUpdateConfirmDiscount: Codable {
+public struct PortalSessionFlowSubscriptionUpdateConfirmDiscount: Codable, Sendable {
     /// The ID of the coupon to apply to this subscription update.
     public var coupon: String?
     /// The ID of a promotion code to apply to this subscription update.
@@ -211,7 +211,7 @@ public struct PortalSessionFlowSubscriptionUpdateConfirmDiscount: Codable {
     }
 }
 
-public struct PortalSessionFlowSubscriptionUpdateConfirmItem: Codable {
+public struct PortalSessionFlowSubscriptionUpdateConfirmItem: Codable, Sendable {
     /// The ID of the subscription item to be updated.
     public var id: String?
     /// The price the customer should subscribe to through this flow. The price must also be included in the configuration's `features.subscription_update.products`.
@@ -226,7 +226,7 @@ public struct PortalSessionFlowSubscriptionUpdateConfirmItem: Codable {
     }
 }
 
-public enum PortalSessionFlowType: String, Codable {
+public enum PortalSessionFlowType: String, Codable, Sendable {
     /// Customer will be able to cancel their subscription
     case subscriptionCancel = "subscription_cancel"
     /// Customer will be able to add a new payment method. The payment method will be set as the `customer.invoice_settings.default_payment_method`.

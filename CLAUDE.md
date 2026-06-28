@@ -1,14 +1,15 @@
 # StripeKit
 
-A strongly-typed, async/await Swift client for the Stripe API, built on `async-http-client` and `swift-crypto`. Targets macOS 12+, iOS 15+, tvOS 15+, watchOS 8+.
+A strongly-typed, async/await Swift client for the Stripe API, built on `async-http-client` and `swift-crypto`. Targets macOS 12+, iOS 15+, tvOS 15+, watchOS 8+. Built with `swift-tools-version:6.3` under the **Swift 6 language mode** (full strict-concurrency checking).
 
 ## Architecture
 
-- **`Sources/StripeKit/StripeClient.swift`** — top-level entry point; exposes one route handler per resource group.
-- **`Sources/StripeKit/StripeRequest.swift`** — the HTTP layer. Sets the pinned `Stripe-Version` header, auth, and content type, then encodes/decodes every request. **The API version is hard-pinned here** (see migration notes below).
-- **`*Routes.swift`** files — protocol + default implementation per resource; build form-encoded request bodies and call `StripeRequest.send`.
-- **Model files** (e.g. `Subscription.swift`, `Charge.swift`) — `Codable` structs mirroring Stripe response objects.
-- **`Shared Models/StripeExpandable.swift`** — `@Expandable` / `@DynamicExpandable` property wrappers for Stripe's expandable references.
+- **`Sources/StripeKit/StripeClient.swift`** — top-level entry point; exposes one route handler per resource group as immutable (`let`) properties. It's a `final class` (a shared, long-lived client) and a fully-checked `Sendable`.
+- **`Sources/StripeKit/StripeRequest.swift`** — the HTTP layer. Sets the pinned `Stripe-Version` header, auth, and content type, then encodes/decodes every request. **The API version is hard-pinned here** (see migration notes below). `StripeAPIHandler` is `Sendable`; its `JSONDecoder` is a computed property (a non-`Sendable` class, so it can't be stored).
+- **`*Routes.swift`** files — protocol + default implementation per resource; build form-encoded request bodies and call `StripeRequest.send`. Route protocols inherit `StripeAPIRoute`, which inherits `Sendable`.
+- **Model files** (e.g. `Subscription.swift`, `Charge.swift`) — `Codable, Sendable` structs mirroring Stripe response objects.
+- **`Shared Models/StripeExpandable.swift`** — `@Expandable` / `@DynamicExpandable` / `@ExpandableCollection` property wrappers for Stripe's expandable references.
+- **`Shared Models/Indirect.swift`** — `@Indirect` property wrapper (an `indirect`-enum box) that adds heap indirection so recursive value types stay structs. Used on `_StripeError.paymentIntent` to break the `StripeError` → `PaymentIntent` → `StripeError` cycle.
 
 ### Decoding conventions (important when editing models)
 
@@ -16,12 +17,20 @@ The shared `JSONDecoder` in `StripeRequest.swift` uses:
 - `keyDecodingStrategy = .convertFromSnakeCase` → Swift properties are **camelCase**; snake_case API keys map automatically (`current_period_end` → `currentPeriodEnd`). Only add explicit `CodingKeys` when automatic conversion wouldn't produce the right key.
 - `dateDecodingStrategy = .secondsSince1970` → all Unix-timestamp fields are `Date` / `Date?`. **Millisecond** timestamps must NOT be typed `Date` (they'd be misread); keep them `Int`.
 
-Other conventions: monetary amounts are `Int`; currency fields use the `Currency` enum; metadata is `[String: String]?`; enums conform to `String, Codable`; models are `public` structs with public memberwise initializers.
+Other conventions: monetary amounts are `Int`; currency fields use the `Currency` enum; metadata is `[String: String]?`; enums conform to `String, Codable, Sendable`; models are `public` structs with public memberwise initializers.
+
+### Concurrency / Sendable conventions (important when adding types)
+
+The package builds under the Swift 6 language mode, so **every public type must be `Sendable`**:
+- New `public struct` models: add `Sendable` to the conformance list (e.g. `public struct Foo: Codable, Sendable`).
+- New `public enum`s: add `Sendable` too (public enums aren't implicitly `Sendable` across the module, and the structs that hold them won't compile otherwise).
+- Generic types: constrain the parameters (e.g. `<Model: Codable & Sendable>`) or add a conditional `extension … : Sendable where …`.
+- A new model that's transitively self-recursive (contains a type that contains it) won't compile as a pure struct — wrap the recursive field with `@Indirect` (see `Indirect.swift`).
 
 ## Build & test
 
 ```bash
-swift build
+swift build   # Swift 6 language mode — must stay warning-clean
 swift test
 ```
 

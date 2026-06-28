@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct TerminalConfiguration: Codable {
+public struct TerminalConfiguration: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// An object containing device type specific settings for BBPOS WisePad 3
@@ -96,7 +96,7 @@ public struct TerminalConfiguration: Codable {
     }
 }
 
-public struct TerminalConfigurationBbposWisepad3: Codable {
+public struct TerminalConfigurationBbposWisepad3: Codable, Sendable {
     /// A File ID representing an image you would like displayed on the reader.
     @Expandable<File> public var splashScreen: String?
 
@@ -109,7 +109,7 @@ public struct TerminalConfigurationBbposWisepad3: Codable {
     }
 }
 
-public struct TerminalConfigurationBbposWiseposE: Codable {
+public struct TerminalConfigurationBbposWiseposE: Codable, Sendable {
     /// A File ID representing an image you would like displayed on the reader.
     @Expandable<File> public var splashScreen: String?
 
@@ -122,7 +122,7 @@ public struct TerminalConfigurationBbposWiseposE: Codable {
     }
 }
 
-public struct TerminalConfigurationStripeS700: Codable {
+public struct TerminalConfigurationStripeS700: Codable, Sendable {
     /// A File ID representing an image you would like displayed on the reader.
     @Expandable<File> public var splashScreen: String?
 
@@ -135,7 +135,7 @@ public struct TerminalConfigurationStripeS700: Codable {
     }
 }
 
-public struct TerminalConfigurationStripeS710: Codable {
+public struct TerminalConfigurationStripeS710: Codable, Sendable {
     /// A File ID representing an image you would like displayed on the reader.
     @Expandable<File> public var splashScreen: String?
 
@@ -148,7 +148,7 @@ public struct TerminalConfigurationStripeS710: Codable {
     }
 }
 
-public struct TerminalConfigurationVerifoneM425: Codable {
+public struct TerminalConfigurationVerifoneM425: Codable, Sendable {
     /// A File ID representing an image you would like displayed on the reader.
     @Expandable<File> public var splashScreen: String?
 
@@ -161,7 +161,7 @@ public struct TerminalConfigurationVerifoneM425: Codable {
     }
 }
 
-public struct TerminalConfigurationVerifoneP400: Codable {
+public struct TerminalConfigurationVerifoneP400: Codable, Sendable {
     /// A File ID representing an image you would like displayed on the reader.
     @Expandable<File> public var splashScreen: String?
 
@@ -174,7 +174,7 @@ public struct TerminalConfigurationVerifoneP400: Codable {
     }
 }
 
-public struct TerminalConfigurationVerifoneP630: Codable {
+public struct TerminalConfigurationVerifoneP630: Codable, Sendable {
     /// A File ID representing an image you would like displayed on the reader.
     @Expandable<File> public var splashScreen: String?
 
@@ -187,7 +187,7 @@ public struct TerminalConfigurationVerifoneP630: Codable {
     }
 }
 
-public struct TerminalConfigurationVerifoneUx700: Codable {
+public struct TerminalConfigurationVerifoneUx700: Codable, Sendable {
     /// A File ID representing an image you would like displayed on the reader.
     @Expandable<File> public var splashScreen: String?
 
@@ -200,7 +200,7 @@ public struct TerminalConfigurationVerifoneUx700: Codable {
     }
 }
 
-public struct TerminalConfigurationVerifoneV660p: Codable {
+public struct TerminalConfigurationVerifoneV660p: Codable, Sendable {
     /// A File ID representing an image you would like displayed on the reader.
     @Expandable<File> public var splashScreen: String?
 
@@ -213,7 +213,7 @@ public struct TerminalConfigurationVerifoneV660p: Codable {
     }
 }
 
-public struct TerminalConfigurationCellular: Codable {
+public struct TerminalConfigurationCellular: Codable, Sendable {
     /// Whether cellular connectivity should be enabled on readers that support it.
     public var enabled: Bool?
 
@@ -222,7 +222,7 @@ public struct TerminalConfigurationCellular: Codable {
     }
 }
 
-public struct TerminalConfigurationOffline: Codable {
+public struct TerminalConfigurationOffline: Codable, Sendable {
     /// Determines whether to allow transactions to be collected while reader is offline. Defaults to false.
     public var enabled: Bool?
 
@@ -231,7 +231,7 @@ public struct TerminalConfigurationOffline: Codable {
     }
 }
 
-public struct TerminalConfigurationReaderSecurity: Codable {
+public struct TerminalConfigurationReaderSecurity: Codable, Sendable {
     /// A code used to access the admin menu on the reader.
     public var adminMenuPasscode: String?
 
@@ -240,7 +240,7 @@ public struct TerminalConfigurationReaderSecurity: Codable {
     }
 }
 
-public struct TerminalConfigurationRebootWindow: Codable {
+public struct TerminalConfigurationRebootWindow: Codable, Sendable {
     /// Integer between 0 to 23 that represents the end hour of the reboot time window. The value must be different than the start_hour.
     public var endHour: Int?
     /// Integer between 0 to 23 that represents the start hour of the reboot time window.
@@ -253,7 +253,7 @@ public struct TerminalConfigurationRebootWindow: Codable {
     }
 }
 
-public struct TerminalConfigurationTipping: Codable {
+public struct TerminalConfigurationTipping: Codable, Sendable {
     /// Tipping configuration for AED
     public var aed: TerminalConfigurationTippingDetails?
     /// Tipping configuration for AUD
@@ -342,7 +342,7 @@ public struct TerminalConfigurationTipping: Codable {
     }
 }
 
-public struct TerminalConfigurationTippingDetails: Codable {
+public struct TerminalConfigurationTippingDetails: Codable, Sendable {
     /// Fixed amounts displayed when collecting a tip
     public var fixedAmounts: [Int]?
     /// Percentages displayed when collecting a tip
@@ -359,7 +359,7 @@ public struct TerminalConfigurationTippingDetails: Codable {
     }
 }
 
-public struct TerminalConfigurationWifi: Codable {
+public struct TerminalConfigurationWifi: Codable, Sendable {
     /// Credentials for a WPA-Enterprise WiFi network using the EAP-PEAP authentication method.
     public var enterpriseEapPeap: TerminalConfigurationWifiEnterpriseEapPeap?
     /// Credentials for a WPA-Enterprise WiFi network using the EAP-TLS authentication method.
@@ -380,13 +380,13 @@ public struct TerminalConfigurationWifi: Codable {
     }
 }
 
-public enum TerminalConfigurationWifiType: String, Codable {
+public enum TerminalConfigurationWifiType: String, Codable, Sendable {
     case personalPsk = "personal_psk"
     case enterpriseEapPeap = "enterprise_eap_peap"
     case enterpriseEapTls = "enterprise_eap_tls"
 }
 
-public struct TerminalConfigurationWifiEnterpriseEapPeap: Codable {
+public struct TerminalConfigurationWifiEnterpriseEapPeap: Codable, Sendable {
     /// A File ID representing a PEM file containing the server certificate.
     public var caCertificateFile: String?
     /// Password for connecting to the WiFi network.
@@ -407,7 +407,7 @@ public struct TerminalConfigurationWifiEnterpriseEapPeap: Codable {
     }
 }
 
-public struct TerminalConfigurationWifiEnterpriseEapTls: Codable {
+public struct TerminalConfigurationWifiEnterpriseEapTls: Codable, Sendable {
     /// A File ID representing a PEM file containing the server certificate.
     public var caCertificateFile: String?
     /// A File ID representing a PEM file containing the client certificate.
@@ -432,7 +432,7 @@ public struct TerminalConfigurationWifiEnterpriseEapTls: Codable {
     }
 }
 
-public struct TerminalConfigurationWifiPersonalPsk: Codable {
+public struct TerminalConfigurationWifiPersonalPsk: Codable, Sendable {
     /// Password for connecting to the WiFi network.
     public var password: String?
     /// Name of the WiFi network.
@@ -445,7 +445,7 @@ public struct TerminalConfigurationWifiPersonalPsk: Codable {
     }
 }
 
-public struct TerminalConfigurationList: Codable {
+public struct TerminalConfigurationList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

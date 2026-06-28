@@ -13,7 +13,7 @@ import Foundation
 #endif
 
 /// The [Coupon Object](https://stripe.com/docs/api/coupons/object) .
-public struct Coupon: Codable {
+public struct Coupon: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// Amount (in the `currency` specified) that will be taken off the subtotal of any invoices for this customer.
@@ -86,7 +86,7 @@ public struct Coupon: Codable {
     }
 }
 
-public struct CouponAppliesTo: Codable {
+public struct CouponAppliesTo: Codable, Sendable {
     /// A list of product IDs this coupon applies to
     public var products: [String]?
     
@@ -95,7 +95,7 @@ public struct CouponAppliesTo: Codable {
     }
 }
 
-public struct CouponCurrencyOptions: Codable {
+public struct CouponCurrencyOptions: Codable, Sendable {
     /// Amount (in the currency specified) that will be taken off the subtotal of any invoices for this customer.
     public var amountOff: Int?
     
@@ -104,7 +104,7 @@ public struct CouponCurrencyOptions: Codable {
     }
 }
 
-public enum CouponDuration: String, Codable {
+public enum CouponDuration: String, Codable, Sendable {
     /// Applies to the first charge from a subscription with this coupon applied.
     case once
     /// Applies to charges in the first `duration_in_months` months from a subscription with this coupon applied.
@@ -113,7 +113,7 @@ public enum CouponDuration: String, Codable {
     case forever
 }
 
-public struct CouponList: Codable {
+public struct CouponList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

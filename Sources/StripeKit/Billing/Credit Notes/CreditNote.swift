@@ -12,7 +12,7 @@ import Foundation
 #endif
 
 /// The [Credit Note Object](https://stripe.com/docs/api/credit_notes/object) .
-public struct CreditNote: Codable {
+public struct CreditNote: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String?
     /// Three-letter ISO currency code, in lowercase. Must be a supported currency.
@@ -153,19 +153,19 @@ public struct CreditNote: Codable {
     }
 }
 
-public enum CreditNoteReason: String, Codable {
+public enum CreditNoteReason: String, Codable, Sendable {
     case duplicate
     case fraudulent
     case orderChange = "order_change"
     case productUnsatisfactory = "product_unsatisfactory"
 }
 
-public enum CreditNoteStatus: String, Codable {
+public enum CreditNoteStatus: String, Codable, Sendable {
     case issued
     case void
 }
 
-public struct CreditNoteShippingCost: Codable {
+public struct CreditNoteShippingCost: Codable, Sendable {
     /// Total shipping cost before any taxes are applied.
     public var amountSubtotal: Int?
     /// Total tax amount applied due to shipping costs. If no tax was applied, defaults to 0.
@@ -190,7 +190,7 @@ public struct CreditNoteShippingCost: Codable {
     }
 }
 
-public struct CreditNoteShippingCostTax: Codable {
+public struct CreditNoteShippingCostTax: Codable, Sendable {
     /// Amount of tax applied for this rate.
     public var amount: Int?
     /// The tax rate applied.
@@ -211,7 +211,7 @@ public struct CreditNoteShippingCostTax: Codable {
     }
 }
 
-public struct CreditNoteTaxAmount: Codable {
+public struct CreditNoteTaxAmount: Codable, Sendable {
     /// The amount, in cents, of the tax.
     public var amount: Int?
     /// Whether this tax amount is inclusive or exclusive.
@@ -228,13 +228,13 @@ public struct CreditNoteTaxAmount: Codable {
     }
 }
 
-public enum CreditNoteType: String, Codable {
+public enum CreditNoteType: String, Codable, Sendable {
     case postPayment = "post_payment"
     case prePayment = "pre_payment"
     case mixed
 }
 
-public struct CreditNoteDiscountAmount: Codable {
+public struct CreditNoteDiscountAmount: Codable, Sendable {
     /// The amount, in cents, of the discount.
     public var amount: Int?
     /// The discount that was applied to get this discount amount.
@@ -246,7 +246,7 @@ public struct CreditNoteDiscountAmount: Codable {
     }
 }
 
-public struct CreditNotePretaxCreditAmount: Codable {
+public struct CreditNotePretaxCreditAmount: Codable, Sendable {
     /// The amount, in cents, of the pretax credit amount.
     public var amount: Int?
     /// The credit balance transaction that was applied to get this pretax credit amount.
@@ -267,14 +267,14 @@ public struct CreditNotePretaxCreditAmount: Codable {
     }
 }
 
-public enum CreditNotePretaxCreditAmountType: String, Codable {
+public enum CreditNotePretaxCreditAmountType: String, Codable, Sendable {
     /// The pretax credit amount is from a credit balance transaction.
     case creditBalanceTransaction = "credit_balance_transaction"
     /// The pretax credit amount is from a discount.
     case discount
 }
 
-public struct CreditNoteRefund: Codable {
+public struct CreditNoteRefund: Codable, Sendable {
     /// Amount of the refund that applies to this credit note, in cents.
     public var amountRefunded: Int?
     /// The payment record refund related to this credit note.
@@ -295,7 +295,7 @@ public struct CreditNoteRefund: Codable {
     }
 }
 
-public struct CreditNoteRefundPaymentRecordRefund: Codable {
+public struct CreditNoteRefundPaymentRecordRefund: Codable, Sendable {
     /// The ID of the payment record.
     public var paymentRecord: String?
     /// The ID of the refund group.
@@ -307,12 +307,12 @@ public struct CreditNoteRefundPaymentRecordRefund: Codable {
     }
 }
 
-public enum CreditNoteRefundType: String, Codable {
+public enum CreditNoteRefundType: String, Codable, Sendable {
     case refund
     case paymentRecordRefund = "payment_record_refund"
 }
 
-public struct CreditNoteTotalTax: Codable {
+public struct CreditNoteTotalTax: Codable, Sendable {
     /// The amount of the tax, in cents.
     public var amount: Int?
     /// Whether this tax is inclusive or exclusive.
@@ -341,7 +341,7 @@ public struct CreditNoteTotalTax: Codable {
     }
 }
 
-public struct CreditNoteTotalTaxRateDetails: Codable {
+public struct CreditNoteTotalTaxRateDetails: Codable, Sendable {
     /// The ID of the tax rate.
     @Expandable<TaxRate> public var taxRate: String?
 
@@ -350,16 +350,16 @@ public struct CreditNoteTotalTaxRateDetails: Codable {
     }
 }
 
-public enum CreditNoteTotalTaxType: String, Codable {
+public enum CreditNoteTotalTaxType: String, Codable, Sendable {
     case taxRateDetails = "tax_rate_details"
 }
 
-public enum CreditNoteTaxBehavior: String, Codable {
+public enum CreditNoteTaxBehavior: String, Codable, Sendable {
     case exclusive
     case inclusive
 }
 
-public enum CreditNoteTaxabilityReason: String, Codable {
+public enum CreditNoteTaxabilityReason: String, Codable, Sendable {
     case customerExempt = "customer_exempt"
     case notAvailable = "not_available"
     case notCollecting = "not_collecting"
@@ -378,14 +378,14 @@ public enum CreditNoteTaxabilityReason: String, Codable {
     case zeroRated = "zero_rated"
 }
 
-public enum CreditNoteEmailType: String, Codable {
+public enum CreditNoteEmailType: String, Codable, Sendable {
     /// Send the credit note PDF to the customer.
     case creditNote = "credit_note"
     /// Do not send a credit note email.
     case none
 }
 
-public struct CreditNoteList: Codable {
+public struct CreditNoteList: Codable, Sendable {
     public var object: String
     public var data: [CreditNote]?
     public var hasMore: Bool?

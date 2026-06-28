@@ -13,7 +13,7 @@ import Foundation
 #endif
 
 /// The [Charge Object](https://stripe.com/docs/api/charges/object)
-public struct Charge: Codable {
+public struct Charge: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// String representing the object’s type. Objects of the same type share the same value.
@@ -206,7 +206,7 @@ public struct Charge: Codable {
     }
 }
 
-public struct ChargeFraudDetails: Codable {
+public struct ChargeFraudDetails: Codable, Sendable {
     /// Assessments reported by you. If set, possible values of are `safe` and `fraudulent`.
     public var userReport: ChargeFraudDetailsReportType?
     /// Assessments from Stripe. If set, the value is `fraudulent`.
@@ -219,12 +219,12 @@ public struct ChargeFraudDetails: Codable {
     }
 }
 
-public enum ChargeFraudDetailsReportType: String, Codable {
+public enum ChargeFraudDetailsReportType: String, Codable, Sendable {
     case safe
     case fraudulent
 }
 
-public struct ChargeOutcome: Codable {
+public struct ChargeOutcome: Codable, Sendable {
     /// An enumerated value providing a more detailed explanation on [how to proceed with an error](https://stripe.com/docs/declines#retrying-issuer-declines).
     public var adviceCode: ChargeOutcomeAdviceCode?
     /// For charges declined by the network, a 2 digit code which indicates the advice returned by the network on how to proceed with an error.
@@ -269,20 +269,20 @@ public struct ChargeOutcome: Codable {
     }
 }
 
-public enum ChargeOutcomeAdviceCode: String, Codable {
+public enum ChargeOutcomeAdviceCode: String, Codable, Sendable {
     case confirmCardData = "confirm_card_data"
     case doNotTryAgain = "do_not_try_again"
     case tryAgainLater = "try_again_later"
 }
 
-public enum ChargeOutcomeNetworkStatus: String, Codable {
+public enum ChargeOutcomeNetworkStatus: String, Codable, Sendable {
     case approvedByNetwork = "approved_by_network"
     case declinedByNetwork = "declined_by_network"
     case notSentToNetwork = "not_sent_to_network"
     case reversedAfterApproval = "reversed_after_approval"
 }
 
-public enum ChargeOutcomeRiskLevel: String, Codable {
+public enum ChargeOutcomeRiskLevel: String, Codable, Sendable {
     case normal
     case elevated
     case highest
@@ -290,7 +290,7 @@ public enum ChargeOutcomeRiskLevel: String, Codable {
     case unknown
 }
 
-public enum ChargeOutcomeType: String, Codable {
+public enum ChargeOutcomeType: String, Codable, Sendable {
     case authorized
     case manualReview = "manual_review"
     case issuerDeclined = "issuer_declined"
@@ -298,13 +298,13 @@ public enum ChargeOutcomeType: String, Codable {
     case invalid
 }
 
-public enum ChargeStatus: String, Codable {
+public enum ChargeStatus: String, Codable, Sendable {
     case succeeded
     case pending
     case failed
 }
 
-public struct ChargeTransferData: Codable {
+public struct ChargeTransferData: Codable, Sendable {
     /// The amount transferred to the destination account, if specified. By default, the entire charge amount is transferred to the destination account.
     public var amount: Int?
     /// ID of an existing, connected Stripe account to transfer funds to if `transfer_data` was specified in the charge request.
@@ -317,7 +317,7 @@ public struct ChargeTransferData: Codable {
     }
 }
 
-public struct ChargeList: Codable {
+public struct ChargeList: Codable, Sendable {
     /// String representing the object’s type. Objects of the same type share the same value. Always has the value list.
     public var object: String
     /// True if this list has another page of items after this one that can be fetched.
@@ -338,7 +338,7 @@ public struct ChargeList: Codable {
     }
 }
 
-public struct ChargeSearchResult: Codable {
+public struct ChargeSearchResult: Codable, Sendable {
     /// A string describing the object type returned.
     public var object: String
     /// A list of charges, paginated by any request parameters.
@@ -367,7 +367,7 @@ public struct ChargeSearchResult: Codable {
     }
 }
 
-public struct ChargePaymentMethodDetails: Codable {
+public struct ChargePaymentMethodDetails: Codable, Sendable {
     ///If this is a `ach_credit_transfer` payment, this hash contains a snapshot of the transaction specific details of the `ach_credit_transfer` payment method.
     public var achCreditTransfer: ChargePaymentMethodDetailsACHCreditTransfer?
     /// If this is a `ach_debit` payment, this hash contains a snapshot of the transaction specific details of the `ach_debit` payment method.
@@ -620,7 +620,7 @@ public struct ChargePaymentMethodDetails: Codable {
     }
 }
 
-public enum ChargePaymentMethodDetailsType: String, Codable {
+public enum ChargePaymentMethodDetailsType: String, Codable, Sendable {
     case achCreditTransfer = "ach_credit_transfer"
     case achDebit = "ach_debit"
     case acssDebit = "acss_debit"
@@ -684,7 +684,7 @@ public enum ChargePaymentMethodDetailsType: String, Codable {
     case upi
 }
 
-public struct ChargePresentmentDetails: Codable {
+public struct ChargePresentmentDetails: Codable, Sendable {
     /// Amount intended to be collected by this payment, denominated in `presentmentCurrency`.
     public var presentmentAmount: Int?
     /// Currency presented to the customer during payment.
@@ -697,7 +697,7 @@ public struct ChargePresentmentDetails: Codable {
     }
 }
 
-public struct ChrageRadarOptions: Codable {
+public struct ChrageRadarOptions: Codable, Sendable {
     /// A Radar Session is a snapshot of the browser metadata and device details that help Radar make more accurate predictions on your payments.
     public var session: String?
     

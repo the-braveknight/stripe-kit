@@ -12,7 +12,7 @@ import Foundation
 #endif
 
 // MARK: - ACSSDebit
-public struct MandatePaymentMethodDetailsACSSDebit: Codable {
+public struct MandatePaymentMethodDetailsACSSDebit: Codable, Sendable {
     /// List of Stripe products where this mandate can be selected automatically.
     public var defaultFor: [MandatePaymentMethodDetailsACSSDebitDefaultFor]?
     /// Description of the interval. Only required if the `‘payment_schedule’` parameter is `‘interval’` or`‘combined’`.
@@ -33,14 +33,14 @@ public struct MandatePaymentMethodDetailsACSSDebit: Codable {
     }
 }
 
-public enum MandatePaymentMethodDetailsACSSDebitDefaultFor: String, Codable {
+public enum MandatePaymentMethodDetailsACSSDebitDefaultFor: String, Codable, Sendable {
     /// Enables payments for Stripe Invoices. ‘subscription’ must also be provided.
     case invoice
     /// Enables payments for Stripe Subscriptions. ‘invoice’ must also be provided.
     case subscription
 }
 
-public enum MandatePaymentMethodDetailsACSSDebitPaymentSchedule: String, Codable {
+public enum MandatePaymentMethodDetailsACSSDebitPaymentSchedule: String, Codable, Sendable {
     /// Payments are initiated at a regular pre-defined interval
     case interval
     /// Payments are initiated sporadically
@@ -49,7 +49,7 @@ public enum MandatePaymentMethodDetailsACSSDebitPaymentSchedule: String, Codable
     case combined
 }
 
-public enum MandatePaymentMethodDetailsACSSDebitTransactionType: String, Codable {
+public enum MandatePaymentMethodDetailsACSSDebitTransactionType: String, Codable, Sendable {
     /// Transactions are made for personal reasons
     case personal
     /// Transactions are made for business reasons
@@ -57,7 +57,7 @@ public enum MandatePaymentMethodDetailsACSSDebitTransactionType: String, Codable
 }
 
 // MARK: - AUBecsDebit
-public struct MandatePaymentMethodDetailsAuBecsDebit: Codable {
+public struct MandatePaymentMethodDetailsAuBecsDebit: Codable, Sendable {
     /// The URL of the mandate. This URL generally contains sensitive information about the customer and should be shared with them exclusively.
     public var url: String?
     
@@ -67,7 +67,7 @@ public struct MandatePaymentMethodDetailsAuBecsDebit: Codable {
 }
 
 // MARK: - BacsDebit
-public struct MandatePaymentMethodDetailsBacsDebit: Codable {
+public struct MandatePaymentMethodDetailsBacsDebit: Codable, Sendable {
     /// The account name that the mandate is for, which is displayed on the bank account statement.
     public var displayName: String?
     /// The status of the mandate on the Bacs network. Can be one of  `pending`, `revoked`,`refused`, or `accepted`.
@@ -96,14 +96,14 @@ public struct MandatePaymentMethodDetailsBacsDebit: Codable {
     }
 }
 
-public enum MandatePaymentMethodDetailsBacsDebitnetworkStatus: String, Codable {
+public enum MandatePaymentMethodDetailsBacsDebitnetworkStatus: String, Codable, Sendable {
     case pending
     case revoked
     case refused
     case accepted
 }
 
-public enum MandatePaymentMethodDetailsBacsDebitRevocationReason: String, Codable {
+public enum MandatePaymentMethodDetailsBacsDebitRevocationReason: String, Codable, Sendable {
     case accountClosed = "account_closed"
     case bankAccountRestricted = "bank_account_restricted"
     case bankOwnershipChanged = "bank_ownership_changed"
@@ -112,7 +112,7 @@ public enum MandatePaymentMethodDetailsBacsDebitRevocationReason: String, Codabl
 }
 
 // MARK: - Blik
-public struct MandatePaymentMethodDetailsBlik: Codable {
+public struct MandatePaymentMethodDetailsBlik: Codable, Sendable {
     /// Date at which the mandate expires.
     public var expiresAfter: Date?
     /// Details for off-session mandates.
@@ -129,7 +129,7 @@ public struct MandatePaymentMethodDetailsBlik: Codable {
     }
 }
 
-public struct MandatePaymentMethodDetailsBlikOffSession: Codable {
+public struct MandatePaymentMethodDetailsBlikOffSession: Codable, Sendable {
     /// Amount of each recurring payment.
     public var amount: Int?
     /// Currency of each recurring payment.
@@ -146,7 +146,7 @@ public struct MandatePaymentMethodDetailsBlikOffSession: Codable {
     }
 }
 
-public enum MandatePaymentMethodDetailsBlikOffSessionInterval: String, Codable {
+public enum MandatePaymentMethodDetailsBlikOffSessionInterval: String, Codable, Sendable {
     /// Payments recur every day.
     case day
     /// Payments recur every week.
@@ -157,7 +157,7 @@ public enum MandatePaymentMethodDetailsBlikOffSessionInterval: String, Codable {
     case year
 }
 
-public enum MandatePaymentMethodDetailsBlikType: String, Codable {
+public enum MandatePaymentMethodDetailsBlikType: String, Codable, Sendable {
     /// Mandate for on-session payments.
     case onSession = "on_session"
     /// Mandate for off-session payments.
@@ -165,17 +165,17 @@ public enum MandatePaymentMethodDetailsBlikType: String, Codable {
 }
 
 // MARK: - Card
-public struct MandatePaymentMethodDetailsCard: Codable {
+public struct MandatePaymentMethodDetailsCard: Codable, Sendable {
     public init() { }
 }
 
 // MARK: - Link
-public struct MandatePaymentMethodDetailsLink: Codable {
+public struct MandatePaymentMethodDetailsLink: Codable, Sendable {
     public init() { }
 }
 
 // MARK: - SepaDebit
-public struct MandatePaymentMethodDetailsSepaDebit: Codable {
+public struct MandatePaymentMethodDetailsSepaDebit: Codable, Sendable {
     /// The unique reference of the mandate.
     public var reference: String?
     /// The URL of the mandate. This URL generally contains sensitive information about the customer and should be shared with them exclusively.
@@ -188,7 +188,7 @@ public struct MandatePaymentMethodDetailsSepaDebit: Codable {
 }
 
 // MARK: - US Bank Account
-public struct MandatePaymentMethodDetailsUsBankAccount: Codable {
+public struct MandatePaymentMethodDetailsUsBankAccount: Codable, Sendable {
     /// Mandate collection method.
     public var collectionMethod: MandatePaymentMethodDetailsUsBankAccountCollectionMethod?
 
@@ -197,57 +197,57 @@ public struct MandatePaymentMethodDetailsUsBankAccount: Codable {
     }
 }
 
-public enum MandatePaymentMethodDetailsUsBankAccountCollectionMethod: String, Codable {
+public enum MandatePaymentMethodDetailsUsBankAccountCollectionMethod: String, Codable, Sendable {
     case paper
 }
 
 // MARK: - Amazon Pay
-public struct MandatePaymentMethodDetailsAmazonPay: Codable {
+public struct MandatePaymentMethodDetailsAmazonPay: Codable, Sendable {
     public init() { }
 }
 
 // MARK: - Cash App
-public struct MandatePaymentMethodDetailsCashapp: Codable {
+public struct MandatePaymentMethodDetailsCashapp: Codable, Sendable {
     public init() { }
 }
 
 // MARK: - Kakao Pay
-public struct MandatePaymentMethodDetailsKakaoPay: Codable {
+public struct MandatePaymentMethodDetailsKakaoPay: Codable, Sendable {
     public init() { }
 }
 
 // MARK: - Klarna
-public struct MandatePaymentMethodDetailsKlarna: Codable {
+public struct MandatePaymentMethodDetailsKlarna: Codable, Sendable {
     public init() { }
 }
 
 // MARK: - KR Card
-public struct MandatePaymentMethodDetailsKrCard: Codable {
+public struct MandatePaymentMethodDetailsKrCard: Codable, Sendable {
     public init() { }
 }
 
 // MARK: - Naver Pay
-public struct MandatePaymentMethodDetailsNaverPay: Codable {
+public struct MandatePaymentMethodDetailsNaverPay: Codable, Sendable {
     public init() { }
 }
 
 // MARK: - NZ Bank Account
-public struct MandatePaymentMethodDetailsNzBankAccount: Codable {
+public struct MandatePaymentMethodDetailsNzBankAccount: Codable, Sendable {
     public init() { }
 }
 
 // MARK: - Revolut Pay
-public struct MandatePaymentMethodDetailsRevolutPay: Codable {
+public struct MandatePaymentMethodDetailsRevolutPay: Codable, Sendable {
     public init() { }
 }
 
 // MARK: - Twint
-public struct MandatePaymentMethodDetailsTwint: Codable {
+public struct MandatePaymentMethodDetailsTwint: Codable, Sendable {
     public init() { }
 }
 
 // MARK: - PayPal
-public struct MandatePaymentMethodDetailsPaypal: Codable {
+public struct MandatePaymentMethodDetailsPaypal: Codable, Sendable {
     /// The PayPal Billing Agreement ID (BAID). This is an ID generated by PayPal which represents the mandate between the merchant and the customer.
     public var billingAgreementId: String?
     /// PayPal account PayerID. This identifier uniquely identifies the PayPal customer.
@@ -260,7 +260,7 @@ public struct MandatePaymentMethodDetailsPaypal: Codable {
 }
 
 // MARK: - Payto
-public struct MandatePaymentMethodDetailsPayto: Codable {
+public struct MandatePaymentMethodDetailsPayto: Codable, Sendable {
     /// Amount that will be collected. It is required when `amount_type` is `fixed`.
     public var amount: Int?
     /// The type of amount that will be collected. The amount charged must be exact or up to the value of `amount` param for `fixed` or `maximum` type respectively.
@@ -293,12 +293,12 @@ public struct MandatePaymentMethodDetailsPayto: Codable {
     }
 }
 
-public enum MandatePaymentMethodDetailsPaytoAmountType: String, Codable {
+public enum MandatePaymentMethodDetailsPaytoAmountType: String, Codable, Sendable {
     case fixed
     case maximum
 }
 
-public enum MandatePaymentMethodDetailsPaytoPaymentSchedule: String, Codable {
+public enum MandatePaymentMethodDetailsPaytoPaymentSchedule: String, Codable, Sendable {
     case adhoc
     case annual
     case daily
@@ -309,7 +309,7 @@ public enum MandatePaymentMethodDetailsPaytoPaymentSchedule: String, Codable {
     case weekly
 }
 
-public enum MandatePaymentMethodDetailsPaytoPurpose: String, Codable {
+public enum MandatePaymentMethodDetailsPaytoPurpose: String, Codable, Sendable {
     case dependantSupport = "dependant_support"
     case government
     case loan
@@ -324,7 +324,7 @@ public enum MandatePaymentMethodDetailsPaytoPurpose: String, Codable {
 }
 
 // MARK: - Pix
-public struct MandatePaymentMethodDetailsPix: Codable {
+public struct MandatePaymentMethodDetailsPix: Codable, Sendable {
     /// Determines if the amount includes the IOF tax.
     public var amountIncludesIof: MandatePaymentMethodDetailsPixAmountIncludesIof?
     /// The type of amount that will be collected. The amount charged must be exact or up to the value of `amount` param for `fixed` or `maximum` type respectively.
@@ -353,17 +353,17 @@ public struct MandatePaymentMethodDetailsPix: Codable {
     }
 }
 
-public enum MandatePaymentMethodDetailsPixAmountIncludesIof: String, Codable {
+public enum MandatePaymentMethodDetailsPixAmountIncludesIof: String, Codable, Sendable {
     case always
     case never
 }
 
-public enum MandatePaymentMethodDetailsPixAmountType: String, Codable {
+public enum MandatePaymentMethodDetailsPixAmountType: String, Codable, Sendable {
     case fixed
     case maximum
 }
 
-public enum MandatePaymentMethodDetailsPixPaymentSchedule: String, Codable {
+public enum MandatePaymentMethodDetailsPixPaymentSchedule: String, Codable, Sendable {
     case halfyearly
     case monthly
     case quarterly
@@ -372,7 +372,7 @@ public enum MandatePaymentMethodDetailsPixPaymentSchedule: String, Codable {
 }
 
 // MARK: - UPI
-public struct MandatePaymentMethodDetailsUpi: Codable {
+public struct MandatePaymentMethodDetailsUpi: Codable, Sendable {
     /// The amount to be charged for future payments.
     public var amount: Int?
     /// The type of amount that will be collected. The amount charged must be exact or up to the value of `amount` param for `fixed` or `maximum` type respectively.
@@ -393,7 +393,7 @@ public struct MandatePaymentMethodDetailsUpi: Codable {
     }
 }
 
-public enum MandatePaymentMethodDetailsUpiAmountType: String, Codable {
+public enum MandatePaymentMethodDetailsUpiAmountType: String, Codable, Sendable {
     case fixed
     case maximum
 }

@@ -8,119 +8,132 @@
 import NIO
 import AsyncHTTPClient
 
-public final class StripeClient {
+/// A shared, long-lived entry point to the Stripe API.
+///
+/// `StripeClient` is a reference type so a single instance can be created once and
+/// shared freely across tasks and actors. Its route handlers are immutable (`let`)
+/// value types, which makes the `Sendable` conformance fully checked and race-free.
+///
+/// To customize headers for a request (e.g. an idempotency key), copy the route
+/// into a local `var` and use the `mutating` `addHeaders` on the copy:
+///
+/// ```swift
+/// var charges = client.charges
+/// let charge = try await charges.addHeaders(["Idempotency-Key": key]).create(...)
+/// ```
+public final class StripeClient: Sendable {
     // MARK: - CORE RESOURCES
-    public var balances: BalanceRoutes
-    public var balanceTransactions: BalanceTransactionRoutes
-    public var charges: ChargeRoutes
-    public var customers: CustomerRoutes
-    public var disputes: DisputeRoutes
-    public var events: EventRoutes
-    public var files: FileRoutes
-    public var fileLinks: FileLinkRoutes
-    public var mandates: MandateRoutes
-    public var paymentIntents: PaymentIntentRoutes
-    public var setupIntents: SetupIntentsRoutes
-    public var setupAttempts: SetupAttemptRoutes
-    public var payouts: PayoutRoutes
-    public var refunds: RefundRoutes
-    public var tokens: TokenRoutes
-    public var ephemeralKeys: EphemeralKeyRoutes
+    public let balances: BalanceRoutes
+    public let balanceTransactions: BalanceTransactionRoutes
+    public let charges: ChargeRoutes
+    public let customers: CustomerRoutes
+    public let disputes: DisputeRoutes
+    public let events: EventRoutes
+    public let files: FileRoutes
+    public let fileLinks: FileLinkRoutes
+    public let mandates: MandateRoutes
+    public let paymentIntents: PaymentIntentRoutes
+    public let setupIntents: SetupIntentsRoutes
+    public let setupAttempts: SetupAttemptRoutes
+    public let payouts: PayoutRoutes
+    public let refunds: RefundRoutes
+    public let tokens: TokenRoutes
+    public let ephemeralKeys: EphemeralKeyRoutes
     
     // MARK: - PAYMENT METHODS
-    public var paymentMethods: PaymentMethodRoutes
-    public var bankAccounts: BankAccountRoutes
-    public var cashBalances: CashBalanceRoutes
-    public var cards: CardRoutes
-//    public var sources: SourceRoutes
+    public let paymentMethods: PaymentMethodRoutes
+    public let bankAccounts: BankAccountRoutes
+    public let cashBalances: CashBalanceRoutes
+    public let cards: CardRoutes
+//    public let sources: SourceRoutes
     
     // MARK: - CHECKOUT
-    public var sessions: SessionRoutes
+    public let sessions: SessionRoutes
     
     // MARK: - PaymentLink
-    public var paymentLinks: PaymentLinkRoutes
+    public let paymentLinks: PaymentLinkRoutes
     
     // MARK: - Products
-    public var products: ProductRoutes
-    public var prices: PriceRoutes
-    public var coupons: CouponRoutes
-    public var promotionCodes: PromotionCodesRoutes
-    public var discounts: DiscountRoutes
-    public var taxCodes: TaxCodeRoutes
-    public var taxRates: TaxRateRoutes
-    public var shippingRates: ShippingRateRoutes
+    public let products: ProductRoutes
+    public let prices: PriceRoutes
+    public let coupons: CouponRoutes
+    public let promotionCodes: PromotionCodesRoutes
+    public let discounts: DiscountRoutes
+    public let taxCodes: TaxCodeRoutes
+    public let taxRates: TaxRateRoutes
+    public let shippingRates: ShippingRateRoutes
     
     // MARK: - BILLING
-    public var creditNotes: CreditNoteRoutes
-    public var customerBalanceTransactions: CustomerBalanceTransactionRoutes
-    public var portalSession: PortalSessionRoutes
-    public var portalConfiguration: PortalConfigurationRoutes
-    public var customerTaxIds: CustomerTaxIDRoutes
-    public var invoices: InvoiceRoutes
-    public var invoiceItems: InvoiceItemRoutes
-    public var plans: PlanRoutes
-    public var subscriptions: SubscriptionRoutes
-    public var subscriptionItems: SubscriptionItemRoutes
-    public var subscriptionSchedules: SubscriptionScheduleRoutes
-    public var usageRecords: UsageRecordRoutes
-    public var quoteLineItems: QuoteLineItemRoutes
-    public var quotes: QuoteRoutes
-    public var testClocks: TestClockRoutes
+    public let creditNotes: CreditNoteRoutes
+    public let customerBalanceTransactions: CustomerBalanceTransactionRoutes
+    public let portalSession: PortalSessionRoutes
+    public let portalConfiguration: PortalConfigurationRoutes
+    public let customerTaxIds: CustomerTaxIDRoutes
+    public let invoices: InvoiceRoutes
+    public let invoiceItems: InvoiceItemRoutes
+    public let plans: PlanRoutes
+    public let subscriptions: SubscriptionRoutes
+    public let subscriptionItems: SubscriptionItemRoutes
+    public let subscriptionSchedules: SubscriptionScheduleRoutes
+    public let usageRecords: UsageRecordRoutes
+    public let quoteLineItems: QuoteLineItemRoutes
+    public let quotes: QuoteRoutes
+    public let testClocks: TestClockRoutes
     
     // MARK: - CONNECT
-    public var connectAccounts: AccountRoutes
-    public var accountSessions: AccountSessionRoutes
-    public var accountLinks: AccountLinkRoutes
-    public var applicationFees: ApplicationFeesRoutes
-    public var applicationFeeRefunds: ApplicationFeeRefundRoutes
-    public var capabilities: CapabilitiesRoutes
-    public var countrySpecs: CountrySpecRoutes
-    public var externalAccounts: ExternalAccountsRoutes
-    public var persons: PersonRoutes
-    public var topups: TopUpRoutes
-    public var transfers: TransferRoutes
-    public var transferReversals: TransferReversalRoutes
-    public var secretManager: SecretRoutes
+    public let connectAccounts: AccountRoutes
+    public let accountSessions: AccountSessionRoutes
+    public let accountLinks: AccountLinkRoutes
+    public let applicationFees: ApplicationFeesRoutes
+    public let applicationFeeRefunds: ApplicationFeeRefundRoutes
+    public let capabilities: CapabilitiesRoutes
+    public let countrySpecs: CountrySpecRoutes
+    public let externalAccounts: ExternalAccountsRoutes
+    public let persons: PersonRoutes
+    public let topups: TopUpRoutes
+    public let transfers: TransferRoutes
+    public let transferReversals: TransferReversalRoutes
+    public let secretManager: SecretRoutes
     
     // MARK: - FRAUD
-    public var earlyFraudWarnings: EarlyFraudWarningRoutes
-    public var reviews: ReviewRoutes
-    public var valueLists: ValueListRoutes
-    public var valueListItems: ValueListItemRoutes
+    public let earlyFraudWarnings: EarlyFraudWarningRoutes
+    public let reviews: ReviewRoutes
+    public let valueLists: ValueListRoutes
+    public let valueListItems: ValueListItemRoutes
     
     // MARK: - ISSUING
-    public var authorizations: AuthorizationRoutes
-    public var cardholders: CardholderRoutes
-    public var issuingCards: IssuingCardRoutes
-    public var issuingDisputes: IssuingDisputeRoutes
-    public var fundingInstructions: FundingInstructionsRoutes
-    public var transactions: TransactionRoutes
+    public let authorizations: AuthorizationRoutes
+    public let cardholders: CardholderRoutes
+    public let issuingCards: IssuingCardRoutes
+    public let issuingDisputes: IssuingDisputeRoutes
+    public let fundingInstructions: FundingInstructionsRoutes
+    public let transactions: TransactionRoutes
     
     // MARK: - TERMINAL
-    public var terminalConnectionTokens: TerminalConnectionTokenRoutes
-    public var terminalLocations: TerminalLocationRoutes
-    public var terminalReaders: TerminalReaderRoutes
-    public var terminalHardwareOrders: TerminalHardwareOrderRoutes
-    public var terminalHardwareProducts: TerminalHardwareProductRoutes
-    public var terminalHardwareSkus: TerminalHardwareSKURoutes
-    public var terminalHardwareShippingMethods: TerminalHardwareShippingMethodRoutes
-    public var terminalConfiguration: TerminalConfigurationRoutes
+    public let terminalConnectionTokens: TerminalConnectionTokenRoutes
+    public let terminalLocations: TerminalLocationRoutes
+    public let terminalReaders: TerminalReaderRoutes
+    public let terminalHardwareOrders: TerminalHardwareOrderRoutes
+    public let terminalHardwareProducts: TerminalHardwareProductRoutes
+    public let terminalHardwareSkus: TerminalHardwareSKURoutes
+    public let terminalHardwareShippingMethods: TerminalHardwareShippingMethodRoutes
+    public let terminalConfiguration: TerminalConfigurationRoutes
         
     // MARK: - SIGMA
-    public var scheduledQueryRuns: ScheduledQueryRunRoutes
+    public let scheduledQueryRuns: ScheduledQueryRunRoutes
 
     // MARK: - REPORTING
-    public var reportRuns: ReportRunRoutes
-    public var reportTypes: ReportTypeRoutes
+    public let reportRuns: ReportRunRoutes
+    public let reportTypes: ReportTypeRoutes
     
     // MARK: - IDENTITY
-    public var verificationSessions: VerificationSessionRoutes
-    public var verificationReports: VerificationReportRoutes
+    public let verificationSessions: VerificationSessionRoutes
+    public let verificationReports: VerificationReportRoutes
     
     // MARK: - WEBHOOKS
-    public var webhookEndpoints: WebhookEndpointRoutes
+    public let webhookEndpoints: WebhookEndpointRoutes
     
-    var handler: StripeAPIHandler
+    let handler: StripeAPIHandler
     
     /// Returns a StripeClient used to interact with the Stripe APIs.
     /// - Parameter httpClient: An `HTTPClient`used to communicate wiith the Stripe API

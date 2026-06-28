@@ -12,7 +12,7 @@ import Foundation
 #endif
 
 /// The [Cardholder object](https://stripe.com/docs/api/issuing/cardholders/object)
-public struct Cardholder: Codable {
+public struct Cardholder: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// The cardholder’s billing address.
@@ -85,7 +85,7 @@ public struct Cardholder: Codable {
     }
 }
 
-public struct CardholderSpendingControls: Codable {
+public struct CardholderSpendingControls: Codable, Sendable {
     /// Array of strings containing categories of authorizations to allow. All other categories will be blocked. Cannot be set with `blocked_categories`.
     public var allowedCategories: [String]?
     /// Array of strings containing categories of authorizations to decline. All other categories will be allowed. Cannot be set with `allowed_categories`.
@@ -114,7 +114,7 @@ public struct CardholderSpendingControls: Codable {
     }
 }
 
-public struct CardholderSpendingControlSpendingLimit: Codable {
+public struct CardholderSpendingControlSpendingLimit: Codable, Sendable {
     /// Maximum amount allowed to spend per interval. This amount is in the card’s currency and in the smallest currency unit.
     public var amount: Int?
     /// Array of strings containing categories this limit applies to. Omitting this field will apply the limit to all categories.
@@ -123,7 +123,7 @@ public struct CardholderSpendingControlSpendingLimit: Codable {
     public var interval: CardholderSpendingControlSpendingLimitInterval?
 }
 
-public enum CardholderSpendingControlSpendingLimitInterval: String, Codable {
+public enum CardholderSpendingControlSpendingLimitInterval: String, Codable, Sendable {
     /// Limit applies to each authorization.
     case perAuthorization = "per_authorization"
     /// Limit applies to a day, starting at midnight UTC.
@@ -138,7 +138,7 @@ public enum CardholderSpendingControlSpendingLimitInterval: String, Codable {
     case allTime = "all_time"
 }
 
-public struct CardholderBilling: Codable {
+public struct CardholderBilling: Codable, Sendable {
     /// The cardholder’s billing address.
     public var address: Address?
     
@@ -147,7 +147,7 @@ public struct CardholderBilling: Codable {
     }
 }
 
-public struct CardholderCompany: Codable {
+public struct CardholderCompany: Codable, Sendable {
     /// Whether the company’s business ID number was provided.
     public var taxIdProvided: Bool?
     
@@ -156,7 +156,7 @@ public struct CardholderCompany: Codable {
     }
 }
 
-public struct CardholderIndividual: Codable {
+public struct CardholderIndividual: Codable, Sendable {
     ///Information related to the `card_issuing` program for this cardholder.
     public var cardIssuing: CardholderIndividualCardIssuing?
     /// The date of birth of this cardholder.
@@ -181,7 +181,7 @@ public struct CardholderIndividual: Codable {
     }
 }
 
-public struct CardholderIndividualCardIssuing: Codable {
+public struct CardholderIndividualCardIssuing: Codable, Sendable {
     /// Information about cardholder acceptance of [Authorized User Terms](https://stripe.com/docs/issuing/cards) .
     public var userTermsAcceptance: CardholderIndividualCardIssuingUserTermsAcceptance?
     
@@ -190,7 +190,7 @@ public struct CardholderIndividualCardIssuing: Codable {
     }
 }
 
-public struct CardholderIndividualCardIssuingUserTermsAcceptance: Codable {
+public struct CardholderIndividualCardIssuingUserTermsAcceptance: Codable, Sendable {
     /// The Unix timestamp marking when the cardholder accepted the Authorized User Terms. Required for Celtic Spend Card users.
     public var date: Date?
     /// The IP address from which the cardholder accepted the Authorized User Terms. Required for Celtic Spend Card users.
@@ -208,7 +208,7 @@ public struct CardholderIndividualCardIssuingUserTermsAcceptance: Codable {
 }
 
 
-public struct CardholderIndividualVerification: Codable {
+public struct CardholderIndividualVerification: Codable, Sendable {
     /// An identifying document, either a passport or local ID card.
     public var document: CardholderIndividualVerificationDocument?
     
@@ -217,7 +217,7 @@ public struct CardholderIndividualVerification: Codable {
     }
 }
 
-public struct CardholderIndividualVerificationDocument: Codable {
+public struct CardholderIndividualVerificationDocument: Codable, Sendable {
     /// The back of a document returned by a file upload with a `purpose` value of `additional_verification`.
     @Expandable<File> public var back: String?
     /// The front of a document returned by a file upload with a `purpose` value of `additional_verification`.
@@ -229,7 +229,7 @@ public struct CardholderIndividualVerificationDocument: Codable {
     }
 }
 
-public struct CardholderAuthorizationRequirements: Codable {
+public struct CardholderAuthorizationRequirements: Codable, Sendable {
     /// If `disabled_reason` is present, all cards will decline authorizations with `cardholder_verification_required` reason.
     public var disabledReason: CardholderAuthorizationRequirementsDisabledReason?
     /// Array of fields that need to be collected in order to verify and re-enable the cardholder.
@@ -242,7 +242,7 @@ public struct CardholderAuthorizationRequirements: Codable {
     }
 }
 
-public enum CardholderStatus: String, Codable {
+public enum CardholderStatus: String, Codable, Sendable {
     /// Cards attached to this cardholder can approve authorizations,
     case active
     /// Cards attached to this cardholder will decline all authorizations with a `cardholder_inactive` reason.
@@ -251,14 +251,14 @@ public enum CardholderStatus: String, Codable {
     case blocked
 }
 
-public enum CardholderType: String, Codable {
+public enum CardholderType: String, Codable, Sendable {
     /// The cardholder is a person, and additional information includes first and last name, date of birth, etc. If you’re issuing Celtic Spend Cards, then Individual cardholders must accept Authorized User Terms prior to activating their card.
     case individual
     /// The cardholder is a company or business entity, and additional information includes their tax ID. This option may not be available if your use case only supports individual cardholders.
     case company
 }
 
-public enum CardholderPreferredLocale: String, Codable {
+public enum CardholderPreferredLocale: String, Codable, Sendable {
     case da
     case de
     case en
@@ -269,7 +269,7 @@ public enum CardholderPreferredLocale: String, Codable {
     case sv
 }
 
-public struct CardholderRedaction: Codable {
+public struct CardholderRedaction: Codable, Sendable {
     /// Indicates whether this object and its related objects have been redacted or not.
     public var status: CardholderRedactionStatus?
 
@@ -278,14 +278,14 @@ public struct CardholderRedaction: Codable {
     }
 }
 
-public enum CardholderRedactionStatus: String, Codable {
+public enum CardholderRedactionStatus: String, Codable, Sendable {
     /// The cardholder is being redacted.
     case processing
     /// The cardholder has been redacted.
     case redacted
 }
 
-public enum CardholderAuthorizationRequirementsDisabledReason: String, Codable {
+public enum CardholderAuthorizationRequirementsDisabledReason: String, Codable, Sendable {
     /// Account might be on a prohibited persons or companies list. The `past_due` field contains information that you need to provide before the cardholder can approve authorizations.
     case listed
     /// This cardholder has raised additional review. Stripe will make a decision and update the `disabled_reason` field.
@@ -296,7 +296,7 @@ public enum CardholderAuthorizationRequirementsDisabledReason: String, Codable {
     case requirementsPastDue = "requirements.past_due"
 }
 
-public enum CardholderAuthorizationRequirementsPastDue: String, Codable {
+public enum CardholderAuthorizationRequirementsPastDue: String, Codable, Sendable {
     /// The IP address from which the Cardholder accepted their Authorized User Terms. Required for Celtic Spend Card users.
     case individualCardIssuingUserTermsAcceptanceIp = "individual.card_issuing.user_terms_acceptance.ip"
     /// The Unix timestamp marking when the Cardholder accepted their Authorized User Terms. Required for Celtic Spend Card users.
@@ -317,7 +317,7 @@ public enum CardholderAuthorizationRequirementsPastDue: String, Codable {
     case companyTaxId = "company.tax_id"
 }
 
-public struct CardholderList: Codable {
+public struct CardholderList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

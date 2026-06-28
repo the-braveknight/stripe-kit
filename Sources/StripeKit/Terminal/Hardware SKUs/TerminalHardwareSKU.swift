@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct TerminalHardwareSKU: Codable {
+public struct TerminalHardwareSKU: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// The price of this SKU.
@@ -56,19 +56,19 @@ public struct TerminalHardwareSKU: Codable {
     }
 }
 
-public enum TerminalHardwareSKUProvider: String, Codable {
+public enum TerminalHardwareSKUProvider: String, Codable, Sendable {
     /// The hardware is provided by Stripe.
     case stripe
 }
 
-public enum TerminalHardwareSKUStatus: String, Codable {
+public enum TerminalHardwareSKUStatus: String, Codable, Sendable {
     /// Available for new orders.
     case available
     /// Can no longer be used for order creation.
     case unavailable
 }
 
-public struct TerminalHardwareSKUList: Codable {
+public struct TerminalHardwareSKUList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

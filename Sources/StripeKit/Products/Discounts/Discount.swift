@@ -13,7 +13,7 @@ import Foundation
 #endif
 
 /// The [Discount Object](https://stripe.com/docs/api/discounts/object)
-public struct Discount: Codable {
+public struct Discount: Codable, Sendable {
     /// The ID of the discount object. Discounts cannot be fetched by ID. Use expand[]=discounts in API calls to expand discount IDs in an array.
     public var id: String
     /// Hash describing the coupon applied to create this discount.
@@ -75,7 +75,7 @@ public struct Discount: Codable {
 }
 
 /// The source of a ``Discount``, describing what was redeemed to create the discount.
-public struct DiscountSource: Codable {
+public struct DiscountSource: Codable, Sendable {
     /// The type of the source of the discount.
     public var type: DiscountSourceType?
     /// The coupon that was redeemed to create this discount.
@@ -88,7 +88,7 @@ public struct DiscountSource: Codable {
     }
 }
 
-public enum DiscountSourceType: String, Codable {
+public enum DiscountSourceType: String, Codable, Sendable {
     /// The discount was created by redeeming a coupon.
     case coupon
 }

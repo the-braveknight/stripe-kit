@@ -13,7 +13,7 @@ import Foundation
 #endif
 
 /// The [Subscription Object](https://stripe.com/docs/api/subscriptions/object)
-public struct Subscription: Codable {
+public struct Subscription: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// If the subscription has been canceled with the `at_period_end` flag set to `true`, `cancel_at_period_end` on the subscription will be `true`. You can use this attribute to determine whether a subscription that has a status of active is scheduled to be canceled at the end of the current period.
@@ -226,7 +226,7 @@ public struct Subscription: Codable {
     }
 }
 
-public struct SubscriptionAutomaticTax: Codable {
+public struct SubscriptionAutomaticTax: Codable, Sendable {
     /// Whether Stripe automatically computes tax on this subscription.
     public var enabled: Bool?
     /// If Stripe disabled automatic tax, this enum describes why.
@@ -243,12 +243,12 @@ public struct SubscriptionAutomaticTax: Codable {
     }
 }
 
-public enum SubscriptionAutomaticTaxDisabledReason: String, Codable {
+public enum SubscriptionAutomaticTaxDisabledReason: String, Codable, Sendable {
     /// Stripe's systems automatically turned off Tax for this subscription when finalizing one of its invoices with a missing or incomplete location for your customer.
     case requiresLocationInputs = "requires_location_inputs"
 }
 
-public struct SubscriptionAutomaticTaxLiability: Codable {
+public struct SubscriptionAutomaticTaxLiability: Codable, Sendable {
     /// The connected account being referenced when `type` is `account`.
     @Expandable<ConnectAccount> public var account: String?
     /// Type of the account referenced.
@@ -260,12 +260,12 @@ public struct SubscriptionAutomaticTaxLiability: Codable {
     }
 }
 
-public enum SubscriptionAutomaticTaxLiabilityType: String, Codable {
+public enum SubscriptionAutomaticTaxLiabilityType: String, Codable, Sendable {
     case account
     case `self`
 }
 
-public struct SubscriptionBillingThresholds: Codable {
+public struct SubscriptionBillingThresholds: Codable, Sendable {
     /// Monetary threshold that triggers the subscription to create an invoice
     public var amountGte: Int?
     /// Indicates if the `billing_cycle_anchor` should be reset when a threshold is reached. If true, `billing_cycle_anchor` will be updated to the date/time the threshold was last reached; otherwise, the value will remain unchanged. This value may not be `true` if the subscription contains items with plans that have `aggregate_usage=last_ever`.
@@ -277,7 +277,7 @@ public struct SubscriptionBillingThresholds: Codable {
     }
 }
 
-public struct SubscriptionCancellationDetails: Codable {
+public struct SubscriptionCancellationDetails: Codable, Sendable {
     /// Additional comments about why the user canceled the subscription, if the subscription was cancelled explicitly by the user.
     public var comment: String?
     /// The customer submitted reason for why they cancelled, if the subscription was cancelled explicitly by the user.
@@ -294,7 +294,7 @@ public struct SubscriptionCancellationDetails: Codable {
     }
 }
 
-public enum SubscriptionCancellationDetailsReason: String, Codable {
+public enum SubscriptionCancellationDetailsReason: String, Codable, Sendable {
     /// The subscription was canceled by a retention policy.
     case canceledByRetentionPolicy = "canceled_by_retention_policy"
     /// The subscription was canceled explicitly by the user.
@@ -305,7 +305,7 @@ public enum SubscriptionCancellationDetailsReason: String, Codable {
     case paymentFailed = "payment_failed"
 }
 
-public enum SubscriptionCancellationDetailsFeedback: String, Codable {
+public enum SubscriptionCancellationDetailsFeedback: String, Codable, Sendable {
     /// It’s too expensive
     case tooExpensive = "too_expensive"
     /// Some features are missing
@@ -324,12 +324,12 @@ public enum SubscriptionCancellationDetailsFeedback: String, Codable {
     case other
 }
 
-public enum SubscriptionCollectionMethod: String, Codable {
+public enum SubscriptionCollectionMethod: String, Codable, Sendable {
     case chargeAutomatically = "charge_automatically"
     case sendInvoice = "send_invoice"
 }
 
-public struct SubscriptionPaymentSettings: Codable {
+public struct SubscriptionPaymentSettings: Codable, Sendable {
     /// Payment-method-specific configuration to provide to invoices created by the subscription.
     public var paymentMethodOptions: SubscriptionPaymentSettingsPaymentMethodOptions?
     /// The list of payment method types to provide to every invoice created by the subscription. If not set, Stripe attempts to automatically determine the types to use by looking at the invoice’s default payment method, the subscription’s default payment method, the customer’s default payment method, and your invoice template settings.
@@ -338,14 +338,14 @@ public struct SubscriptionPaymentSettings: Codable {
     public var saveDefaultPaymentMethod: SubscriptionPaymentSettingsSaveDefaultPaymentMethod?
 }
 
-public enum SubscriptionPaymentSettingsSaveDefaultPaymentMethod: String, Codable {
+public enum SubscriptionPaymentSettingsSaveDefaultPaymentMethod: String, Codable, Sendable {
     /// Stripe never sets `subscription.default_payment_method`.
     case off
     /// Stripe sets `subscription.default_payment_method` when a subscription payment succeeds.
     case onSubscription = "on_subscription"
 }
 
-public struct SubscriptionPendingInvoiceInterval: Codable {
+public struct SubscriptionPendingInvoiceInterval: Codable, Sendable {
     /// Specifies invoicing frequency. Either `day`, `week`, `month` or `year`.
     public var interval: SubscriptionInterval?
     /// The number of intervals between invoices. For example, `interval=month` and `interval_count=3` bills every 3 months. Maximum of one year interval allowed (1 year, 12 months, or 52 weeks).
@@ -357,14 +357,14 @@ public struct SubscriptionPendingInvoiceInterval: Codable {
     }
 }
 
-public enum SubscriptionInterval: String, Codable {
+public enum SubscriptionInterval: String, Codable, Sendable {
     case day
     case week
     case month
     case year
 }
 
-public enum SubscriptionStatus: String, Codable {
+public enum SubscriptionStatus: String, Codable, Sendable {
     case active
     case pastDue = "past_due"
     case unpaid
@@ -375,7 +375,7 @@ public enum SubscriptionStatus: String, Codable {
     case paused
 }
 
-public struct SubscriptionList: Codable {
+public struct SubscriptionList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?
@@ -392,7 +392,7 @@ public struct SubscriptionList: Codable {
     }
 }
 
-public enum SubscriptionPaymentBehavior: String, Codable {
+public enum SubscriptionPaymentBehavior: String, Codable, Sendable {
     /// Use `allow_incomplete` to transition the subscription to `status=past_due` if a payment is required but cannot be paid.
     case allowIncomplete = "allow_incomplete"
     /// Use `error_if_incomplete` if you want Stripe to return an HTTP 402 status code if a subscription’s first invoice cannot be paid.
@@ -403,13 +403,13 @@ public enum SubscriptionPaymentBehavior: String, Codable {
     case defaultIncomplete = "default_incomplete"
 }
 
-public enum SubscriptionProrationBehavior: String, Codable {
+public enum SubscriptionProrationBehavior: String, Codable, Sendable {
     case createProrations = "create_prorations"
     case none
     case alwaysInvoice = "always_invoice"
 }
 
-public struct SubscriptionPendingUpdate: Codable {
+public struct SubscriptionPendingUpdate: Codable, Sendable {
     /// If the update is applied, determines the date of the first full invoice, and, for plans with `month` or `year` intervals, the day of the month for subsequent invoices.
     public var billingCycleAnchor: Date?
     /// The point after which the changes reflected by this update will be discarded and no longer applied.
@@ -438,7 +438,7 @@ public struct SubscriptionPendingUpdate: Codable {
     }
 }
 
-public struct SubscriptionPauseCollection: Codable {
+public struct SubscriptionPauseCollection: Codable, Sendable {
     /// The payment collection behavior for this subscription while paused. One of `keep_as_draft`, `mark_uncollectible`, or `void`.
     public var behavior: SubscriptionPauseCollectionBehavior?
     /// The time after which the subscription will resume collecting payments.
@@ -450,13 +450,13 @@ public struct SubscriptionPauseCollection: Codable {
     }
 }
 
-public enum SubscriptionPauseCollectionBehavior: String, Codable {
+public enum SubscriptionPauseCollectionBehavior: String, Codable, Sendable {
     case keepAsDraft = "keep_as_draft"
     case markUncollectible = "mark_uncollectible"
     case void
 }
 
-public struct SubscriptionTrialSettings: Codable {
+public struct SubscriptionTrialSettings: Codable, Sendable {
     /// SubscriptionTrialSettingsEndBehavior?
     public var endBehavior: SubscriptionTrialSettingsEndBehavior?
     
@@ -464,7 +464,7 @@ public struct SubscriptionTrialSettings: Codable {
         self.endBehavior = endBehavior
     }
 }
-public struct SubscriptionTrialSettingsEndBehavior: Codable {
+public struct SubscriptionTrialSettingsEndBehavior: Codable, Sendable {
     /// Indicates how the subscription should change when the trial ends if the user did not provide a payment method.
     public var missingPaymentMethod: SubscriptionTrialSettingsEndBehaviorMissingPaymentMethod?
     
@@ -472,7 +472,7 @@ public struct SubscriptionTrialSettingsEndBehavior: Codable {
         self.missingPaymentMethod = missingPaymentMethod
     }
 }
-public enum SubscriptionTrialSettingsEndBehaviorMissingPaymentMethod: String, Codable {
+public enum SubscriptionTrialSettingsEndBehaviorMissingPaymentMethod: String, Codable, Sendable {
     /// Cancel the subscription if a payment method is not attached when the trial ends.
     case cancel
     /// Pause the subscription if a payment method is not attached when the trial ends.
@@ -481,7 +481,7 @@ public enum SubscriptionTrialSettingsEndBehaviorMissingPaymentMethod: String, Co
     case createInvoice = "create_invoice"
 }
 
-public struct SubscriptionTransferData: Codable {
+public struct SubscriptionTransferData: Codable, Sendable {
     /// A non-negative decimal between 0 and 100, with at most two decimal places. This represents the percentage of the subscription invoice subtotal that will be transferred to the destination account. By default, the entire amount is transferred to the destination.
     public var amountPercent: Int?
     /// The account where funds from the payment will be transferred to upon payment success.
@@ -493,7 +493,7 @@ public struct SubscriptionTransferData: Codable {
     }
 }
 
-public struct SubscriptionBillingCycleAnchorConfig: Codable {
+public struct SubscriptionBillingCycleAnchorConfig: Codable, Sendable {
     /// The day of the month of the billing_cycle_anchor.
     public var dayOfMonth: Int?
     /// The hour of the day of the billing_cycle_anchor.
@@ -518,7 +518,7 @@ public struct SubscriptionBillingCycleAnchorConfig: Codable {
     }
 }
 
-public struct SubscriptionBillingMode: Codable {
+public struct SubscriptionBillingMode: Codable, Sendable {
     /// Controls the calculation and orchestration of prorations and invoices for subscriptions.
     public var type: SubscriptionBillingModeType?
     /// Configure behavior for flexible billing mode.
@@ -535,14 +535,14 @@ public struct SubscriptionBillingMode: Codable {
     }
 }
 
-public enum SubscriptionBillingModeType: String, Codable {
+public enum SubscriptionBillingModeType: String, Codable, Sendable {
     /// Calculations for subscriptions and invoices are based on legacy defaults.
     case classic
     /// Supports more flexible calculation and orchestration options for subscriptions and invoices.
     case flexible
 }
 
-public struct SubscriptionBillingModeFlexible: Codable {
+public struct SubscriptionBillingModeFlexible: Codable, Sendable {
     /// Controls how invoices and invoice items display proration amounts and discount amounts.
     public var prorationDiscounts: SubscriptionBillingModeFlexibleProrationDiscounts?
 
@@ -551,12 +551,12 @@ public struct SubscriptionBillingModeFlexible: Codable {
     }
 }
 
-public enum SubscriptionBillingModeFlexibleProrationDiscounts: String, Codable {
+public enum SubscriptionBillingModeFlexibleProrationDiscounts: String, Codable, Sendable {
     case included
     case itemized
 }
 
-public struct SubscriptionInvoiceSettings: Codable {
+public struct SubscriptionInvoiceSettings: Codable, Sendable {
     /// The account tax IDs associated with the subscription. Will be set on invoices generated by the subscription.
     @ExpandableCollection<TaxID> public var accountTaxIds: [String]?
     /// A list of up to 4 custom fields to be displayed on the invoice.
@@ -573,7 +573,7 @@ public struct SubscriptionInvoiceSettings: Codable {
     }
 }
 
-public struct SubscriptionInvoiceSettingsCustomField: Codable {
+public struct SubscriptionInvoiceSettingsCustomField: Codable, Sendable {
     /// The name of the custom field.
     public var name: String?
     /// The value of the custom field.
@@ -585,7 +585,7 @@ public struct SubscriptionInvoiceSettingsCustomField: Codable {
     }
 }
 
-public struct SubscriptionInvoiceSettingsIssuer: Codable {
+public struct SubscriptionInvoiceSettingsIssuer: Codable, Sendable {
     /// The connected account being referenced when `type` is `account`.
     @Expandable<ConnectAccount> public var account: String?
     /// Type of the account referenced.
@@ -597,12 +597,12 @@ public struct SubscriptionInvoiceSettingsIssuer: Codable {
     }
 }
 
-public enum SubscriptionInvoiceSettingsIssuerType: String, Codable {
+public enum SubscriptionInvoiceSettingsIssuerType: String, Codable, Sendable {
     case account
     case `self`
 }
 
-public struct SubscriptionManagedPayments: Codable {
+public struct SubscriptionManagedPayments: Codable, Sendable {
     /// Whether Managed Payments is enabled for this subscription.
     public var enabled: Bool?
 
@@ -611,7 +611,7 @@ public struct SubscriptionManagedPayments: Codable {
     }
 }
 
-public struct SubscriptionPresentmentDetails: Codable {
+public struct SubscriptionPresentmentDetails: Codable, Sendable {
     /// The currency in which the subscription is presented to the customer. Three-letter ISO currency code, in lowercase.
     public var presentmentCurrency: Currency?
 
@@ -620,7 +620,7 @@ public struct SubscriptionPresentmentDetails: Codable {
     }
 }
 
-public struct SubscriptionSearchResult: Codable {
+public struct SubscriptionSearchResult: Codable, Sendable {
     /// A string describing the object type returned.
     public var object: String
     /// A list of subscription, paginated by any request parameters.

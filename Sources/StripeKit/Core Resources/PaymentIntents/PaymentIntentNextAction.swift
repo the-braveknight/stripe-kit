@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct PaymentIntentNextActionAlipayHandleRedirect: Codable {
+public struct PaymentIntentNextActionAlipayHandleRedirect: Codable, Sendable {
     /// The native data to be used with Alipay SDK you must redirect your customer to in order to authenticate the payment in an Android App.
     public var nativeData: String?
     /// The native URL you must redirect your customer to in order to authenticate the payment in an iOS App.
@@ -32,7 +32,7 @@ public struct PaymentIntentNextActionAlipayHandleRedirect: Codable {
     }
 }
 
-public struct PaymentIntentNextActionBoletoDisplayDetails: Codable {
+public struct PaymentIntentNextActionBoletoDisplayDetails: Codable, Sendable {
     /// The timestamp after which the boleto expires.
     public var expiresAt: Date?
     /// The URL to the hosted boleto voucher page, which allows customers to view the boleto voucher.
@@ -53,7 +53,7 @@ public struct PaymentIntentNextActionBoletoDisplayDetails: Codable {
     }
 }
 
-public struct PaymentIntentNextActionCardAwaitNotification: Codable {
+public struct PaymentIntentNextActionCardAwaitNotification: Codable, Sendable {
     /// The time that payment will be attempted. If customer approval is required, they need to provide approval before this time.
     public var chargeAttemptAt: Date?
     /// For payments greater than INR 15000, the customer must provide explicit approval of the payment with their bank. For payments of lower amount, no customer action is required.
@@ -65,7 +65,7 @@ public struct PaymentIntentNextActionCardAwaitNotification: Codable {
     }
 }
 
-public struct PaymentIntentNextActionKonbiniDisplayDetails: Codable {
+public struct PaymentIntentNextActionKonbiniDisplayDetails: Codable, Sendable {
     /// The timestamp at which the pending Konbini payment expires.
     public var expiresAt: Date?
     /// The URL for the Konbini payment instructions page, which allows customers to view and print a Konbini voucher.
@@ -82,7 +82,7 @@ public struct PaymentIntentNextActionKonbiniDisplayDetails: Codable {
     }
 }
 
-public struct PaymentIntentNextActionKonbiniDisplayDetailsStores: Codable {
+public struct PaymentIntentNextActionKonbiniDisplayDetailsStores: Codable, Sendable {
     /// FamilyMart instruction details.
     public var familymart: PaymentIntentNextActionKonbiniDisplayDetailsStoresFamilyMart?
     /// Lawson instruction details.
@@ -103,7 +103,7 @@ public struct PaymentIntentNextActionKonbiniDisplayDetailsStores: Codable {
     }
 }
 
-public struct PaymentIntentNextActionKonbiniDisplayDetailsStoresFamilyMart: Codable {
+public struct PaymentIntentNextActionKonbiniDisplayDetailsStoresFamilyMart: Codable, Sendable {
     /// The confirmation number.
     public var confirmationNumber: String?
     /// The payment code
@@ -115,7 +115,7 @@ public struct PaymentIntentNextActionKonbiniDisplayDetailsStoresFamilyMart: Coda
     }
 }
 
-public struct PaymentIntentNextActionKonbiniDisplayDetailsStoresLawson: Codable {
+public struct PaymentIntentNextActionKonbiniDisplayDetailsStoresLawson: Codable, Sendable {
     /// The confirmation number.
     public var confirmationNumber: String?
     /// The payment code
@@ -127,7 +127,7 @@ public struct PaymentIntentNextActionKonbiniDisplayDetailsStoresLawson: Codable 
     }
 }
 
-public struct PaymentIntentNextActionKonbiniDisplayDetailsStoresMinistop: Codable {
+public struct PaymentIntentNextActionKonbiniDisplayDetailsStoresMinistop: Codable, Sendable {
     /// The confirmation number.
     public var confirmationNumber: String?
     /// The payment code
@@ -139,7 +139,7 @@ public struct PaymentIntentNextActionKonbiniDisplayDetailsStoresMinistop: Codabl
     }
 }
 
-public struct PaymentIntentNextActionKonbiniDisplayDetailsStoresSeicomart: Codable {
+public struct PaymentIntentNextActionKonbiniDisplayDetailsStoresSeicomart: Codable, Sendable {
     /// The confirmation number.
     public var confirmationNumber: String?
     /// The payment code
@@ -151,7 +151,7 @@ public struct PaymentIntentNextActionKonbiniDisplayDetailsStoresSeicomart: Codab
     }
 }
 
-public struct PaymentIntentNextActionOXXODisplayDetails: Codable {
+public struct PaymentIntentNextActionOXXODisplayDetails: Codable, Sendable {
     /// The timestamp after which the OXXO voucher expires.
     public var expiresAfter: Date?
     /// The URL for the hosted OXXO voucher page, which allows customers to view and print an OXXO voucher.
@@ -168,7 +168,7 @@ public struct PaymentIntentNextActionOXXODisplayDetails: Codable {
     }
 }
 
-public struct PaymentIntentNextActionPaynowDisplayQRCode: Codable {
+public struct PaymentIntentNextActionPaynowDisplayQRCode: Codable, Sendable {
     /// The raw data string used to generate QR code, it should be used together with QR code library.
     public var data: String?
     /// The URL to the hosted PayNow instructions page, which allows customers to view the PayNow QR code.
@@ -189,7 +189,7 @@ public struct PaymentIntentNextActionPaynowDisplayQRCode: Codable {
     }
 }
 
-public struct PaymentIntentNextActionPromptPayDisplayQRCode: Codable {
+public struct PaymentIntentNextActionPromptPayDisplayQRCode: Codable, Sendable {
     /// The raw data string used to generate QR code, it should be used together with QR code library.
     public var data: String?
     /// The URL to the hosted PromptPay instructions page, which allows customers to view the PromptPay QR code.
@@ -210,7 +210,7 @@ public struct PaymentIntentNextActionPromptPayDisplayQRCode: Codable {
     }
 }
 
-public struct PaymentIntentNextActionRedirectToUrl: Codable {
+public struct PaymentIntentNextActionRedirectToUrl: Codable, Sendable {
     /// If the customer does not exit their browser while authenticating, they will be redirected to this specified URL after completion.
     public var returnUrl: String?
     /// The URL you must redirect your customer to in order to authenticate the payment.
@@ -222,7 +222,7 @@ public struct PaymentIntentNextActionRedirectToUrl: Codable {
     }
 }
 
-public enum PaymentIntentNextActionType: String, Codable {
+public enum PaymentIntentNextActionType: String, Codable, Sendable {
     case redirectToUrl = "redirect_to_url"
     case useStripeSDK = "use_stripe_sdk"
     case alipayHandleRedirect = "alipay_handle_redirect"
@@ -238,7 +238,7 @@ public enum PaymentIntentNextActionType: String, Codable {
     case wechatPayRedirectToIosApp = "wechat_pay_redirect_to_ios_app"
 }
 
-public struct PaymentIntentNextActionVerifyWithMicrodeposits: Codable {
+public struct PaymentIntentNextActionVerifyWithMicrodeposits: Codable, Sendable {
     /// The timestamp when the microdeposits are expected to land.
     public var arrivalDate: Date?
     /// The URL for the hosted verification page, which allows customers to verify their bank account.
@@ -255,12 +255,12 @@ public struct PaymentIntentNextActionVerifyWithMicrodeposits: Codable {
     }
 }
 
-public enum PaymentIntentNextActionVerifyWithMicrodepositsType: String, Codable {
+public enum PaymentIntentNextActionVerifyWithMicrodepositsType: String, Codable, Sendable {
     case descriptorCode = "descriptor_code"
     case amounts
 }
 
-public struct PaymentIntentNextActionWechatPayQRCode: Codable {
+public struct PaymentIntentNextActionWechatPayQRCode: Codable, Sendable {
     /// The data being used to generate QR code
     public var data: String?
     /// The URL to the hosted WeChat Pay instructions page, which allows customers to view the WeChat Pay QR code.
@@ -285,7 +285,7 @@ public struct PaymentIntentNextActionWechatPayQRCode: Codable {
     }
 }
 
-public struct PaymentIntentNextActionWechatPayAndroidApp: Codable {
+public struct PaymentIntentNextActionWechatPayAndroidApp: Codable, Sendable {
     /// `app_id` is the APP ID registered on WeChat open platform
     public var appId: String?
     /// `nonce_str` is a random string
@@ -318,7 +318,7 @@ public struct PaymentIntentNextActionWechatPayAndroidApp: Codable {
     }
 }
 
-public struct PaymentIntentNextActionWechatPayIOSApp: Codable {
+public struct PaymentIntentNextActionWechatPayIOSApp: Codable, Sendable {
     /// An universal link that redirect to Wechat Pay APP
     public var nativeUrl: String?
     

@@ -12,7 +12,7 @@ import Foundation
 #endif
 
 /// The [Reader Object](https://stripe.com/docs/api/terminal/readers/object)
-public struct TerminalReader: Codable {
+public struct TerminalReader: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// Type of reader, one of `bbpos_wisepad3`, `stripe_m2`, `bbpos_chipper2x`, `bbpos_wisepos_e`, `verifone_P400`, or `simulated_wisepos_e`.
@@ -69,7 +69,7 @@ public struct TerminalReader: Codable {
     }
 }
 
-public struct TerminalReaderAction: Codable {
+public struct TerminalReaderAction: Codable, Sendable {
     /// An error detailing why the requested action failed. Only set if status is `failed`. (Requires reader software version 2.42 or later.)
     public var apiError: TerminalReaderActionApiError?
     /// Payload required to collect inputs from the reader user. Only present if type is `collect_inputs`.
@@ -127,7 +127,7 @@ public struct TerminalReaderAction: Codable {
 }
 
 /// An error detailing why a reader action failed.
-public struct TerminalReaderActionApiError: Codable {
+public struct TerminalReaderActionApiError: Codable, Sendable {
     /// A short string indicating the error code reported.
     public var code: String?
     /// For card errors resulting from a card issuer decline, a short string indicating the card issuer’s reason for the decline if they provide one.
@@ -160,13 +160,13 @@ public struct TerminalReaderActionApiError: Codable {
     }
 }
 
-public enum TerminalReaderActionStatus: String, Codable {
+public enum TerminalReaderActionStatus: String, Codable, Sendable {
     case inProgress = "in_progress"
     case succeeded
     case failed
 }
 
-public enum TerminalReaderActionType: String, Codable {
+public enum TerminalReaderActionType: String, Codable, Sendable {
     case collectInputs = "collect_inputs"
     case collectPaymentMethod = "collect_payment_method"
     case confirmPaymentIntent = "confirm_payment_intent"
@@ -177,7 +177,7 @@ public enum TerminalReaderActionType: String, Codable {
     case refundPayment = "refund_payment"
 }
 
-public struct TerminalReaderActionPaymentIntent: Codable {
+public struct TerminalReaderActionPaymentIntent: Codable, Sendable {
     /// Most recent PaymentIntent processed by the reader.
     @Expandable<PaymentIntent> public var paymentIntent: String?
     /// Per-transaction overrides of Terminal reader configurations.
@@ -190,7 +190,7 @@ public struct TerminalReaderActionPaymentIntent: Codable {
     }
 }
 
-public struct TerminalReaderActionPaymentIntentProcessConfig: Codable {
+public struct TerminalReaderActionPaymentIntentProcessConfig: Codable, Sendable {
     /// Enable customer-initiated cancellation when processing this payment.
     public var enableCustomerCancellation: Bool?
     /// If the customer doesn't abandon authenticating the payment, they're redirected to this URL after completion.
@@ -211,7 +211,7 @@ public struct TerminalReaderActionPaymentIntentProcessConfig: Codable {
     }
 }
 
-public struct TerminalReaderActionPaymentIntentProcessConfigTipping: Codable {
+public struct TerminalReaderActionPaymentIntentProcessConfigTipping: Codable, Sendable {
     /// Amount used to calculate tip suggestions on tipping selection screen for this transaction. Must be a positive integer in the smallest currency unit (e.g., 100 cents to represent $1.00 or 100 to represent ¥100, a zero-decimal currency).
     public var amountEligible: Int?
 
@@ -220,7 +220,7 @@ public struct TerminalReaderActionPaymentIntentProcessConfigTipping: Codable {
     }
 }
 
-public struct TerminalReaderActionSetupIntent: Codable {
+public struct TerminalReaderActionSetupIntent: Codable, Sendable {
     /// ID of a card PaymentMethod generated from the `card_present` PaymentMethod that may be attached to a Customer for future transactions. Only present if it was possible to generate a card PaymentMethod.
     public var generatedCard: String?
     /// Most recent SetupIntent processed by the reader.
@@ -237,7 +237,7 @@ public struct TerminalReaderActionSetupIntent: Codable {
     }
 }
 
-public struct TerminalReaderActionSetupIntentProcessConfig: Codable {
+public struct TerminalReaderActionSetupIntentProcessConfig: Codable, Sendable {
     /// Enable customer-initiated cancellation when processing this SetupIntent.
     public var enableCustomerCancellation: Bool?
 
@@ -246,7 +246,7 @@ public struct TerminalReaderActionSetupIntentProcessConfig: Codable {
     }
 }
 
-public struct TerminalReaderActionRefundPayment: Codable {
+public struct TerminalReaderActionRefundPayment: Codable, Sendable {
     /// The amount being refunded.
     public var amount: Int?
     /// Charge that is being refunded.
@@ -287,7 +287,7 @@ public struct TerminalReaderActionRefundPayment: Codable {
     }
 }
 
-public struct TerminalReaderActionRefundPaymentConfig: Codable {
+public struct TerminalReaderActionRefundPaymentConfig: Codable, Sendable {
     /// Enable customer-initiated cancellation when refunding this payment.
     public var enableCustomerCancellation: Bool?
 
@@ -296,7 +296,7 @@ public struct TerminalReaderActionRefundPaymentConfig: Codable {
     }
 }
 
-public struct TerminalReaderActionSetReaderDisplay: Codable {
+public struct TerminalReaderActionSetReaderDisplay: Codable, Sendable {
     /// Cart object to be displayed by the reader.
     public var cart: TerminalReaderActionSetReaderDisplayCart?
     /// Type of information to be displayed by the reader.
@@ -308,7 +308,7 @@ public struct TerminalReaderActionSetReaderDisplay: Codable {
     }
 }
 
-public struct TerminalReaderActionSetReaderDisplayCart: Codable {
+public struct TerminalReaderActionSetReaderDisplayCart: Codable, Sendable {
     /// Three-letter ISO currency code, in lowercase. Must be a supported currency.
     public var currency: Currency?
     /// List of line items in the cart.
@@ -329,7 +329,7 @@ public struct TerminalReaderActionSetReaderDisplayCart: Codable {
     }
 }
 
-public struct TerminalReaderActionSetReaderDisplayCartLineItem: Codable {
+public struct TerminalReaderActionSetReaderDisplayCartLineItem: Codable, Sendable {
     /// The amount of the line item. A positive integer in the smallest currency unit.
     public var amount: Int?
     /// Description of the line item.
@@ -346,7 +346,7 @@ public struct TerminalReaderActionSetReaderDisplayCartLineItem: Codable {
     }
 }
 
-public struct TerminalReaderActionConfirmPaymentIntent: Codable {
+public struct TerminalReaderActionConfirmPaymentIntent: Codable, Sendable {
     /// Most recent PaymentIntent processed by the reader.
     @Expandable<PaymentIntent> public var paymentIntent: String?
     /// Per-transaction overrides of Terminal reader configurations.
@@ -359,7 +359,7 @@ public struct TerminalReaderActionConfirmPaymentIntent: Codable {
     }
 }
 
-public struct TerminalReaderActionConfirmPaymentIntentConfirmConfig: Codable {
+public struct TerminalReaderActionConfirmPaymentIntentConfirmConfig: Codable, Sendable {
     /// If the customer doesn't abandon authenticating the payment, they're redirected to this URL after completion.
     public var returnUrl: String?
 
@@ -368,7 +368,7 @@ public struct TerminalReaderActionConfirmPaymentIntentConfirmConfig: Codable {
     }
 }
 
-public struct TerminalReaderActionCollectPaymentMethod: Codable {
+public struct TerminalReaderActionCollectPaymentMethod: Codable, Sendable {
     /// Per-transaction overrides of Terminal reader configurations.
     public var collectConfig: TerminalReaderActionCollectPaymentMethodCollectConfig?
     /// Most recent PaymentIntent processed by the reader.
@@ -385,7 +385,7 @@ public struct TerminalReaderActionCollectPaymentMethod: Codable {
     }
 }
 
-public struct TerminalReaderActionCollectPaymentMethodCollectConfig: Codable {
+public struct TerminalReaderActionCollectPaymentMethodCollectConfig: Codable, Sendable {
     /// Enable customer-initiated cancellation when processing this payment.
     public var enableCustomerCancellation: Bool?
     /// Override showing a tipping selection screen on this transaction.
@@ -402,7 +402,7 @@ public struct TerminalReaderActionCollectPaymentMethodCollectConfig: Codable {
     }
 }
 
-public struct TerminalReaderActionPrintContent: Codable {
+public struct TerminalReaderActionPrintContent: Codable, Sendable {
     /// Image to be printed by the reader. Only present if `type` is `image`.
     public var image: TerminalReaderActionPrintContentImage?
     /// Type of content to be printed. One of `image`.
@@ -414,7 +414,7 @@ public struct TerminalReaderActionPrintContent: Codable {
     }
 }
 
-public struct TerminalReaderActionPrintContentImage: Codable {
+public struct TerminalReaderActionPrintContentImage: Codable, Sendable {
     /// Time at which the image was created.
     public var createdAt: Date?
     /// The filename of the image (e.g. `receipt.png`).
@@ -435,7 +435,7 @@ public struct TerminalReaderActionPrintContentImage: Codable {
     }
 }
 
-public struct TerminalReaderActionCollectInputs: Codable {
+public struct TerminalReaderActionCollectInputs: Codable, Sendable {
     /// List of inputs to be collected.
     public var inputs: [TerminalReaderActionCollectInputsInput]?
     /// Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
@@ -448,7 +448,7 @@ public struct TerminalReaderActionCollectInputs: Codable {
     }
 }
 
-public struct TerminalReaderActionCollectInputsInput: Codable {
+public struct TerminalReaderActionCollectInputsInput: Codable, Sendable {
     /// Default text of input being collected.
     public var customText: TerminalReaderActionCollectInputsInputCustomText?
     /// Information about a email being collected using a reader.
@@ -497,7 +497,7 @@ public struct TerminalReaderActionCollectInputsInput: Codable {
     }
 }
 
-public struct TerminalReaderActionCollectInputsInputCustomText: Codable {
+public struct TerminalReaderActionCollectInputsInputCustomText: Codable, Sendable {
     /// Customize the default description for this input.
     public var description: String?
     /// Customize the default label for this input's skip button.
@@ -519,7 +519,7 @@ public struct TerminalReaderActionCollectInputsInputCustomText: Codable {
 }
 
 /// A simple value (email, numeric, phone, signature or text) collected from a reader.
-public struct TerminalReaderActionCollectInputsInputValue: Codable {
+public struct TerminalReaderActionCollectInputsInputValue: Codable, Sendable {
     /// The collected value.
     public var value: String?
 
@@ -528,7 +528,7 @@ public struct TerminalReaderActionCollectInputsInputValue: Codable {
     }
 }
 
-public struct TerminalReaderActionCollectInputsInputSelection: Codable {
+public struct TerminalReaderActionCollectInputsInputSelection: Codable, Sendable {
     /// The id of the selected choice.
     public var id: String?
     /// List of possible choices to be selected.
@@ -545,7 +545,7 @@ public struct TerminalReaderActionCollectInputsInputSelection: Codable {
     }
 }
 
-public struct TerminalReaderActionCollectInputsInputSelectionChoice: Codable {
+public struct TerminalReaderActionCollectInputsInputSelectionChoice: Codable, Sendable {
     /// The id to be selected.
     public var id: String?
     /// The button style for the choice. One of `primary` or `secondary`.
@@ -560,7 +560,7 @@ public struct TerminalReaderActionCollectInputsInputSelectionChoice: Codable {
     }
 }
 
-public struct TerminalReaderActionCollectInputsInputToggle: Codable {
+public struct TerminalReaderActionCollectInputsInputToggle: Codable, Sendable {
     /// The default value of the toggle. One of `enabled` or `disabled`.
     public var defaultValue: String?
     /// The description which will be displayed for the toggle.
@@ -581,7 +581,7 @@ public struct TerminalReaderActionCollectInputsInputToggle: Codable {
     }
 }
 
-public struct TerminalReaderList: Codable {
+public struct TerminalReaderList: Codable, Sendable {
     public var object: String
     public var data: [TerminalReader]?
     public var hasMore: Bool?

@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 /// When you collect a transaction fee on top of a charge made for your user (using [Connect](https://stripe.com/docs/connect) ), an `Application Fee` object is created in your account. You can list, retrieve, and refund application fees. For details, see [Collecting application fees](https://stripe.com/docs/connect/direct-charges#collecting-fees). [Learn More](https://stripe.com/docs/api/application_fees)
-public struct ApplicationFee: Codable {
+public struct ApplicationFee: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// ID of the Stripe account this fee was taken from.
@@ -76,7 +76,7 @@ public struct ApplicationFee: Codable {
     }
 }
 
-public struct ApplicationFeeSource: Codable {
+public struct ApplicationFeeSource: Codable, Sendable {
     /// Charge ID that created this application fee.
     public var charge: String?
     /// Payout ID that created this application fee.
@@ -93,12 +93,12 @@ public struct ApplicationFeeSource: Codable {
     }
 }
 
-public enum ApplicationFeeSourceType: String, Codable {
+public enum ApplicationFeeSourceType: String, Codable, Sendable {
     case charge
     case payout
 }
 
-public struct ApplicationFeeList: Codable {
+public struct ApplicationFeeList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

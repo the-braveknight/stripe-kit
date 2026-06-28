@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct TestClock: Codable {
+public struct TestClock: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// String representing the object’s type. Objects of the same type share the same value.
@@ -52,7 +52,7 @@ public struct TestClock: Codable {
     }
 }
 
-public enum TestClockStatus: String, Codable {
+public enum TestClockStatus: String, Codable, Sendable {
     /// All test clock objects have advanced to the `frozen_time`.
     case ready
     /// In the process of advancing time for the test clock objects.
@@ -61,7 +61,7 @@ public enum TestClockStatus: String, Codable {
     case internalFailure = "internal_failure"
 }
 
-public struct TestClockStatusDetails: Codable {
+public struct TestClockStatusDetails: Codable, Sendable {
     /// Present if the status of the test clock is `advancing`.
     public var advancing: TestClockStatusDetailsAdvancing?
 
@@ -70,7 +70,7 @@ public struct TestClockStatusDetails: Codable {
     }
 }
 
-public struct TestClockStatusDetailsAdvancing: Codable {
+public struct TestClockStatusDetailsAdvancing: Codable, Sendable {
     /// The `frozen_time` that the Test Clock is advancing towards.
     public var targetFrozenTime: Date?
 
@@ -79,7 +79,7 @@ public struct TestClockStatusDetailsAdvancing: Codable {
     }
 }
 
-public struct TestClockList: Codable {
+public struct TestClockList: Codable, Sendable {
     /// A string describing the object type returned.
     public var object: String
     /// A list of Test Clocks, paginated by any request parameters.

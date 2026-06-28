@@ -12,7 +12,7 @@ import Foundation
 #endif
 
 /// The [Tax Rate Object](https://stripe.com/docs/api/tax_rates/object)
-public struct TaxRate: Codable {
+public struct TaxRate: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// Defaults to true. When set to false, this tax rate cannot be applied to objects in the API, but will still be applied to subscriptions and invoices that already have it set.
@@ -89,7 +89,7 @@ public struct TaxRate: Codable {
     }
 }
 
-public struct TaxRateFlatAmount: Codable {
+public struct TaxRateFlatAmount: Codable, Sendable {
     /// Amount of the tax when the `rate_type` is `flat_amount`. This positive integer represents how much to charge in the smallest currency unit (e.g., 100 cents to charge $1.00 or 100 to charge ¥100, a zero-decimal currency).
     public var amount: Int?
     /// Three-letter ISO currency code, in lowercase.
@@ -102,7 +102,7 @@ public struct TaxRateFlatAmount: Codable {
     }
 }
 
-public enum TaxRateJurisdictionLevel: String, Codable {
+public enum TaxRateJurisdictionLevel: String, Codable, Sendable {
     case city
     case country
     case county
@@ -111,14 +111,14 @@ public enum TaxRateJurisdictionLevel: String, Codable {
     case state
 }
 
-public enum TaxRateRateType: String, Codable {
+public enum TaxRateRateType: String, Codable, Sendable {
     /// A fixed amount applied as tax, regardless of the taxable amount, such as a retail delivery fee.
     case flatAmount = "flat_amount"
     /// A tax rate expressed as a percentage of the taxable amount, such as the sales tax rate in California.
     case percentage
 }
 
-public enum TaxRateTaxType: String, Codable {
+public enum TaxRateTaxType: String, Codable, Sendable {
     case admissionsTax = "admissions_tax"
     case amusementTax = "amusement_tax"
     case attendanceTax = "attendance_tax"
@@ -143,7 +143,7 @@ public enum TaxRateTaxType: String, Codable {
     case vat
 }
 
-public struct TaxRateList: Codable {
+public struct TaxRateList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?
