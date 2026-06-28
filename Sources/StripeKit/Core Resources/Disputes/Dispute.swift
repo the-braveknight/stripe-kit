@@ -230,13 +230,13 @@ public enum DisputePaymentMethodDetailsAmazonPayDisputeType: String, Codable, Se
 
 public struct DisputePaymentMethodDetailsCard: Codable, Sendable {
     /// Card brand. Can be `amex`, `cartes_bancaires`, `diners`, `discover`, `eftpos_au`, `jcb`, `link`, `mastercard`, `unionpay`, `visa`, or `unknown`.
-    public var brand: String?
+    public var brand: PaymentMethodDetailsCardBrand?
     /// The type of dispute opened. Different case types may have varying fees and financial impact.
     public var caseType: DisputePaymentMethodDetailsCardCaseType?
     /// The card network's specific dispute reason code, which maps to one of Stripe's primary dispute categories to simplify response guidance. The [Network code map](https://stripe.com/docs/disputes/categories#network-code-map) lists all available dispute reason codes by network.
     public var networkReasonCode: String?
 
-    public init(brand: String? = nil,
+    public init(brand: PaymentMethodDetailsCardBrand? = nil,
                 caseType: DisputePaymentMethodDetailsCardCaseType? = nil,
                 networkReasonCode: String? = nil) {
         self.brand = brand

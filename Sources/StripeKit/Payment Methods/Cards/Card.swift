@@ -155,6 +155,13 @@ public enum CardBrand: String, Codable, Sendable {
     case unionPay = "UnionPay"
     case visa = "Visa"
     case unknown = "Unknown"
+
+    /// Falls back to `.unknown` for brands not modeled by this SDK version
+    /// instead of throwing.
+    public init(from decoder: Decoder) throws {
+        let raw = try decoder.singleValueContainer().decode(String.self)
+        self = CardBrand(rawValue: raw) ?? .unknown
+    }
 }
 
 public enum CardFundingType: String, Codable, Sendable {
@@ -162,6 +169,13 @@ public enum CardFundingType: String, Codable, Sendable {
     case debit
     case prepaid
     case unknown
+
+    /// Falls back to `.unknown` for funding types not modeled by this SDK
+    /// version instead of throwing.
+    public init(from decoder: Decoder) throws {
+        let raw = try decoder.singleValueContainer().decode(String.self)
+        self = CardFundingType(rawValue: raw) ?? .unknown
+    }
 }
 
 public enum CardTokenizedMethod: String, Codable, Sendable {

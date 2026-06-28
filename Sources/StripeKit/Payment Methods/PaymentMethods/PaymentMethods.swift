@@ -171,14 +171,24 @@ public struct PaymentMethodCard: Codable, Sendable {
 
 public enum PaymentMethodDetailsCardBrand: String, Codable, Sendable {
     case amex
+    case cartesBancaires = "cartes_bancaires"
     case diners
     case discover
     case eftposAu = "eftpos_au"
+    case girocard
     case jcb
+    case link
     case mastercard
     case unionpay
     case visa
     case unknown
+
+    /// Falls back to `.unknown` for brands not modeled by this SDK version
+    /// instead of throwing.
+    public init(from decoder: Decoder) throws {
+        let raw = try decoder.singleValueContainer().decode(String.self)
+        self = PaymentMethodDetailsCardBrand(rawValue: raw) ?? .unknown
+    }
 }
 
 public enum PaymentMethodCardNetwork: String, Codable, Sendable {
@@ -189,10 +199,18 @@ public enum PaymentMethodCardNetwork: String, Codable, Sendable {
     case eftposAu = "eftpos_au"
     case interac
     case jcb
+    case link
     case mastercard
     case unionpay
     case visa
     case unknown
+
+    /// Falls back to `.unknown` for networks not modeled by this SDK version
+    /// instead of throwing.
+    public init(from decoder: Decoder) throws {
+        let raw = try decoder.singleValueContainer().decode(String.self)
+        self = PaymentMethodCardNetwork(rawValue: raw) ?? .unknown
+    }
 }
 
 public struct PaymentMethodDetailsCardChecks: Codable, Sendable {

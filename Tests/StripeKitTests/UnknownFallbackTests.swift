@@ -45,6 +45,31 @@ final class UnknownFallbackTests: XCTestCase {
         XCTAssertEqual(box.currency, .unknown)
     }
 
+    // MARK: - Card brand / funding / network
+
+    private struct CardDetailsBox: Codable {
+        let brand: PaymentMethodDetailsCardBrand?
+        let funding: CardFundingType?
+        let network: PaymentMethodCardNetwork?
+    }
+
+    func testCardDetailsDecodeKnownValues() throws {
+        let data = Data(#"{"brand":"visa","funding":"credit","network":"mastercard"}"#.utf8)
+        let box = try makeDecoder().decode(CardDetailsBox.self, from: data)
+        XCTAssertEqual(box.brand, .visa)
+        XCTAssertEqual(box.funding, .credit)
+        XCTAssertEqual(box.network, .mastercard)
+    }
+
+    func testCardDetailsFallBackToUnknown() throws {
+        // Brand/funding/network values this SDK version doesn't model must not throw.
+        let data = Data(#"{"brand":"some_future_brand","funding":"future_funding","network":"future_net"}"#.utf8)
+        let box = try makeDecoder().decode(CardDetailsBox.self, from: data)
+        XCTAssertEqual(box.brand, .unknown)
+        XCTAssertEqual(box.funding, .unknown)
+        XCTAssertEqual(box.network, .unknown)
+    }
+
     // MARK: - EventObject
 
     func testEventObjectFallsBackToUnknownPreservingType() throws {

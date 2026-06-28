@@ -1477,7 +1477,7 @@ public struct ChargePaymentMethodDetailsWalletFunding: Codable, Sendable {
 
 public struct ChargePaymentMethodDetailsWalletFundingCard: Codable, Sendable {
     /// Card brand.
-    public var brand: String?
+    public var brand: PaymentMethodDetailsCardBrand?
     /// Two-letter ISO code representing the country of the card.
     public var country: String?
     /// Two-digit number representing the card’s expiration month.
@@ -1485,15 +1485,15 @@ public struct ChargePaymentMethodDetailsWalletFundingCard: Codable, Sendable {
     /// Four-digit number representing the card’s expiration year.
     public var expYear: Int?
     /// Card funding type. Can be `credit`, `debit`, `prepaid`, or `unknown`.
-    public var funding: String?
+    public var funding: CardFundingType?
     /// The last four digits of the card.
     public var last4: String?
 
-    public init(brand: String? = nil,
+    public init(brand: PaymentMethodDetailsCardBrand? = nil,
                 country: String? = nil,
                 expMonth: Int? = nil,
                 expYear: Int? = nil,
-                funding: String? = nil,
+                funding: CardFundingType? = nil,
                 last4: String? = nil) {
         self.brand = brand
         self.country = country
@@ -1650,7 +1650,7 @@ public struct ChargePaymentMethodDetailsMobilepay: Codable, Sendable {
 
 public struct ChargePaymentMethodDetailsMobilepayCard: Codable, Sendable {
     /// Brand of the card used in the transaction.
-    public var brand: String?
+    public var brand: PaymentMethodDetailsCardBrand?
     /// Two-letter ISO code representing the country of the card.
     public var country: String?
     /// Two-digit number representing the card’s expiration month.
@@ -1660,7 +1660,7 @@ public struct ChargePaymentMethodDetailsMobilepayCard: Codable, Sendable {
     /// The last four digits of the card.
     public var last4: String?
 
-    public init(brand: String? = nil,
+    public init(brand: PaymentMethodDetailsCardBrand? = nil,
                 country: String? = nil,
                 expMonth: Int? = nil,
                 expYear: Int? = nil,
