@@ -112,17 +112,21 @@ public struct PriceRecurring: Codable, Sendable {
     public var meter: String?
     /// Configures how the quantity per period should be determined. Can be either `metered` or `licensed`. `licensed` automatically bills the `quantity` set when adding it to a subscription. `metered` aggregates the total usage based on usage records. Defaults to `licensed`.
     public var usageType: PlanUsageType?
+    /// Default number of trial days when subscribing a customer to this price using `trial_from_plan=true`.
+    public var trialPeriodDays: Int?
 
     public init(aggregateUsage: PriceRecurringAggregateUsage? = nil,
                 interval: PlanInterval? = nil,
                 intervalCount: Int? = nil,
                 meter: String? = nil,
-                usageType: PlanUsageType? = nil) {
+                usageType: PlanUsageType? = nil,
+                trialPeriodDays: Int? = nil) {
         self.aggregateUsage = aggregateUsage
         self.interval = interval
         self.intervalCount = intervalCount
         self.meter = meter
         self.usageType = usageType
+        self.trialPeriodDays = trialPeriodDays
     }
 }
     

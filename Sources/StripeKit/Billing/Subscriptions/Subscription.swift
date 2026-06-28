@@ -90,6 +90,8 @@ public struct Subscription: Codable, Sendable {
     @ExpandableCollection<Discount> public var discounts: [String]?
     /// All invoices will be billed using the specified settings.
     public var invoiceSettings: SubscriptionInvoiceSettings?
+    /// The billing schedules applied to the subscription, controlling how far in advance each set of items is billed.
+    public var billingSchedules: [SubscriptionBillingSchedule]?
     /// If the subscription has ended, the date the subscription ended.
     public var endedAt: Date?
     /// Has the value true if the object exists in live mode or the value false if the object exists in test mode.
@@ -157,6 +159,7 @@ public struct Subscription: Codable, Sendable {
                 discount: Discount? = nil,
                 discounts: [String]? = nil,
                 invoiceSettings: SubscriptionInvoiceSettings? = nil,
+                billingSchedules: [SubscriptionBillingSchedule]? = nil,
                 endedAt: Date? = nil,
                 livemode: Bool? = nil,
                 nextPendingInvoiceItemInvoice: Date? = nil,
@@ -207,6 +210,7 @@ public struct Subscription: Codable, Sendable {
         self.discount = discount
         self._discounts = ExpandableCollection(ids: discounts)
         self.invoiceSettings = invoiceSettings
+        self.billingSchedules = billingSchedules
         self.endedAt = endedAt
         self.livemode = livemode
         self.nextPendingInvoiceItemInvoice = nextPendingInvoiceItemInvoice
@@ -556,6 +560,87 @@ public enum SubscriptionBillingModeFlexibleProrationDiscounts: String, Codable, 
     case itemized
 }
 
+// MARK: Billing Schedules
+public struct SubscriptionBillingSchedule: Codable, Sendable {
+    /// The items the billing schedule applies to.
+    public var appliesTo: [SubscriptionBillingScheduleAppliesTo]?
+    /// The point in time the subscription is billed until for the items this schedule applies to.
+    public var billUntil: SubscriptionBillingScheduleBillUntil?
+    /// A unique identifier for the billing schedule within the subscription.
+    public var key: String?
+
+    public init(appliesTo: [SubscriptionBillingScheduleAppliesTo]? = nil,
+                billUntil: SubscriptionBillingScheduleBillUntil? = nil,
+                key: String? = nil) {
+        self.appliesTo = appliesTo
+        self.billUntil = billUntil
+        self.key = key
+    }
+}
+
+public struct SubscriptionBillingScheduleAppliesTo: Codable, Sendable {
+    /// The ID of the price the schedule applies to.
+    @Expandable<Price> public var price: String?
+    /// The type of the `applies_to` value.
+    public var type: SubscriptionBillingScheduleAppliesToType?
+
+    public init(price: String? = nil,
+                type: SubscriptionBillingScheduleAppliesToType? = nil) {
+        self._price = Expandable(id: price)
+        self.type = type
+    }
+}
+
+public enum SubscriptionBillingScheduleAppliesToType: String, Codable, Sendable {
+    case price
+}
+
+public struct SubscriptionBillingScheduleBillUntil: Codable, Sendable {
+    /// The computed timestamp the subscription will be billed until.
+    public var computedTimestamp: Date?
+    /// The duration, relative to the subscription, that the schedule bills until.
+    public var duration: SubscriptionBillingScheduleBillUntilDuration?
+    /// The explicit timestamp the subscription will be billed until.
+    public var timestamp: Date?
+    /// The type of the `bill_until` value, one of `duration` or `timestamp`.
+    public var type: SubscriptionBillingScheduleBillUntilType?
+
+    public init(computedTimestamp: Date? = nil,
+                duration: SubscriptionBillingScheduleBillUntilDuration? = nil,
+                timestamp: Date? = nil,
+                type: SubscriptionBillingScheduleBillUntilType? = nil) {
+        self.computedTimestamp = computedTimestamp
+        self.duration = duration
+        self.timestamp = timestamp
+        self.type = type
+    }
+}
+
+public enum SubscriptionBillingScheduleBillUntilType: String, Codable, Sendable {
+    case duration
+    case timestamp
+}
+
+public struct SubscriptionBillingScheduleBillUntilDuration: Codable, Sendable {
+    /// The unit of time the duration is specified in, one of `day`, `week`, `month`, or `year`.
+    public var interval: SubscriptionBillingScheduleBillUntilDurationInterval?
+    /// The number of intervals (specified in the `interval` attribute) the duration lasts.
+    public var intervalCount: Int?
+
+    public init(interval: SubscriptionBillingScheduleBillUntilDurationInterval? = nil,
+                intervalCount: Int? = nil) {
+        self.interval = interval
+        self.intervalCount = intervalCount
+    }
+}
+
+public enum SubscriptionBillingScheduleBillUntilDurationInterval: String, Codable, Sendable {
+    case day
+    case week
+    case month
+    case year
+}
+
 public struct SubscriptionInvoiceSettings: Codable, Sendable {
     /// The account tax IDs associated with the subscription. Will be set on invoices generated by the subscription.
     @ExpandableCollection<TaxID> public var accountTaxIds: [String]?
@@ -563,13 +648,21 @@ public struct SubscriptionInvoiceSettings: Codable, Sendable {
     public var customFields: [SubscriptionInvoiceSettingsCustomField]?
     /// The connected account that issues the invoice. The invoice is presented with the branding and support information of the specified account.
     public var issuer: SubscriptionInvoiceSettingsIssuer?
+    /// The subscription’s description, meant to be displayable to the customer. Use this field to optionally store an explanation of the subscription for rendering in Stripe surfaces and certain local payment methods UIs.
+    public var description: String?
+    /// The footer displayed on invoices generated by the subscription.
+    public var footer: String?
 
     public init(accountTaxIds: [String]? = nil,
                 customFields: [SubscriptionInvoiceSettingsCustomField]? = nil,
-                issuer: SubscriptionInvoiceSettingsIssuer? = nil) {
+                issuer: SubscriptionInvoiceSettingsIssuer? = nil,
+                description: String? = nil,
+                footer: String? = nil) {
         self._accountTaxIds = ExpandableCollection(ids: accountTaxIds)
         self.customFields = customFields
         self.issuer = issuer
+        self.description = description
+        self.footer = footer
     }
 }
 

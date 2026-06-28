@@ -34,6 +34,8 @@ public struct SubscriptionItem: Codable, Sendable {
     public var currentPeriodEnd: Date?
     /// The start time of this subscription item's current billing period.
     public var currentPeriodStart: Date?
+    /// The time period the subscription item has been billed for.
+    public var billedUntil: Date?
     /// The discounts applied to the subscription item. Subscription item discounts are applied before subscription discounts. Use `expand[]=discounts` to expand each discount.
     @ExpandableCollection<Discount> public var discounts: [String]?
     /// The tax rates which apply to this `subscription_item`. When set, the `default_tax_rates` on the subscription do not apply to this `subscription_item`.
@@ -49,6 +51,7 @@ public struct SubscriptionItem: Codable, Sendable {
                 created: Date,
                 currentPeriodEnd: Date? = nil,
                 currentPeriodStart: Date? = nil,
+                billedUntil: Date? = nil,
                 discounts: [String]? = nil,
                 taxRates: [TaxRate]? = nil) {
         self.id = id
@@ -61,6 +64,7 @@ public struct SubscriptionItem: Codable, Sendable {
         self.created = created
         self.currentPeriodEnd = currentPeriodEnd
         self.currentPeriodStart = currentPeriodStart
+        self.billedUntil = billedUntil
         self._discounts = ExpandableCollection(ids: discounts)
         self.taxRates = taxRates
     }

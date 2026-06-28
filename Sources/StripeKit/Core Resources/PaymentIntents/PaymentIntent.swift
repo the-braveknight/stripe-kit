@@ -99,7 +99,9 @@ public struct PaymentIntent: Codable, Sendable {
     public var transferData: PaymentIntentTransferData?
     /// A string that identifies the resulting payment as part of a group. See the PaymentIntents Connect usage guide for details.
     public var transferGroup: String?
-    
+    /// Automations to be run during the PaymentIntent lifecycle.
+    public var hooks: PaymentIntentHooks?
+
     public init(id: String,
                 amount: Int? = nil,
                 automaticPaymentMethods: PaymentIntentAutomaticMaymentMethods? = nil,
@@ -142,7 +144,8 @@ public struct PaymentIntent: Codable, Sendable {
                 review: String? = nil,
                 source: String? = nil,
                 transferData: PaymentIntentTransferData? = nil,
-                transferGroup: String? = nil) {
+                transferGroup: String? = nil,
+                hooks: PaymentIntentHooks? = nil) {
         self.id = id
         self.amount = amount
         self.automaticPaymentMethods = automaticPaymentMethods
@@ -186,6 +189,34 @@ public struct PaymentIntent: Codable, Sendable {
         self.source = source
         self.transferData = transferData
         self.transferGroup = transferGroup
+        self.hooks = hooks
+    }
+}
+
+public struct PaymentIntentHooks: Codable, Sendable {
+    /// Arguments passed in automations.
+    public var inputs: PaymentIntentHooksInputs?
+
+    public init(inputs: PaymentIntentHooksInputs? = nil) {
+        self.inputs = inputs
+    }
+}
+
+public struct PaymentIntentHooksInputs: Codable, Sendable {
+    /// Tax arguments for automations.
+    public var tax: PaymentIntentHooksInputsTax?
+
+    public init(tax: PaymentIntentHooksInputsTax? = nil) {
+        self.tax = tax
+    }
+}
+
+public struct PaymentIntentHooksInputsTax: Codable, Sendable {
+    /// The [TaxCalculation](https://docs.stripe.com/api/tax/calculations) id.
+    public var calculation: String?
+
+    public init(calculation: String? = nil) {
+        self.calculation = calculation
     }
 }
 
