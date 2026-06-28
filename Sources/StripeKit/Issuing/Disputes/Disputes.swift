@@ -12,7 +12,7 @@ import Foundation
 #endif
 
 /// The [Dispte Object](https://stripe.com/docs/api/issuing/disputes/object)
-public struct IssuingDispute: Codable {
+public struct IssuingDispute: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// Disputed amount. Usually the amount of the `disputed_transaction`, but can differ (usually because of currency fluctuation or because only part of the order is disputed).
@@ -65,7 +65,7 @@ public struct IssuingDispute: Codable {
     }
 }
 
-public struct IssuingDisputeList: Codable {
+public struct IssuingDisputeList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?
@@ -82,7 +82,7 @@ public struct IssuingDisputeList: Codable {
     }
 }
 
-public struct IssuingDisputeEvidence: Codable {
+public struct IssuingDisputeEvidence: Codable, Sendable {
     /// Evidence provided when `reason` is `‘canceled’`.
     public var canceled: IssuingDisputeEvidenceCanceled?
     /// Evidence provided when `reason` is `‘duplicate’`.
@@ -103,7 +103,7 @@ public struct IssuingDisputeEvidence: Codable {
     public var serviceNotAsDescribed: IssuingDisputeEvidenceServiceNotAsDescribed?
 }
 
-public struct IssuingDisputeEvidenceCanceled: Codable {
+public struct IssuingDisputeEvidenceCanceled: Codable, Sendable {
     /// (ID of a file upload) Additional documentation supporting the dispute.
     @Expandable<File> public var additionalDocumentation: String?
     /// Date when order was canceled.
@@ -148,21 +148,21 @@ public struct IssuingDisputeEvidenceCanceled: Codable {
     }
 }
 
-public enum IssuingDisputeEvidenceCanceledProductType: String, Codable {
+public enum IssuingDisputeEvidenceCanceledProductType: String, Codable, Sendable {
     /// Tangible goods such as groceries and furniture.
     case merchandise
     /// Intangible goods such as domain name registration, flights and lessons.
     case service
 }
 
-public enum IssuingDisputeEvidenceCanceledReturnStatus: String, Codable {
+public enum IssuingDisputeEvidenceCanceledReturnStatus: String, Codable, Sendable {
     /// The merchant accepted the return.
     case successful
     /// The merchant rejected the return.
     case merchantRejected = "merchant_rejected"
 }
 
-public struct IssuingDisputeEvidenceDuplicate: Codable {
+public struct IssuingDisputeEvidenceDuplicate: Codable, Sendable {
     /// (ID of a file upload) Additional documentation supporting the dispute.
     @Expandable<File> public var additionalDocumentation: String?
     /// (ID of a file upload) Copy of the card statement showing that the product had already been paid for.
@@ -191,7 +191,7 @@ public struct IssuingDisputeEvidenceDuplicate: Codable {
     }
 }
 
-public struct IssuingDisputeEvidenceFraudulent: Codable {
+public struct IssuingDisputeEvidenceFraudulent: Codable, Sendable {
     /// (ID of a file upload) Additional documentation supporting the dispute.
     @Expandable<File> public var additionalDocumentation: String?
     /// Explanation of why the cardholder is disputing this transaction.
@@ -203,7 +203,7 @@ public struct IssuingDisputeEvidenceFraudulent: Codable {
     }
 }
 
-public struct IssuingDisputeEvidenceMerchandiseNotAsDescribed: Codable {
+public struct IssuingDisputeEvidenceMerchandiseNotAsDescribed: Codable, Sendable {
     /// (ID of a file upload) Additional documentation supporting the dispute.
     @Expandable<File> public var additionalDocumentation: String?
     /// Explanation of why the cardholder is disputing this transaction.
@@ -232,14 +232,14 @@ public struct IssuingDisputeEvidenceMerchandiseNotAsDescribed: Codable {
     }
 }
 
-public enum IssuingDisputeEvidenceMerchandiseNotAsDescribedReturnStatus: String, Codable {
+public enum IssuingDisputeEvidenceMerchandiseNotAsDescribedReturnStatus: String, Codable, Sendable {
     /// The merchant accepted the return.
     case successful
     /// The merchant rejected the return.
     case merchantRejected = "merchant_rejected"
 }
 
-public struct IssuingDisputeEvidenceNoValidAuthorization: Codable {
+public struct IssuingDisputeEvidenceNoValidAuthorization: Codable, Sendable {
     /// (ID of a file upload) Additional documentation supporting the dispute.
     @Expandable<File> public var additionalDocumentation: String?
     /// Explanation of why the cardholder is disputing this transaction.
@@ -251,7 +251,7 @@ public struct IssuingDisputeEvidenceNoValidAuthorization: Codable {
     }
 }
 
-public struct IssuingDisputeEvidenceNotReceived: Codable {
+public struct IssuingDisputeEvidenceNotReceived: Codable, Sendable {
     /// (ID of a file upload) Additional documentation supporting the dispute.
     @Expandable<File> public var additionalDocumentation: String?
     /// Date when the cardholder expected to receive the product.
@@ -276,14 +276,14 @@ public struct IssuingDisputeEvidenceNotReceived: Codable {
     }
 }
 
-public enum IssuingDisputeEvidenceNotReceivedProductType: String, Codable {
+public enum IssuingDisputeEvidenceNotReceivedProductType: String, Codable, Sendable {
     /// Tangible goods such as groceries and furniture.
     case merchandise
     /// Intangible goods such as domain name registration, flights and lessons.
     case service
 }
 
-public struct IssuingDisputeEvidenceOther: Codable {
+public struct IssuingDisputeEvidenceOther: Codable, Sendable {
     /// (ID of a file upload) Additional documentation supporting the dispute.
     @Expandable<File> public var additionalDocumentation: String?
     /// Explanation of why the cardholder is disputing this transaction.
@@ -304,14 +304,14 @@ public struct IssuingDisputeEvidenceOther: Codable {
     }
 }
 
-public enum IssuingDisputeEvidenceOtherProductType: String, Codable {
+public enum IssuingDisputeEvidenceOtherProductType: String, Codable, Sendable {
     /// Tangible goods such as groceries and furniture.
     case merchandise
     /// Intangible goods such as domain name registration, flights and lessons.
     case service
 }
 
-public enum IssuingDisputeEvidenceReason: String, Codable {
+public enum IssuingDisputeEvidenceReason: String, Codable, Sendable {
     /// Merchandise or service was not received.
     case notReceived = "not_received"
     /// The cardholder did not make the transaction.
@@ -330,7 +330,7 @@ public enum IssuingDisputeEvidenceReason: String, Codable {
     case canceled
 }
 
-public struct IssuingDisputeEvidenceServiceNotAsDescribed: Codable {
+public struct IssuingDisputeEvidenceServiceNotAsDescribed: Codable, Sendable {
     /// (ID of a file upload) Additional documentation supporting the dispute.
     @Expandable<File> public var additionalDocumentation: String?
     /// Date when order was canceled.
@@ -355,7 +355,7 @@ public struct IssuingDisputeEvidenceServiceNotAsDescribed: Codable {
     }
 }
 
-public enum IssuingDisputeStatus: String, Codable {
+public enum IssuingDisputeStatus: String, Codable, Sendable {
     /// The dispute is won.
     case won
     /// The dispute is lost.
@@ -368,7 +368,7 @@ public enum IssuingDisputeStatus: String, Codable {
     case expired
 }
 
-public enum IssuingDisputeLossReason: String, Codable {
+public enum IssuingDisputeLossReason: String, Codable, Sendable {
     case cardholderAuthenticationIssuerLiability = "cardholder_authentication_issuer_liability"
     case eci5TokenTransactionWithTavv = "eci5_token_transaction_with_tavv"
     case excessDisputesInTimeframe = "excess_disputes_in_timeframe"

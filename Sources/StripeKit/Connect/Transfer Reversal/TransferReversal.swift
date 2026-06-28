@@ -12,7 +12,7 @@ import Foundation
 #endif
 
 /// The [Transfer Reversal Object](https://stripe.com/docs/api/transfer_reversals/object) .
-public struct TransferReversal: Codable {
+public struct TransferReversal: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// Amount, in cents.
@@ -57,7 +57,7 @@ public struct TransferReversal: Codable {
     }
 }
 
-public struct TransferReversalList: Codable {
+public struct TransferReversalList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     /// The total number of items available. This value is not included by default, but you can request it by specifying `total_count` in the `expand` array.

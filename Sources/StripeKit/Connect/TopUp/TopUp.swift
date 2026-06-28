@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 /// The top-up object [see here](https://stripe.com/docs/api/topups/object)
-public struct TopUp: Codable {
+public struct TopUp: Codable, Sendable {
     
     
     /// Unique identifier for the object.
@@ -82,7 +82,7 @@ public struct TopUp: Codable {
     }
 }
 
-public enum TopUpStatus: String, Codable {
+public enum TopUpStatus: String, Codable, Sendable {
     case canceled
     case failed
     case pending
@@ -90,7 +90,7 @@ public enum TopUpStatus: String, Codable {
     case succeeded
 }
 
-public struct TopUpList: Codable {
+public struct TopUpList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

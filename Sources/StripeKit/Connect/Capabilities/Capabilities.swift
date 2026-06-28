@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct Capability: Codable {
+public struct Capability: Codable, Sendable {
     /// The identifier for the capability.
     public var id: String
     /// The account for which the capability enables functionality.
@@ -48,7 +48,7 @@ public struct Capability: Codable {
     }
 }
 
-public struct CapabilitiesRequirements: Codable {
+public struct CapabilitiesRequirements: Codable, Sendable {
     /// Fields that are due and can be satisfied by providing the corresponding alternative fields instead.
     public var alternatives: [CapabilitiesRequirementsAlternative]?
     /// Date by which the fields in `currently_due` must be collected to keep the capability enabled for the account. These fields may disable the capability sooner if the next threshold is reached before they are collected.
@@ -72,7 +72,7 @@ public struct CapabilitiesRequirements: Codable {
     public var pendingVerification: [String]?
 }
 
-public struct CapabilitiesRequirementsAlternative: Codable {
+public struct CapabilitiesRequirementsAlternative: Codable, Sendable {
     /// Fields that can be provided to satisfy all fields in `original_fields_due`.
     public var alternativeFieldsDue: [String]?
     /// Fields that are due and can be satisfied by providing all fields in `alternative_fields_due`.
@@ -84,14 +84,14 @@ public struct CapabilitiesRequirementsAlternative: Codable {
     }
 }
 
-public enum CapabilitiesStatus: String, Codable {
+public enum CapabilitiesStatus: String, Codable, Sendable {
     case active
     case inactive
     case pending
     case unrequested
 }
 
-public struct CapabilitiesFutureRequirements: Codable {
+public struct CapabilitiesFutureRequirements: Codable, Sendable {
     /// Fields that are due and can be satisfied by providing the corresponding alternative fields instead.
     public var alternatives: [CapabilitiesRequirementsAlternative]?
     /// Date by which the fields in `currently_due` must be collected to keep the capability enabled for the account. These fields may disable the capability sooner if the next threshold is reached before they are collected.
@@ -128,7 +128,7 @@ public struct CapabilitiesFutureRequirements: Codable {
     }
 }
 
-public struct CapabilitiesList: Codable {
+public struct CapabilitiesList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct SetupAttempt: Codable {
+public struct SetupAttempt: Codable, Sendable {
     
     
     /// Unique identifier for the object.
@@ -84,7 +84,7 @@ public struct SetupAttempt: Codable {
     }
 }
 
-public enum SetupAttemptStatus: String, Codable {
+public enum SetupAttemptStatus: String, Codable, Sendable {
     case requiresConfirmation = "requires_confirmation"
     case requiresAction = "requires_action"
     case processing
@@ -93,12 +93,12 @@ public enum SetupAttemptStatus: String, Codable {
     case abandoned
 }
 
-public enum SetupAttemptUsage: String, Codable {
+public enum SetupAttemptUsage: String, Codable, Sendable {
     case offSession = "off_session"
     case onSession = "on_session"
 }
 
-public struct SetupAttemptList: Codable {
+public struct SetupAttemptList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

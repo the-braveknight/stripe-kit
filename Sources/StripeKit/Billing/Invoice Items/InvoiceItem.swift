@@ -13,7 +13,7 @@ import Foundation
 #endif
 
 /// The [InvoiceItem Object](https://stripe.com/docs/api/invoiceitems/object)
-public struct InvoiceItem: Codable {
+public struct InvoiceItem: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String?
     /// Amount (in the currency specified) of the invoice item. This should always be equal to unit_amount * quantity.
@@ -110,7 +110,7 @@ public struct InvoiceItem: Codable {
     }
 }
 
-public struct InvoiceItemParent: Codable {
+public struct InvoiceItemParent: Codable, Sendable {
     /// The type of parent that generated this invoice item.
     public var type: InvoiceItemParentType?
     /// Details about the subscription that generated this invoice item.
@@ -123,11 +123,11 @@ public struct InvoiceItemParent: Codable {
     }
 }
 
-public enum InvoiceItemParentType: String, Codable {
+public enum InvoiceItemParentType: String, Codable, Sendable {
     case subscriptionDetails = "subscription_details"
 }
 
-public struct InvoiceItemParentSubscriptionDetails: Codable {
+public struct InvoiceItemParentSubscriptionDetails: Codable, Sendable {
     /// The subscription that generated this invoice item.
     @Expandable<Subscription> public var subscription: String?
     /// The subscription item that generated this invoice item.
@@ -140,7 +140,7 @@ public struct InvoiceItemParentSubscriptionDetails: Codable {
     }
 }
 
-public struct InvoiceItemPricing: Codable {
+public struct InvoiceItemPricing: Codable, Sendable {
     /// The type of pricing for this invoice item.
     public var type: InvoiceItemPricingType?
     /// Details about the price used to generate this invoice item.
@@ -157,11 +157,11 @@ public struct InvoiceItemPricing: Codable {
     }
 }
 
-public enum InvoiceItemPricingType: String, Codable {
+public enum InvoiceItemPricingType: String, Codable, Sendable {
     case priceDetails = "price_details"
 }
 
-public struct InvoiceItemPricingPriceDetails: Codable {
+public struct InvoiceItemPricingPriceDetails: Codable, Sendable {
     /// The ID of the price this invoice item is based on.
     @Expandable<Price> public var price: String?
     /// The ID of the product this invoice item is based on.
@@ -174,7 +174,7 @@ public struct InvoiceItemPricingPriceDetails: Codable {
     }
 }
 
-public struct InvoiceItemProrationDetails: Codable {
+public struct InvoiceItemProrationDetails: Codable, Sendable {
     /// For a credit proration `line_item`, the original debit `line_items` to which the credit proration applies.
     public var creditedItems: InvoiceItemProrationDetailsCreditedItem?
 
@@ -183,7 +183,7 @@ public struct InvoiceItemProrationDetails: Codable {
     }
 }
 
-public struct InvoiceItemProrationDetailsCreditedItem: Codable {
+public struct InvoiceItemProrationDetailsCreditedItem: Codable, Sendable {
     /// Invoice containing the credited invoice line items.
     public var invoice: String?
     /// Credited invoice line items.
@@ -195,7 +195,7 @@ public struct InvoiceItemProrationDetailsCreditedItem: Codable {
     }
 }
 
-public struct InvoiceItemPeriod: Codable {
+public struct InvoiceItemPeriod: Codable, Sendable {
     /// The start of the period. This value is inclusive.
     public var start: Date?
     /// The end of the period, which must be greater than or equal to the start. This value is inclusive.
@@ -207,7 +207,7 @@ public struct InvoiceItemPeriod: Codable {
     }
 }
 
-public struct InvoiceItemList: Codable {
+public struct InvoiceItemList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct AccountSession: Codable {
+public struct AccountSession: Codable, Sendable {
     /// The ID of the account the AccountSession was created for
     public var account: String
     /// The client secret of this AccountSession. Used on the client to set up secure access to the given account.
@@ -42,7 +42,7 @@ public struct AccountSession: Codable {
 }
 
 /// A generic embedded component configuration, describing whether the component is enabled and which features are turned on.
-public struct AccountSessionComponent<Features: Codable>: Codable {
+public struct AccountSessionComponent<Features: Codable & Sendable>: Codable, Sendable {
     /// Whether the embedded component is enabled.
     public var enabled: Bool?
     /// The features enabled in the embedded component.
@@ -55,7 +55,7 @@ public struct AccountSessionComponent<Features: Codable>: Codable {
 }
 
 /// The set of embedded components configured for an ``AccountSession``.
-public struct AccountSessionComponents: Codable {
+public struct AccountSessionComponents: Codable, Sendable {
     /// Configuration for the account management embedded component.
     public var accountManagement: AccountSessionComponent<AccountSessionAccountManagementFeatures>?
     /// Configuration for the account onboarding embedded component.
@@ -145,12 +145,12 @@ public struct AccountSessionComponents: Codable {
 }
 
 /// A feature set with no configurable features.
-public struct AccountSessionEmptyFeatures: Codable {
+public struct AccountSessionEmptyFeatures: Codable, Sendable {
     public init() {}
 }
 
 /// Features available for the `account_management` embedded component.
-public struct AccountSessionAccountManagementFeatures: Codable {
+public struct AccountSessionAccountManagementFeatures: Codable, Sendable {
     /// Whether to allow platforms to control bank account collection for their connected accounts.
     public var externalAccountCollection: Bool?
     /// Disables Stripe user authentication for this embedded component.
@@ -163,7 +163,7 @@ public struct AccountSessionAccountManagementFeatures: Codable {
 }
 
 /// Features available for the `account_onboarding` embedded component.
-public struct AccountSessionAccountOnboardingFeatures: Codable {
+public struct AccountSessionAccountOnboardingFeatures: Codable, Sendable {
     /// Whether to allow platforms to control bank account collection for their connected accounts.
     public var externalAccountCollection: Bool?
     /// Disables Stripe user authentication for this embedded component.
@@ -176,7 +176,7 @@ public struct AccountSessionAccountOnboardingFeatures: Codable {
 }
 
 /// Features available for the `balances` and `payouts` embedded components.
-public struct AccountSessionPayoutsFeatures: Codable {
+public struct AccountSessionPayoutsFeatures: Codable, Sendable {
     /// Disables Stripe user authentication for this embedded component.
     public var disableStripeUserAuthentication: Bool?
     /// Whether to allow payout schedule to be changed.
@@ -202,7 +202,7 @@ public struct AccountSessionPayoutsFeatures: Codable {
 }
 
 /// Possible values for the `instant_payouts` feature flag.
-public enum AccountSessionInstantPayouts: String, Codable {
+public enum AccountSessionInstantPayouts: String, Codable, Sendable {
     /// Explicitly disable instant payouts.
     case disabled
     /// Explicitly enable instant payouts.
@@ -212,7 +212,7 @@ public enum AccountSessionInstantPayouts: String, Codable {
 }
 
 /// Features available for the `payments`, `payment_details`, and `disputes_list` embedded components.
-public struct AccountSessionPaymentsFeatures: Codable {
+public struct AccountSessionPaymentsFeatures: Codable, Sendable {
     /// Whether to allow capturing and cancelling payment intents.
     public var capturePayments: Bool?
     /// Whether connected accounts can manage destination charges that are created on behalf of them.
@@ -234,7 +234,7 @@ public struct AccountSessionPaymentsFeatures: Codable {
 }
 
 /// Features available for the `payment_disputes` embedded component.
-public struct AccountSessionPaymentDisputesFeatures: Codable {
+public struct AccountSessionPaymentDisputesFeatures: Codable, Sendable {
     /// Whether connected accounts can manage destination charges that are created on behalf of them.
     public var destinationOnBehalfOfChargeManagement: Bool?
     /// Whether responding to disputes is enabled, including submitting evidence and accepting disputes.
@@ -252,7 +252,7 @@ public struct AccountSessionPaymentDisputesFeatures: Codable {
 }
 
 /// Features available for the `financial_account` embedded component.
-public struct AccountSessionFinancialAccountFeatures: Codable {
+public struct AccountSessionFinancialAccountFeatures: Codable, Sendable {
     /// Disables Stripe user authentication for this embedded component.
     public var disableStripeUserAuthentication: Bool?
     /// Whether to allow platforms to control bank account collection for their connected accounts.
@@ -274,7 +274,7 @@ public struct AccountSessionFinancialAccountFeatures: Codable {
 }
 
 /// Features available for the `financial_account_transactions` embedded component.
-public struct AccountSessionFinancialAccountTransactionsFeatures: Codable {
+public struct AccountSessionFinancialAccountTransactionsFeatures: Codable, Sendable {
     /// Whether to allow card spend dispute management features.
     public var cardSpendDisputeManagement: Bool?
 
@@ -284,7 +284,7 @@ public struct AccountSessionFinancialAccountTransactionsFeatures: Codable {
 }
 
 /// Features available for the `instant_payouts_promotion` embedded component.
-public struct AccountSessionInstantPayoutsPromotionFeatures: Codable {
+public struct AccountSessionInstantPayoutsPromotionFeatures: Codable, Sendable {
     /// Disables Stripe user authentication for this embedded component.
     public var disableStripeUserAuthentication: Bool?
     /// Whether to allow platforms to control bank account collection for their connected accounts.
@@ -302,7 +302,7 @@ public struct AccountSessionInstantPayoutsPromotionFeatures: Codable {
 }
 
 /// Features available for the `issuing_card` embedded component.
-public struct AccountSessionIssuingCardFeatures: Codable {
+public struct AccountSessionIssuingCardFeatures: Codable, Sendable {
     /// Whether to allow card management features.
     public var cardManagement: Bool?
     /// Whether to allow card spend dispute management features.
@@ -324,7 +324,7 @@ public struct AccountSessionIssuingCardFeatures: Codable {
 }
 
 /// Features available for the `issuing_cards_list` embedded component.
-public struct AccountSessionIssuingCardsListFeatures: Codable {
+public struct AccountSessionIssuingCardsListFeatures: Codable, Sendable {
     /// Whether to allow card management features.
     public var cardManagement: Bool?
     /// Whether to allow card spend dispute management features.
@@ -350,7 +350,7 @@ public struct AccountSessionIssuingCardsListFeatures: Codable {
 }
 
 /// Features available for the `notification_banner` embedded component.
-public struct AccountSessionNotificationBannerFeatures: Codable {
+public struct AccountSessionNotificationBannerFeatures: Codable, Sendable {
     /// Disables Stripe user authentication for this embedded component.
     public var disableStripeUserAuthentication: Bool?
     /// Whether to allow platforms to control bank account collection for their connected accounts.

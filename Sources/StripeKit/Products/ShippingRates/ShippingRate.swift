@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct ShippingRate: Codable {
+public struct ShippingRate: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// Whether the shipping rate can be used for new purchases. Defaults to `true`.
@@ -64,7 +64,7 @@ public struct ShippingRate: Codable {
     }
 }
 
-public struct ShippingRateFixedAmount: Codable {
+public struct ShippingRateFixedAmount: Codable, Sendable {
     /// A non-negative integer in cents representing how much to charge.
     public var amount: Int?
     /// Three-letter ISO currency code, in lowercase. Must be a supported currency.
@@ -81,7 +81,7 @@ public struct ShippingRateFixedAmount: Codable {
     }
 }
 
-public struct ShippingRateFixedAmountCurrencyOptions: Codable {
+public struct ShippingRateFixedAmountCurrencyOptions: Codable, Sendable {
     /// A non-negative integer in cents representing how much to charge.
     public var amount: Int?
     /// Specifies whether the rate is considered inclusive of taxes or exclusive of taxes. One of `inclusive`, `exclusive`, or `unspecified`.
@@ -94,17 +94,17 @@ public struct ShippingRateFixedAmountCurrencyOptions: Codable {
     }
 }
 
-public enum ShippingRateFixedAmountCurrencyOptionsTaxBehavior: String, Codable {
+public enum ShippingRateFixedAmountCurrencyOptionsTaxBehavior: String, Codable, Sendable {
     case inclusive
     case exclusive
     case unspecified
 }
 
-public enum ShippingRateType: String, Codable {
+public enum ShippingRateType: String, Codable, Sendable {
     case fixedAmount = "fixed_amount"
 }
 
-public struct ShippingRateDeliveryEstimate: Codable {
+public struct ShippingRateDeliveryEstimate: Codable, Sendable {
     /// The upper bound of the estimated range. If empty, represents no upper bound i.e., infinite.
     public var maximum: ShippingRateDeliveryEstimateMaxMin?
     /// The lower bound of the estimated range. If empty, represents no lower bound.
@@ -117,7 +117,7 @@ public struct ShippingRateDeliveryEstimate: Codable {
     }
 }
 
-public struct ShippingRateDeliveryEstimateMaxMin: Codable {
+public struct ShippingRateDeliveryEstimateMaxMin: Codable, Sendable {
     /// A unit of time.
     public var unit: ShippingRateDeliveryEstimateUnit?
     /// Must be greater than 0.
@@ -129,7 +129,7 @@ public struct ShippingRateDeliveryEstimateMaxMin: Codable {
     }
 }
 
-public enum ShippingRateDeliveryEstimateUnit: String, Codable {
+public enum ShippingRateDeliveryEstimateUnit: String, Codable, Sendable {
     case hour
     case day
     case businessDay = "business_day"
@@ -137,13 +137,13 @@ public enum ShippingRateDeliveryEstimateUnit: String, Codable {
     case month
 }
 
-public enum ShippingRateTaxBehavior: String, Codable {
+public enum ShippingRateTaxBehavior: String, Codable, Sendable {
     case inclusive
     case exclusive
     case unspecified
 }
 
-public struct ShippingRateList: Codable {
+public struct ShippingRateList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

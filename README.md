@@ -1,5 +1,5 @@
 # StripeKit
-![](https://img.shields.io/badge/Swift-5.7-lightgrey.svg?style=svg)
+![](https://img.shields.io/badge/Swift-6.3-lightgrey.svg?style=svg)
 ![](https://img.shields.io/badge/SwiftNio-2-lightgrey.svg?style=svg)
 ![Test](https://github.com/vapor-community/stripe-kit/workflows/Test/badge.svg)
 
@@ -7,7 +7,7 @@
 
 ## Version support
 
-Stripe API version `2022-11-15` -> StripeKit: 22.0.0
+Pinned Stripe API version: `2026-06-24.dahlia` (set as the `Stripe-Version` header in `StripeRequest.swift`).
 
 ## Installation
 To start using StripeKit, in your `Package.swift`, add the following
@@ -25,6 +25,8 @@ let stripe = StripeClient(httpClient: httpClient, apiKey: "sk_12345")
 ```
 
 And now you have acess to the APIs via `stripe`.
+
+`StripeClient` is `Sendable` — create a single instance and share it freely across tasks and actors. All model types are `Sendable` value types as well.
 
 The APIs you have available correspond to what's implemented.
 
@@ -163,22 +165,24 @@ print("New Stripe Connect account ID: \(connectAccount.id)")
 ```
 
 ## Authentication via the Stripe-Account header
-The first, preferred, authentication option is to use your (the platform account’s) secret key and pass a `Stripe-Account` header identifying the connected account for which the request is being made. The example request performs a refund of a  charge on behalf of a connected account using a builder style API:
+The first, preferred, authentication option is to use your (the platform account’s) secret key and pass a `Stripe-Account` header identifying the connected account for which the request is being made. The example request performs a refund of a  charge on behalf of a connected account using a builder style API. Because the route handlers on `StripeClient` are immutable (`let`) value types, copy the one you need into a local `var` before customizing its headers:
 ```swift
-   stripe.refunds
+   var refunds = stripe.refunds
+   try await refunds
     .addHeaders(["Stripe-Account": "acc_12345",
              "Authorization": "Bearer different_api_key",
              "Stripe-Version": "older-api-version"])
     .create(charge: "ch_12345", reason: .requestedByCustomer)
 ```
-**NOTE:** The modified headers will remain on the route instance _(refunds in this case)_ of the `StripeClient` if a reference to it is held. If you're accessing the StripeClient in the scope of a function, the headers will not be retained.
+**NOTE:** `addHeaders` mutates the local copy and returns it; it does **not** persist headers back onto the `StripeClient`'s stored route. Each customized request needs its own local copy.
 
 ## Idempotent Requests
 Similar to the account header, you can use the same builder style API to attach Idempotency Keys to your requests.
 
 ```swift
     let key = UUID().uuidString
-    stripe.refunds
+    var refunds = stripe.refunds
+    try await refunds
     .addHeaders(["Idempotency-Key": key])
     .create(charge: "ch_12345", reason: .requestedByCustomer)
 ```

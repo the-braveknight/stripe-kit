@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 /// `Application Fee Refund` objects allow you to refund an application fee that has previously been created but not yet refunded. Funds will be refunded to the Stripe account from which the fee was originally collected.
-public struct ApplicationFeeRefund: Codable {
+public struct ApplicationFeeRefund: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// String representing the object’s type. Objects of the same type share the same value.
@@ -48,7 +48,7 @@ public struct ApplicationFeeRefund: Codable {
     }
 }
 
-public struct ApplicationFeeRefundList: Codable {
+public struct ApplicationFeeRefundList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

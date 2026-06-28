@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct Mandate: Codable {
+public struct Mandate: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// Details about the customer’s acceptance of the mandate.
@@ -60,7 +60,7 @@ public struct Mandate: Codable {
     }
 }
 
-public struct MandateCustomerAcceptance: Codable {
+public struct MandateCustomerAcceptance: Codable, Sendable {
     /// The time at which the customer accepted the Mandate.
     public var acceptedAt: Date?
     /// If this is a Mandate accepted offline, this hash contains details about the offline acceptance.
@@ -81,11 +81,11 @@ public struct MandateCustomerAcceptance: Codable {
     }
 }
 
-public struct MandateCustomerAcceptanceOffline: Codable {
+public struct MandateCustomerAcceptanceOffline: Codable, Sendable {
     public init() {}
 }
 
-public struct MandateCustomerAcceptanceOnline: Codable {
+public struct MandateCustomerAcceptanceOnline: Codable, Sendable {
     /// The IP address from which the Mandate was accepted by the customer
     public var ipAddress: String?
     /// The user agent of the browser from which the Mandate was accepted by the customer.
@@ -97,12 +97,12 @@ public struct MandateCustomerAcceptanceOnline: Codable {
     }
 }
 
-public enum MandateCustomerAcceptanceType: String, Codable {
+public enum MandateCustomerAcceptanceType: String, Codable, Sendable {
     case online
     case offline
 }
 
-public struct MandatePaymentMethodDetails: Codable {
+public struct MandatePaymentMethodDetails: Codable, Sendable {
     /// If this mandate is associated with a `acss_debit` payment method, this hash contains mandate information specific to the `acss_debit` payment method.
     public var acssDebit: MandatePaymentMethodDetailsACSSDebit?
     /// If this mandate is associated with a `amazon_pay` payment method, this hash contains mandate information specific to the `amazon_pay` payment method.
@@ -195,7 +195,7 @@ public struct MandatePaymentMethodDetails: Codable {
     }
 }
 
-public struct MandateSingleUse: Codable {
+public struct MandateSingleUse: Codable, Sendable {
     /// On a single use mandate, the amount of the payment.
     public var amount: Int?
     /// On a single use mandate, the currency of the payment.
@@ -207,7 +207,7 @@ public struct MandateSingleUse: Codable {
     }
 }
 
-public struct MandateMultiUse: Codable {
+public struct MandateMultiUse: Codable, Sendable {
     /// On a multi use mandate, the amount of the payment.
     public var amount: Int?
     /// On a multi use mandate, the currency of the payment.
@@ -219,7 +219,7 @@ public struct MandateMultiUse: Codable {
     }
 }
 
-public enum MandateStatus: String, Codable {
+public enum MandateStatus: String, Codable, Sendable {
     /// The mandate can be used to initiate a payment.
     case active
     /// The mandate was rejected, revoked, or previously used, and may not be used to initiate future payments.
@@ -228,7 +228,7 @@ public enum MandateStatus: String, Codable {
     case pending
 }
 
-public enum MandateType: String, Codable {
+public enum MandateType: String, Codable, Sendable {
     /// Represents permission given for multiple payments.
     case multiUse = "multi_use"
     /// Represents a one-time permission given for a single payment.

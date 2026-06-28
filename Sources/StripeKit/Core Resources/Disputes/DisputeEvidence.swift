@@ -6,7 +6,7 @@
 //
 
 /// The [Dispute Evidence Object](https://stripe.com/docs/api/disputes/evidence_object)
-public struct DisputeEvidence: Codable {
+public struct DisputeEvidence: Codable, Sendable {
     /// Any server or activity logs showing proof that the customer accessed or downloaded the purchased digital product. This information should include IP addresses, corresponding timestamps, and any detailed recorded activity.
     public var accessActivityLog: String?
     /// The billing address provided by the customer.
@@ -123,7 +123,7 @@ public struct DisputeEvidence: Codable {
     }
 }
 
-public struct DisputeEvidenceEnhancedEvidence: Codable {
+public struct DisputeEvidenceEnhancedEvidence: Codable, Sendable {
     /// Evidence provided for Mastercard Compliance disputes.
     public var mastercardCompliance: DisputeEvidenceEnhancedEvidenceMastercardCompliance?
     /// Evidence provided for Visa Compelling Evidence 3.0 evidence submission.
@@ -140,7 +140,7 @@ public struct DisputeEvidenceEnhancedEvidence: Codable {
     }
 }
 
-public struct DisputeEvidenceEnhancedEvidenceMastercardCompliance: Codable {
+public struct DisputeEvidenceEnhancedEvidenceMastercardCompliance: Codable, Sendable {
     /// When set to true, indicates that you have submitted your acknowledgement of the Mastercard compliance dispute fee.
     public var feeAcknowledged: Bool?
 
@@ -149,7 +149,7 @@ public struct DisputeEvidenceEnhancedEvidenceMastercardCompliance: Codable {
     }
 }
 
-public struct DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3: Codable {
+public struct DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3: Codable, Sendable {
     /// Disputed transaction details for Visa Compelling Evidence 3.0 evidence submission.
     public var disputedTransaction: DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3DisputedTransaction?
     /// List of exactly two prior undisputed transaction objects for Visa Compelling Evidence 3.0 evidence submission.
@@ -162,7 +162,7 @@ public struct DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3: Codable {
     }
 }
 
-public struct DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3DisputedTransaction: Codable {
+public struct DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3DisputedTransaction: Codable, Sendable {
     /// User Account ID used to log into business platform. Must be recognizable by the user.
     public var customerAccountId: String?
     /// Unique identifier of the cardholder’s device derived from a combination of at least two hardware and software attributes. Must be at least 20 characters.
@@ -199,12 +199,12 @@ public struct DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3DisputedTran
     }
 }
 
-public enum DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3MerchandiseOrServices: String, Codable {
+public enum DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3MerchandiseOrServices: String, Codable, Sendable {
     case merchandise
     case services
 }
 
-public struct DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3PriorUndisputedTransaction: Codable {
+public struct DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3PriorUndisputedTransaction: Codable, Sendable {
     /// Stripe charge ID for the Visa Compelling Evidence 3.0 eligible prior undisputed transaction.
     public var charge: String?
     /// User Account ID used to log into business platform. Must be recognizable by the user.
@@ -241,7 +241,7 @@ public struct DisputeEvidenceEnhancedEvidenceVisaCompellingEvidence3PriorUndispu
     }
 }
 
-public struct DisputeEvidenceEnhancedEvidenceVisaCompliance: Codable {
+public struct DisputeEvidenceEnhancedEvidenceVisaCompliance: Codable, Sendable {
     /// When set to true, indicates that you have submitted your acknowledgement of the Visa compliance dispute fee.
     public var feeAcknowledged: Bool?
 

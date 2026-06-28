@@ -13,7 +13,7 @@ import Foundation
 #endif
 
 /// The [Dispute Object](https://stripe.com/docs/api/disputes/object)
-public struct Dispute: Codable {
+public struct Dispute: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// Disputed amount. Usually the amount of the charge, but can differ (usually because of currency fluctuation or because only part of the order is disputed).
@@ -86,7 +86,7 @@ public struct Dispute: Codable {
     }
 }
 
-public struct DisputeEvidenceDetails: Codable {
+public struct DisputeEvidenceDetails: Codable, Sendable {
     /// Date by which evidence must be submitted in order to successfully challenge dispute. Will be null if the customer’s bank or credit card company doesn’t allow a response for this particular dispute.
     public var dueBy: Date?
     /// The field that the dispute will use to determine the enhanced eligibility for the dispute, if any.
@@ -111,7 +111,7 @@ public struct DisputeEvidenceDetails: Codable {
     }
 }
 
-public struct DisputeEvidenceDetailsEnhancedEligibility: Codable {
+public struct DisputeEvidenceDetailsEnhancedEligibility: Codable, Sendable {
     /// Eligibility status for the Mastercard compliance dispute.
     public var mastercardCompliance: DisputeEvidenceDetailsEnhancedEligibilityMastercardCompliance?
     /// Eligibility status for the Visa Compelling Evidence 3.0 evidence submission.
@@ -128,7 +128,7 @@ public struct DisputeEvidenceDetailsEnhancedEligibility: Codable {
     }
 }
 
-public struct DisputeEvidenceDetailsEnhancedEligibilityMastercardCompliance: Codable {
+public struct DisputeEvidenceDetailsEnhancedEligibilityMastercardCompliance: Codable, Sendable {
     /// Status of the eligibility for the Mastercard compliance dispute.
     public var status: DisputeEvidenceDetailsEnhancedEligibilityMastercardComplianceStatus?
 
@@ -137,12 +137,12 @@ public struct DisputeEvidenceDetailsEnhancedEligibilityMastercardCompliance: Cod
     }
 }
 
-public enum DisputeEvidenceDetailsEnhancedEligibilityMastercardComplianceStatus: String, Codable {
+public enum DisputeEvidenceDetailsEnhancedEligibilityMastercardComplianceStatus: String, Codable, Sendable {
     case feeAcknowledged = "fee_acknowledged"
     case requiresFeeAcknowledgement = "requires_fee_acknowledgement"
 }
 
-public struct DisputeEvidenceDetailsEnhancedEligibilityVisaCompellingEvidence3: Codable {
+public struct DisputeEvidenceDetailsEnhancedEligibilityVisaCompellingEvidence3: Codable, Sendable {
     /// List of actions required to qualify dispute for Visa Compelling Evidence 3.0 evidence submission.
     public var requiredActions: [DisputeEvidenceDetailsEnhancedEligibilityVisaCompellingEvidence3RequiredAction]?
     /// Visa Compelling Evidence 3.0 eligibility status.
@@ -155,7 +155,7 @@ public struct DisputeEvidenceDetailsEnhancedEligibilityVisaCompellingEvidence3: 
     }
 }
 
-public enum DisputeEvidenceDetailsEnhancedEligibilityVisaCompellingEvidence3RequiredAction: String, Codable {
+public enum DisputeEvidenceDetailsEnhancedEligibilityVisaCompellingEvidence3RequiredAction: String, Codable, Sendable {
     case missingCustomerIdentifiers = "missing_customer_identifiers"
     case missingDisputedTransactionDescription = "missing_disputed_transaction_description"
     case missingMerchandiseOrServices = "missing_merchandise_or_services"
@@ -163,13 +163,13 @@ public enum DisputeEvidenceDetailsEnhancedEligibilityVisaCompellingEvidence3Requ
     case missingPriorUndisputedTransactions = "missing_prior_undisputed_transactions"
 }
 
-public enum DisputeEvidenceDetailsEnhancedEligibilityVisaCompellingEvidence3Status: String, Codable {
+public enum DisputeEvidenceDetailsEnhancedEligibilityVisaCompellingEvidence3Status: String, Codable, Sendable {
     case notQualified = "not_qualified"
     case qualified
     case requiresAction = "requires_action"
 }
 
-public struct DisputeEvidenceDetailsEnhancedEligibilityVisaCompliance: Codable {
+public struct DisputeEvidenceDetailsEnhancedEligibilityVisaCompliance: Codable, Sendable {
     /// Status of the eligibility for the Visa compliance dispute.
     public var status: DisputeEvidenceDetailsEnhancedEligibilityVisaComplianceStatus?
 
@@ -178,18 +178,18 @@ public struct DisputeEvidenceDetailsEnhancedEligibilityVisaCompliance: Codable {
     }
 }
 
-public enum DisputeEvidenceDetailsEnhancedEligibilityVisaComplianceStatus: String, Codable {
+public enum DisputeEvidenceDetailsEnhancedEligibilityVisaComplianceStatus: String, Codable, Sendable {
     case feeAcknowledged = "fee_acknowledged"
     case requiresFeeAcknowledgement = "requires_fee_acknowledgement"
 }
 
-public enum DisputeEnhancedEligibilityType: String, Codable {
+public enum DisputeEnhancedEligibilityType: String, Codable, Sendable {
     case mastercardCompliance = "mastercard_compliance"
     case visaCompellingEvidence3 = "visa_compelling_evidence_3"
     case visaCompliance = "visa_compliance"
 }
 
-public struct DisputePaymentMethodDetails: Codable {
+public struct DisputePaymentMethodDetails: Codable, Sendable {
     /// Amazon Pay specific dispute details.
     public var amazonPay: DisputePaymentMethodDetailsAmazonPay?
     /// Card specific dispute details.
@@ -214,7 +214,7 @@ public struct DisputePaymentMethodDetails: Codable {
     }
 }
 
-public struct DisputePaymentMethodDetailsAmazonPay: Codable {
+public struct DisputePaymentMethodDetailsAmazonPay: Codable, Sendable {
     /// The AmazonPay dispute type, chargeback or claim.
     public var disputeType: DisputePaymentMethodDetailsAmazonPayDisputeType?
 
@@ -223,12 +223,12 @@ public struct DisputePaymentMethodDetailsAmazonPay: Codable {
     }
 }
 
-public enum DisputePaymentMethodDetailsAmazonPayDisputeType: String, Codable {
+public enum DisputePaymentMethodDetailsAmazonPayDisputeType: String, Codable, Sendable {
     case chargeback
     case claim
 }
 
-public struct DisputePaymentMethodDetailsCard: Codable {
+public struct DisputePaymentMethodDetailsCard: Codable, Sendable {
     /// Card brand. Can be `amex`, `cartes_bancaires`, `diners`, `discover`, `eftpos_au`, `jcb`, `link`, `mastercard`, `unionpay`, `visa`, or `unknown`.
     public var brand: String?
     /// The type of dispute opened. Different case types may have varying fees and financial impact.
@@ -245,7 +245,7 @@ public struct DisputePaymentMethodDetailsCard: Codable {
     }
 }
 
-public enum DisputePaymentMethodDetailsCardCaseType: String, Codable {
+public enum DisputePaymentMethodDetailsCardCaseType: String, Codable, Sendable {
     case block
     case chargeback
     case compliance
@@ -253,7 +253,7 @@ public enum DisputePaymentMethodDetailsCardCaseType: String, Codable {
     case resolution
 }
 
-public struct DisputePaymentMethodDetailsKlarna: Codable {
+public struct DisputePaymentMethodDetailsKlarna: Codable, Sendable {
     /// The reason for the dispute as defined by Klarna.
     public var chargebackLossReasonCode: String?
     /// The reason for the dispute as defined by Klarna.
@@ -266,7 +266,7 @@ public struct DisputePaymentMethodDetailsKlarna: Codable {
     }
 }
 
-public struct DisputePaymentMethodDetailsPaypal: Codable {
+public struct DisputePaymentMethodDetailsPaypal: Codable, Sendable {
     /// The ID of the dispute in PayPal.
     public var caseId: String?
     /// The reason for the dispute as defined by PayPal.
@@ -279,14 +279,14 @@ public struct DisputePaymentMethodDetailsPaypal: Codable {
     }
 }
 
-public enum DisputePaymentMethodDetailsType: String, Codable {
+public enum DisputePaymentMethodDetailsType: String, Codable, Sendable {
     case amazonPay = "amazon_pay"
     case card
     case klarna
     case paypal
 }
 
-public enum DisputeReason: String, Codable {
+public enum DisputeReason: String, Codable, Sendable {
     case bankCannotProcess = "bank_cannot_process"
     case checkReturned = "check_returned"
     case creditNotProcessed = "credit_not_processed"
@@ -304,7 +304,7 @@ public enum DisputeReason: String, Codable {
     case unrecognized
 }
 
-public enum DisputeStatus: String, Codable {
+public enum DisputeStatus: String, Codable, Sendable {
     case warningNeedsResponse = "warning_needs_response"
     case warningUnderReview = "warning_under_review"
     case warningClosed = "warning_closed"
@@ -315,7 +315,7 @@ public enum DisputeStatus: String, Codable {
     case prevented
 }
 
-public struct DisputeList: Codable {
+public struct DisputeList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

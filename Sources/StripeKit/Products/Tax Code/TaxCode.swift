@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct TaxCode: Codable {
+public struct TaxCode: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// String representing the object’s type. Objects of the same type share the same value.
@@ -36,7 +36,7 @@ public struct TaxCode: Codable {
     }
 }
 
-public struct TaxCodeRequirements: Codable {
+public struct TaxCodeRequirements: Codable, Sendable {
     /// Describes if a performance location is required to determine the correct tax for products using this tax code.
     public var performanceLocation: TaxCodeRequirementsPerformanceLocation?
 
@@ -45,14 +45,14 @@ public struct TaxCodeRequirements: Codable {
     }
 }
 
-public enum TaxCodeRequirementsPerformanceLocation: String, Codable {
+public enum TaxCodeRequirementsPerformanceLocation: String, Codable, Sendable {
     /// Performance location can be passed but is not required; the customer's address is used if not provided.
     case optional
     /// Performance location must be provided for successful tax calculation.
     case required
 }
 
-public struct TaxCodeList: Codable {
+public struct TaxCodeList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

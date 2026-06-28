@@ -13,7 +13,7 @@ import Foundation
 #endif
 
 /// The [Balance Transaction Object](https://stripe.com/docs/api/balance/balance_transaction)
-public struct BalanceTransaction: Codable {
+public struct BalanceTransaction: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// String representing the object’s type. Objects of the same type share the same value.
@@ -82,7 +82,7 @@ public struct BalanceTransaction: Codable {
     }
 }
 
-public struct BalanceTransactionFeeDetails: Codable {
+public struct BalanceTransactionFeeDetails: Codable, Sendable {
     /// Amount of the fee, in cents.
     public var amount: Int?
     /// ID of the Connect application that earned the fee.
@@ -107,7 +107,7 @@ public struct BalanceTransactionFeeDetails: Codable {
     }
 }
 
-public enum BalanceTransactionFeeDetailsType: String, Codable {
+public enum BalanceTransactionFeeDetailsType: String, Codable, Sendable {
     case applicationFee = "application_fee"
     case paymentMethodPassthroughFee = "payment_method_passthrough_fee"
     case stripeFee = "stripe_fee"
@@ -115,19 +115,19 @@ public enum BalanceTransactionFeeDetailsType: String, Codable {
     case withheldTax = "withheld_tax"
 }
 
-public enum BalanceTransactionStatus: String, Codable {
+public enum BalanceTransactionStatus: String, Codable, Sendable {
     case available
     case pending
 }
 
-public enum BalanceTransactionBalanceType: String, Codable {
+public enum BalanceTransactionBalanceType: String, Codable, Sendable {
     case issuing
     case payments
     case refundAndDisputePrefunding = "refund_and_dispute_prefunding"
     case riskReserved = "risk_reserved"
 }
 
-public enum BalanceTransactionType: String, Codable {
+public enum BalanceTransactionType: String, Codable, Sendable {
     case adjustment
     case advance
     case advanceFunding = "advance_funding"
@@ -180,7 +180,7 @@ public enum BalanceTransactionType: String, Codable {
     case transferRefund = "transfer_refund"
 }
 
-public struct BalanceTransactionList: Codable {
+public struct BalanceTransactionList: Codable, Sendable {
     public var object: String
     public var url: String?
     public var hasMore: Bool?

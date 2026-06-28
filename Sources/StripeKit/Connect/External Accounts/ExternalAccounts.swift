@@ -7,7 +7,7 @@
 //
 
 /// External accounts list. [See here](https://stripe.com/docs/api/accounts/object#account_object-external_accounts)
-public struct ConnectAccountExternalAccountsList: Codable {
+public struct ConnectAccountExternalAccountsList: Codable, Sendable {
     /// String representing the object’s type. Objects of the same type share the same value. Always has the value list.
     public var object: String
     /**
@@ -75,10 +75,10 @@ public struct ConnectAccountExternalAccountsList: Codable {
     }
     
     // A helper type to encode heterogeneous elements
-    struct AnyEncodable: Encodable {
-        private let _encode: (Encoder) throws -> Void
+    struct AnyEncodable: Encodable, Sendable {
+        private let _encode: @Sendable (Encoder) throws -> Void
 
-        init<T: Encodable>(_ encodable: T) {
+        init<T: Encodable & Sendable>(_ encodable: T) {
             _encode = encodable.encode
         }
 

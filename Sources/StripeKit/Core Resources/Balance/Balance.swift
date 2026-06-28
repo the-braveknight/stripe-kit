@@ -7,7 +7,7 @@
 //
 
 /// The [Balance Object](https://stripe.com/docs/api/balance/balance_object)
-public struct Balance: Codable {
+public struct Balance: Codable, Sendable {
     /// String representing the object’s type. Objects of the same type share the same value.
     public var object: String
     /// Funds that are available to be transferred or paid out, whether automatically by Stripe or explicitly via the [Transfers API](https://stripe.com/docs/api/balance/balance_object#transfers) or [Payouts API](https://stripe.com/docs/api/balance/balance_object#payouts). The available balance for each currency and payment type can be found in the `source_types` property.
@@ -44,7 +44,7 @@ public struct Balance: Codable {
     }
 }
 
-public struct BalanceRefundAndDisputePrefunding: Codable {
+public struct BalanceRefundAndDisputePrefunding: Codable, Sendable {
     /// Funds that are available for use.
     public var available: [BalanceAmount]?
     /// Funds that are pending.
@@ -57,7 +57,7 @@ public struct BalanceRefundAndDisputePrefunding: Codable {
     }
 }
 
-public struct BalanceIssuing: Codable {
+public struct BalanceIssuing: Codable, Sendable {
     /// Funds that are available for use.
     public var available: [BalanceAmount]?
     
@@ -66,7 +66,7 @@ public struct BalanceIssuing: Codable {
     }
 }
 
-public struct BalanceAmount: Codable {
+public struct BalanceAmount: Codable, Sendable {
     /// Balance amount.
     public var amount: Int?
     /// Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies) .
@@ -87,7 +87,7 @@ public struct BalanceAmount: Codable {
     }
 }
 
-public struct BalanceAmountNetAvailable: Codable {
+public struct BalanceAmountNetAvailable: Codable, Sendable {
     /// Net balance amount, subtracting fees from platform-set pricing.
     public var amount: Int?
     /// ID of the external account for this net balance (not expandable).
@@ -104,7 +104,7 @@ public struct BalanceAmountNetAvailable: Codable {
     }
 }
 
-public struct BalanceAmountSourceType: Codable {
+public struct BalanceAmountSourceType: Codable, Sendable {
     /// Amount for bank account.
     public var bankAccount: Int?
     /// Amount for card.

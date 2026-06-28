@@ -11,7 +11,7 @@ import Foundation
 #endif
 
 /// The [Session Object.](https://stripe.com/docs/api/checkout/sessions/object)
-public struct Session: Codable {
+public struct Session: Codable, Sendable {
     /// Unique identifier for the object. Used to pass to redirectToCheckout in Stripe.js.
     public var id: String
     /// The URL the customer will be directed to if they decide to cancel payment and return to your website.
@@ -292,7 +292,7 @@ public struct Session: Codable {
     }
 }
 
-public struct SessionCustomField: Codable {
+public struct SessionCustomField: Codable, Sendable {
     /// Configuration for `type=dropdown` fields.
     public var dropdown: SessionCustomFieldDropdown?
     /// String of your choice that your integration can use to reconcile this field. Must be unique to this field, alphanumeric, and up to 200 characters.
@@ -325,7 +325,7 @@ public struct SessionCustomField: Codable {
     }
 }
 
-public struct SessionCustomFieldDropdown: Codable {
+public struct SessionCustomFieldDropdown: Codable, Sendable {
     /// The options available for the customer to select. Up to 200 options allowed
     public var options: [SessionCustomFieldDropdownOption]?
     /// The option selected by the customer. This will be the `value` for the option.
@@ -338,7 +338,7 @@ public struct SessionCustomFieldDropdown: Codable {
     }
 }
 
-public struct SessionCustomFieldDropdownOption: Codable {
+public struct SessionCustomFieldDropdownOption: Codable, Sendable {
     /// The label for the option, displayed to the customer. Up to 100 characters.
     public var label: String?
     /// The value for this option, not displayed to the customer, used by your integration to reconcile the option selected by the customer. Must be unique to this option, alphanumeric, and up to 100 characters.
@@ -350,7 +350,7 @@ public struct SessionCustomFieldDropdownOption: Codable {
     }
 }
 
-public struct SessionCustomFieldLabel: Codable {
+public struct SessionCustomFieldLabel: Codable, Sendable {
     /// Custom text for the label, displayed to the customer. Up to 50 characters.
     public var custom: String?
     ///The type of the label.
@@ -362,12 +362,12 @@ public struct SessionCustomFieldLabel: Codable {
     }
 }
 
-public enum SessionCustomFieldLabelType: String, Codable {
+public enum SessionCustomFieldLabelType: String, Codable, Sendable {
     /// Set a custom label for the field.
     case custom
 }
 
-public struct SessionCustomFieldNumeric: Codable {
+public struct SessionCustomFieldNumeric: Codable, Sendable {
     /// The maximum character length constraint for the customer’s input.
     public var maximumLength: Int?
     /// The minimum character length requirement for the customer’s input.
@@ -384,7 +384,7 @@ public struct SessionCustomFieldNumeric: Codable {
     }
 }
 
-public struct SessionCustomFieldText: Codable {
+public struct SessionCustomFieldText: Codable, Sendable {
     /// The maximum character length constraint for the customer’s input.
     public var maximumLength: Int?
     /// The minimum character length requirement for the customer’s input.
@@ -401,7 +401,7 @@ public struct SessionCustomFieldText: Codable {
     }
 }
 
-public enum SessionCustomFieldType: String, Codable {
+public enum SessionCustomFieldType: String, Codable, Sendable {
     /// Collect a string field from your customer.
     case text
     /// Collect a numbers-only field from your customer.
@@ -410,7 +410,7 @@ public enum SessionCustomFieldType: String, Codable {
     case dropdown
 }
 
-public struct SessionCustomText: Codable {
+public struct SessionCustomText: Codable, Sendable {
     /// Custom text that should be displayed after the payment confirmation button.
     public var afterSubmit: SessionCustomTextAfterSubmit?
     /// Custom text that should be displayed alongside shipping address collection.
@@ -431,7 +431,7 @@ public struct SessionCustomText: Codable {
     }
 }
 
-public struct SessionCustomTextAfterSubmit: Codable {
+public struct SessionCustomTextAfterSubmit: Codable, Sendable {
     /// Text may be up to 1200 characters in length.
     public var message: String?
 
@@ -440,7 +440,7 @@ public struct SessionCustomTextAfterSubmit: Codable {
     }
 }
 
-public struct SessionCustomTextTermsOfServiceAcceptance: Codable {
+public struct SessionCustomTextTermsOfServiceAcceptance: Codable, Sendable {
     /// Text may be up to 1200 characters in length.
     public var message: String?
 
@@ -449,7 +449,7 @@ public struct SessionCustomTextTermsOfServiceAcceptance: Codable {
     }
 }
 
-public struct SessionCustomTextShippingAddress: Codable {
+public struct SessionCustomTextShippingAddress: Codable, Sendable {
     /// Text may be up to 1000 characters in length.
     public var message: String?
     
@@ -458,7 +458,7 @@ public struct SessionCustomTextShippingAddress: Codable {
     }
 }
 
-public struct SessionCustomTextSubmit: Codable {
+public struct SessionCustomTextSubmit: Codable, Sendable {
     /// Text may be up to 1000 characters in length.
     public var message: String?
     
@@ -467,13 +467,13 @@ public struct SessionCustomTextSubmit: Codable {
     }
 }
 
-public enum SessionCustomerCreation: String, Codable {
+public enum SessionCustomerCreation: String, Codable, Sendable {
     /// The Checkout Session will only create a Customer if it is required for Session confirmation. Currently, only `subscription` mode Sessions require a Customer.
     case ifRequired = "if_required"
     /// The Checkout Session will always create a Customer when a Session confirmation is attempted.
     case always
 }
-public struct SessionInvoiceCreation: Codable {
+public struct SessionInvoiceCreation: Codable, Sendable {
     /// Indicates whether invoice creation is enabled for the Checkout Session.
     public var enabled: Bool?
     /// Parameters passed when creating invoices for payment-mode Checkout Sessions.
@@ -485,7 +485,7 @@ public struct SessionInvoiceCreation: Codable {
     }
 }
 
-public struct SessionInvoiceCreationInvoiceData: Codable {
+public struct SessionInvoiceCreationInvoiceData: Codable, Sendable {
     /// The account tax IDs associated with the invoice
     @ExpandableCollection<TaxID> public var accountTaxIds: [String]?
     /// Custom fields displayed on the invoice.
@@ -514,7 +514,7 @@ public struct SessionInvoiceCreationInvoiceData: Codable {
     }
 }
 
-public struct SessionInvoiceCreationInvoiceDataCustomFields: Codable {
+public struct SessionInvoiceCreationInvoiceDataCustomFields: Codable, Sendable {
     /// The name of the custom field.
     public var name: String?
     /// The value of the custom field.
@@ -526,7 +526,7 @@ public struct SessionInvoiceCreationInvoiceDataCustomFields: Codable {
     }
 }
 
-public struct SessionInvoiceCreationInvoiceDataRenderingOptions: Codable {
+public struct SessionInvoiceCreationInvoiceDataRenderingOptions: Codable, Sendable {
     /// How line-item prices and amounts will be displayed with respect to tax on invoice PDFs.
     public var amountTaxDisplay: String?
     
@@ -535,7 +535,7 @@ public struct SessionInvoiceCreationInvoiceDataRenderingOptions: Codable {
     }
 }
 
-public struct SessionAfterExpiration: Codable {
+public struct SessionAfterExpiration: Codable, Sendable {
     /// When set, configuration used to recover the Checkout Session on expiry.
     public var recovery: SessionAfterExpirationRecovery?
     
@@ -544,7 +544,7 @@ public struct SessionAfterExpiration: Codable {
     }
 }
 
-public struct SessionAfterExpirationRecovery: Codable {
+public struct SessionAfterExpirationRecovery: Codable, Sendable {
     /// Enables user redeemable promotion codes on the recovered Checkout Sessions. Defaults to `false`
     public var allowPromotionCodes: Bool?
     /// If `true`, a recovery url will be generated to recover this Checkout Session if it expires before a transaction is completed. It will be attached to the Checkout Session object upon expiration.
@@ -565,7 +565,7 @@ public struct SessionAfterExpirationRecovery: Codable {
     }
 }
 
-public struct SessionAutomaticTax: Codable {
+public struct SessionAutomaticTax: Codable, Sendable {
     /// Indicates whether automatic tax is enabled for the session.
     public var enabled: Bool?
     /// The tax provider powering automatic tax.
@@ -576,7 +576,7 @@ public struct SessionAutomaticTax: Codable {
     public var status: SessionAutomaticTaxStatus?
 }
 
-public struct SessionAutomaticTaxLiability: Codable {
+public struct SessionAutomaticTaxLiability: Codable, Sendable {
     /// The connected account being referenced when `type` is `account`.
     @Expandable<ConnectAccount> public var account: String?
     /// Type of the account referenced.
@@ -588,7 +588,7 @@ public struct SessionAutomaticTaxLiability: Codable {
     }
 }
 
-public enum SessionAutomaticTaxStatus: String, Codable {
+public enum SessionAutomaticTaxStatus: String, Codable, Sendable {
     /// The location details entered by the customer aren’t valid or don’t provide enough location information to accurately determine tax rates.
     case requiresLocationInputs = "requires_location_inputs"
     /// Stripe successfully calculated tax automatically for this session.
@@ -597,14 +597,14 @@ public enum SessionAutomaticTaxStatus: String, Codable {
     case failed
 }
 
-public enum SessionBillingAddressCollection: String, Codable {
+public enum SessionBillingAddressCollection: String, Codable, Sendable {
     /// Checkout will only collect the billing address when necessary. When using `automatic_tax`, Checkout will collect the minimum number of fields required for tax calculation.
     case auto
     /// Checkout will always collect the customer’s billing address.
     case required
 }
 
-public struct SessionConsent: Codable {
+public struct SessionConsent: Codable, Sendable {
     /// If `opt_in`, the customer consents to receiving promotional communications from the merchant about this Checkout Session.
     public var promotions: String?
     /// If `accepted`, the customer in this Checkout Session has agreed to the merchant’s terms of service.
@@ -617,12 +617,12 @@ public struct SessionConsent: Codable {
     }
 }
 
-public enum SessionConsentTermsOfService: String, Codable {
+public enum SessionConsentTermsOfService: String, Codable, Sendable {
     /// The customer has accepted the specified terms of service agreement.
     case accepted
 }
 
-public struct SessionConsentCollection: Codable {
+public struct SessionConsentCollection: Codable, Sendable {
     /// If set to `auto`, enables the collection of customer consent for promotional communications. The Checkout Session will determine whether to display an option to opt into promotional communication from the merchant depending on the customer’s locale. Only available to US merchants.
     public var promotions: String?
     /// If set to `required`, it requires customers to accept the terms of service before being able to pay.
@@ -634,7 +634,7 @@ public struct SessionConsentCollection: Codable {
     }
 }
 
-public struct SessionCurrencyConversion: Codable {
+public struct SessionCurrencyConversion: Codable, Sendable {
     /// Total of all items in source currency before discounts or taxes are applied.
     public var amountSubtotal: Int?
     /// Total of all items in source currency after discounts and taxes are applied.
@@ -655,7 +655,7 @@ public struct SessionCurrencyConversion: Codable {
     }
 }
 
-public struct SessionCustomerDetails: Codable {
+public struct SessionCustomerDetails: Codable, Sendable {
     /// The customer’s address after a completed Checkout Session. Note: This property is populated only for sessions on or after March 30, 2022.
     public var address: Address?
     /// The customer’s email at time of checkout.
@@ -684,7 +684,7 @@ public struct SessionCustomerDetails: Codable {
     }
 }
 
-public struct SessionCustomerDetailsTaxId: Codable {
+public struct SessionCustomerDetailsTaxId: Codable, Sendable {
     /// The type of the tax ID.
     public var type: TaxIDType
     /// The value of the tax ID.
@@ -696,7 +696,7 @@ public struct SessionCustomerDetailsTaxId: Codable {
     }
 }
 
-public struct SessionLineItem: Codable {
+public struct SessionLineItem: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// String representing the object’s type. Objects of the same type share the same value.
@@ -749,7 +749,7 @@ public struct SessionLineItem: Codable {
     }
 }
 
-public struct SessionLineItemDiscount: Codable {
+public struct SessionLineItemDiscount: Codable, Sendable {
     /// The amount discounted.
     public var amount: Int?
     /// The discount applied.
@@ -761,7 +761,7 @@ public struct SessionLineItemDiscount: Codable {
     }
 }
 
-public struct SessionLineItemTax: Codable {
+public struct SessionLineItemTax: Codable, Sendable {
     /// Amount of tax applied for this rate.
     public var amount: Int?
     /// The tax rate applied.
@@ -773,7 +773,7 @@ public struct SessionLineItemTax: Codable {
     }
 }
 
-public struct SessionLineItemList: Codable {
+public struct SessionLineItemList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?
@@ -790,7 +790,7 @@ public struct SessionLineItemList: Codable {
     }
 }
 
-public enum SessionLocale: String, Codable {
+public enum SessionLocale: String, Codable, Sendable {
     case auto = "auto"
     case bg = "bg"
     case cs = "cs"
@@ -834,7 +834,7 @@ public enum SessionLocale: String, Codable {
     case zhTW = "zh-TW"
 }
 
-public enum SessionMode: String, Codable {
+public enum SessionMode: String, Codable, Sendable {
     /// Accept one-time payments for cards, iDEAL, and more.
     case payment
     /// Save payment details to charge your customers later.
@@ -844,14 +844,14 @@ public enum SessionMode: String, Codable {
 }
 
 
-public enum SessionPaymentMethodCollection: String, Codable {
+public enum SessionPaymentMethodCollection: String, Codable, Sendable {
     /// The Checkout Session will always collect a PaymentMethod.
     case always
     /// The Checkout Session will only collect a PaymentMethod if there is an amount due.
     case ifRequired = "if_required"
 }
 
-public struct SessionPhoneNumberCollection: Codable {
+public struct SessionPhoneNumberCollection: Codable, Sendable {
     /// Indicates whether phone number collection is enabled for the session
     public var enabled: Bool
     
@@ -860,7 +860,7 @@ public struct SessionPhoneNumberCollection: Codable {
     }
 }
 
-public struct SessionShippingAddressCollection: Codable {
+public struct SessionShippingAddressCollection: Codable, Sendable {
     /// An array of two-letter ISO country codes representing which countries Checkout should provide as options for shipping locations. Unsupported country codes: `AS, CX, CC, CU, HM, IR, KP, MH, FM, NF, MP, PW, SD, SY, UM, VI`.
     public var allowedCountries: [String]?
     
@@ -869,7 +869,7 @@ public struct SessionShippingAddressCollection: Codable {
     }
 }
 
-public struct SessionShippingCost: Codable {
+public struct SessionShippingCost: Codable, Sendable {
     /// Total shipping cost before any discounts or taxes are applied.
     public var amountSubtotal: Int?
     /// Total tax amount applied due to shipping costs. If no tax was applied, defaults to 0.
@@ -894,7 +894,7 @@ public struct SessionShippingCost: Codable {
     }
 }
 
-public struct SessionShippingCostTaxes: Codable {
+public struct SessionShippingCostTaxes: Codable, Sendable {
     /// Amount of tax applied for this rate.
     public var amount: Int?
     /// The tax rate applied.
@@ -906,7 +906,7 @@ public struct SessionShippingCostTaxes: Codable {
     }
 }
 
-public struct SessionShippingOption: Codable {
+public struct SessionShippingOption: Codable, Sendable {
     /// A non-negative integer in cents representing how much to charge.
     public var shippingAmount: Int?
     /// The shipping rate.
@@ -918,7 +918,7 @@ public struct SessionShippingOption: Codable {
     }
 }
 
-public enum SessionSubmitType: String, Codable {
+public enum SessionSubmitType: String, Codable, Sendable {
     case auto
     case book
     case donate
@@ -926,7 +926,7 @@ public enum SessionSubmitType: String, Codable {
     case subscribe
 }
 
-public enum SessionStatus: String, Codable {
+public enum SessionStatus: String, Codable, Sendable {
     /// The checkout session is still in progress. Payment processing has not started
     case open
     /// The checkout session is complete. Payment processing may still be in progress
@@ -935,7 +935,7 @@ public enum SessionStatus: String, Codable {
     case expired
 }
 
-public struct SessionTotalDetails: Codable {
+public struct SessionTotalDetails: Codable, Sendable {
     /// This is the sum of all the line item discounts.
     public var amountDiscount: Int?
     /// This is the sum of all the line item shipping amounts.
@@ -956,14 +956,14 @@ public struct SessionTotalDetails: Codable {
     }
 }
 
-public struct SessionTotalDetailsBreakdown: Codable {
+public struct SessionTotalDetailsBreakdown: Codable, Sendable {
     /// The aggregated discounts.
     public var discounts: [SessionTotalDetailsBreakdownDiscount]?
     /// The aggregated tax amounts by rate.
     public var taxes: [SessionTotalDetailsBreakdownTax]?
 }
 
-public struct SessionTotalDetailsBreakdownDiscount: Codable {
+public struct SessionTotalDetailsBreakdownDiscount: Codable, Sendable {
     /// The amount discounted.
     public var amount: Int?
     /// The discount applied.
@@ -975,7 +975,7 @@ public struct SessionTotalDetailsBreakdownDiscount: Codable {
     }
 }
 
-public struct SessionTotalDetailsBreakdownTax: Codable {
+public struct SessionTotalDetailsBreakdownTax: Codable, Sendable {
     /// Amount of tax applied for this rate.
     public var amount: Int?
     /// The tax rate applied.
@@ -987,7 +987,7 @@ public struct SessionTotalDetailsBreakdownTax: Codable {
     }
 }
 
-public enum SessionPaymentStatus: String, Codable {
+public enum SessionPaymentStatus: String, Codable, Sendable {
     /// The payment funds are available in your account.
     case paid
     /// The payment funds are not yet available in your account.
@@ -996,7 +996,7 @@ public enum SessionPaymentStatus: String, Codable {
     case noPaymentRequired = "no_payment_required"
 }
 
-public struct SessionTaxIdCollection: Codable {
+public struct SessionTaxIdCollection: Codable, Sendable {
     /// Indicates whether tax ID collection is enabled for the session
     public var enabled: Bool?
     
@@ -1006,7 +1006,7 @@ public struct SessionTaxIdCollection: Codable {
 }
 
 // MARK: Adaptive Pricing
-public struct SessionAdaptivePricing: Codable {
+public struct SessionAdaptivePricing: Codable, Sendable {
     /// Whether Adaptive Pricing is enabled.
     public var enabled: Bool?
 
@@ -1016,7 +1016,7 @@ public struct SessionAdaptivePricing: Codable {
 }
 
 // MARK: Branding Settings
-public struct SessionBrandingSettings: Codable {
+public struct SessionBrandingSettings: Codable, Sendable {
     /// A hex color value starting with `#` representing the background color for the Checkout Session.
     public var backgroundColor: String?
     /// The border style for the Checkout Session.
@@ -1049,7 +1049,7 @@ public struct SessionBrandingSettings: Codable {
     }
 }
 
-public struct SessionBrandingSettingsImage: Codable {
+public struct SessionBrandingSettingsImage: Codable, Sendable {
     /// The type of image.
     public var type: String?
     /// The ID of a File upload.
@@ -1065,7 +1065,7 @@ public struct SessionBrandingSettingsImage: Codable {
 }
 
 // MARK: Collected Information
-public struct SessionCollectedInformation: Codable {
+public struct SessionCollectedInformation: Codable, Sendable {
     /// The business name collected during the session.
     public var businessName: String?
     /// The individual name collected during the session.
@@ -1083,7 +1083,7 @@ public struct SessionCollectedInformation: Codable {
 }
 
 // MARK: Discounts
-public struct SessionDiscount: Codable {
+public struct SessionDiscount: Codable, Sendable {
     /// Coupon attached to the Checkout Session.
     @Expandable<Coupon> public var coupon: String?
     /// Promotion code attached to the Checkout Session.
@@ -1096,7 +1096,7 @@ public struct SessionDiscount: Codable {
 }
 
 // MARK: Managed Payments
-public struct SessionManagedPayments: Codable {
+public struct SessionManagedPayments: Codable, Sendable {
     /// Whether Managed Payments is enabled for this Checkout Session.
     public var enabled: Bool?
 
@@ -1106,7 +1106,7 @@ public struct SessionManagedPayments: Codable {
 }
 
 // MARK: Name Collection
-public struct SessionNameCollection: Codable {
+public struct SessionNameCollection: Codable, Sendable {
     /// Settings for collecting the customer's business name.
     public var business: SessionNameCollectionBusiness?
     /// Settings for collecting the customer's individual name.
@@ -1119,7 +1119,7 @@ public struct SessionNameCollection: Codable {
     }
 }
 
-public struct SessionNameCollectionBusiness: Codable {
+public struct SessionNameCollectionBusiness: Codable, Sendable {
     /// Indicates whether business name collection is enabled for the session.
     public var enabled: Bool?
     /// Whether the customer is required to provide a business name before completing the Checkout Session. Defaults to `false`.
@@ -1131,7 +1131,7 @@ public struct SessionNameCollectionBusiness: Codable {
     }
 }
 
-public struct SessionNameCollectionIndividual: Codable {
+public struct SessionNameCollectionIndividual: Codable, Sendable {
     /// Indicates whether individual name collection is enabled for the session.
     public var enabled: Bool?
     /// Whether the customer is required to provide their name before completing the Checkout Session. Defaults to `false`.
@@ -1144,7 +1144,7 @@ public struct SessionNameCollectionIndividual: Codable {
 }
 
 // MARK: Optional Items
-public struct SessionOptionalItem: Codable {
+public struct SessionOptionalItem: Codable, Sendable {
     /// Settings for the adjustable quantity behavior for this optional item.
     public var adjustableQuantity: SessionOptionalItemAdjustableQuantity?
     /// The ID of the Price used to generate this optional item.
@@ -1161,7 +1161,7 @@ public struct SessionOptionalItem: Codable {
     }
 }
 
-public struct SessionOptionalItemAdjustableQuantity: Codable {
+public struct SessionOptionalItemAdjustableQuantity: Codable, Sendable {
     /// Set to `true` if the quantity can be adjusted to any non-negative integer.
     public var enabled: Bool?
     /// The maximum quantity of this item the customer can purchase.
@@ -1177,13 +1177,13 @@ public struct SessionOptionalItemAdjustableQuantity: Codable {
 }
 
 // MARK: Origin Context
-public enum SessionOriginContext: String, Codable {
+public enum SessionOriginContext: String, Codable, Sendable {
     case mobileApp = "mobile_app"
     case web
 }
 
 // MARK: Payment Method Configuration Details
-public struct SessionPaymentMethodConfigurationDetails: Codable {
+public struct SessionPaymentMethodConfigurationDetails: Codable, Sendable {
     /// ID of the payment method configuration used.
     public var id: String?
     /// ID of the parent payment method configuration used.
@@ -1196,7 +1196,7 @@ public struct SessionPaymentMethodConfigurationDetails: Codable {
 }
 
 // MARK: Permissions
-public struct SessionPermissions: Codable {
+public struct SessionPermissions: Codable, Sendable {
     /// Determines which entity is allowed to update the shipping details.
     public var updateShippingDetails: String?
 
@@ -1206,7 +1206,7 @@ public struct SessionPermissions: Codable {
 }
 
 // MARK: Presentment Details
-public struct SessionPresentmentDetails: Codable {
+public struct SessionPresentmentDetails: Codable, Sendable {
     /// Amount intended to be collected by this payment, denominated in `presentment_currency`.
     public var presentmentAmount: Int?
     /// Currency presented to the customer during payment.
@@ -1219,7 +1219,7 @@ public struct SessionPresentmentDetails: Codable {
 }
 
 // MARK: Redirect On Completion
-public enum SessionRedirectOnCompletion: String, Codable {
+public enum SessionRedirectOnCompletion: String, Codable, Sendable {
     /// The Session will always redirect to the `return_url` after successful confirmation.
     case always
     /// The Session will only redirect to the `return_url` after a redirect-based payment method is used.
@@ -1229,7 +1229,7 @@ public enum SessionRedirectOnCompletion: String, Codable {
 }
 
 // MARK: Saved Payment Method Options
-public struct SessionSavedPaymentMethodOptions: Codable {
+public struct SessionSavedPaymentMethodOptions: Codable, Sendable {
     /// Uses the `allow_redisplay` value of each saved payment method to filter the list of payment methods.
     public var allowRedisplayFilters: [String]?
     /// Enable customers to choose if they wish to remove their saved payment methods.
@@ -1247,7 +1247,7 @@ public struct SessionSavedPaymentMethodOptions: Codable {
 }
 
 // MARK: UI Mode
-public enum SessionUIMode: String, Codable {
+public enum SessionUIMode: String, Codable, Sendable {
     /// The Checkout Session will be displayed using embedded UI.
     case embedded
     /// The Checkout Session will be displayed as a hosted page that the customer is redirected to.
@@ -1256,7 +1256,7 @@ public enum SessionUIMode: String, Codable {
     case custom
 }
 
-public struct SessionList: Codable {
+public struct SessionList: Codable, Sendable {
     public var object: String
     public var hasMore: Bool?
     public var url: String?

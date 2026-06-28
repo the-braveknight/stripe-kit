@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct SubscriptionPaymentSettingsPaymentMethodOptions: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptions: Codable, Sendable {
     /// If paying by `acss_debit`, this sub-hash contains details about the Canadian pre-authorized debit payment method options to pass to the invoice’s PaymentIntent.
     public var acssDebit: SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebit?
     /// If paying by `bancontact`, this sub-hash contains details about the Bancontact payment method options to pass to the invoice’s PaymentIntent.
@@ -57,7 +57,7 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptions: Codable {
 }
 
 // MARK: ACSS Debit
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebit: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebit: Codable, Sendable {
     /// Additional fields for Mandate creation
     public var mandateOptions: SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebitManadteOptions?
     /// Bank account verification method.
@@ -70,7 +70,7 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebit: Codable 
     }
 }
 
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebitManadteOptions: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebitManadteOptions: Codable, Sendable {
     /// Transaction type of the mandate.
     public var transactionType: SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebitManadteOptionsTransactionType?
     
@@ -79,14 +79,14 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebitManadteOpt
     }
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebitManadteOptionsTransactionType: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebitManadteOptionsTransactionType: String, Codable, Sendable {
     /// Transactions are made for personal reasons
     case personal
     /// Transactions are made for business reasons
     case business
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebitVerificationMethod: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebitVerificationMethod: String, Codable, Sendable {
     /// Instant verification with fallback to microdeposits.
     case automatic
     /// Instant verification.
@@ -96,7 +96,7 @@ public enum SubscriptionPaymentSettingsPaymentMethodOptionsAcssDebitVerification
 }
 
 // MARK: Bancontact
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsBancontact: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsBancontact: Codable, Sendable {
     /// Preferred language of the Bancontact authorization page that the customer is redirected to.
     public var preferredLanguage: String?
     
@@ -106,7 +106,7 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsBancontact: Codable
 }
 
 // MARK: Card
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsCard: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsCard: Codable, Sendable {
     /// Installment details for this Invoice (Mexico only). For more information, see the installments integration guide.
     public var mandateOptions: SubscriptionPaymentSettingsPaymentMethodOptionsCardMandateOptions?
     /// Selected network to process this Subscription on. Depends on the available networks of the card attached to the Subscription. Can be only set confirm-time.
@@ -123,7 +123,7 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsCard: Codable {
     }
 }
 
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsCardMandateOptions: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsCardMandateOptions: Codable, Sendable {
     /// Amount to be charged for future payments.
     public var amount: Int?
     /// One of `fixed` or `maximum`. If `fixed`, the `amount` param refers to the exact amount to be charged in future payments. If `maximum`, the `amount` charged can be up to the value passed for the `amount` param.
@@ -140,14 +140,14 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsCardMandateOptions:
     }
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsCardMandateOptionsAmountType: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsCardMandateOptionsAmountType: String, Codable, Sendable {
     /// If `fixed`, the `amount` param refers to the exact amount to be charged in future payments.
     case fixed
     /// If `maximum`, the `amount` charged can be up to the value passed for the amount param.
     case maximum
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsCardRequestThreedSecure: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsCardRequestThreedSecure: String, Codable, Sendable {
     /// Triggers 3D Secure authentication only if it is required.
     case automatic
     /// Requires 3D Secure authentication if it is available.
@@ -157,7 +157,7 @@ public enum SubscriptionPaymentSettingsPaymentMethodOptionsCardRequestThreedSecu
 }
 
 // MARK: Customer Balance
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalance: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalance: Codable, Sendable {
     /// Configuration for the bank transfer funding type, if the `funding_type` is set to `bank_transfer`.
     public var bankTransfer: SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceBankTransfer?
     /// The funding method type to be used when there are not enough funds in the customer balance. Permitted values include: `bank_transfer`
@@ -170,7 +170,7 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalance: Co
     }
 }
 
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceBankTransfer: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceBankTransfer: Codable, Sendable {
     /// Configuration for `eu_bank_transfer` funding type.
     public var euBankTransfer: SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceBankTransferEUBankTransfer?
     /// The bank transfer type that can be used for funding. Permitted values include: `eu_bank_transfer`, `gb_bank_transfer`, `jp_bank_transfer`, or `mx_bank_transfe`.
@@ -183,7 +183,7 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceBank
     }
 }
 
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceBankTransferEUBankTransfer: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceBankTransferEUBankTransfer: Codable, Sendable {
     /// The desired country code of the bank account information. Permitted values include: `BE`, `DE`, `ES`, `FR`, `IE`, or `NL`.
     public var country: String?
     
@@ -192,7 +192,7 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceBank
     }
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceBankTransferType: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceBankTransferType: String, Codable, Sendable {
     case euBankTransfer = "eu_bank_transfer"
     case gbBankTransfer = "gb_bank_transfer"
     case jpBankTransfer = "jp_bank_transfer"
@@ -200,17 +200,17 @@ public enum SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceBankTr
     case usBankTransfer = "us_bank_transfer"
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceFundingType: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsCustomerBalanceFundingType: String, Codable, Sendable {
     case bankTransfer = "bank_transfer"
 }
 
 // MARK: Konbini
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsKonbini: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsKonbini: Codable, Sendable {
     public init(){}
 }
 
 // MARK: US Bank Account
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccount: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccount: Codable, Sendable {
     /// Additional fields for Financial Connections Session creation
     public var financialConnections: SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnections?
     /// Bank account verification method.
@@ -223,7 +223,7 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccount: Coda
     }
 }
 
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnections: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnections: Codable, Sendable {
     /// Provide filters for the linked accounts that the customer can select for the payment method.
     public var filters: SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFilters?
     /// The list of permissions to request. The `payment_method` permission must be included.
@@ -240,7 +240,7 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinanc
     }
 }
 
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFilters: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFilters: Codable, Sendable {
     /// The account subcategories to use to filter for selectable accounts. Valid subcategories are `checking` and `savings`.
     public var accountSubcategories: [SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFiltersAccountSubcategory]?
 
@@ -249,12 +249,12 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinanc
     }
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFiltersAccountSubcategory: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsFiltersAccountSubcategory: String, Codable, Sendable {
     case checking
     case savings
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPermission: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPermission: String, Codable, Sendable {
     /// Allows the creation of a payment method from the account.
     case paymentMethod = "payment_method"
     /// Allows accessing balance data from the account.
@@ -265,7 +265,7 @@ public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancia
     case transactions
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPrefetch: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancialConnectionsPrefetch: String, Codable, Sendable {
     /// Requests to prefetch balance data on accounts collected in this session.
     case balances
     /// Requests to prefetch ownership data on accounts collected in this session.
@@ -274,7 +274,7 @@ public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountFinancia
     case transactions
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountVerificationMethod: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountVerificationMethod: String, Codable, Sendable {
     /// Instant verification with fallback to microdeposits.
     case automatic
     /// Instant verification only.
@@ -284,7 +284,7 @@ public enum SubscriptionPaymentSettingsPaymentMethodOptionsUSBankAccountVerifica
 }
 
 // MARK: PayTo
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsPayto: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsPayto: Codable, Sendable {
     /// Additional fields for Mandate creation.
     public var mandateOptions: SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptions?
 
@@ -293,7 +293,7 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsPayto: Codable {
     }
 }
 
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptions: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptions: Codable, Sendable {
     /// Amount that will be collected. It is required when `amount_type` is `fixed`.
     public var amount: Int?
     /// The type of amount that will be collected. The amount charged must be exact or up to the value of `amount` param for `fixed` or `maximum` type respectively.
@@ -310,12 +310,12 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptions
     }
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptionsAmountType: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptionsAmountType: String, Codable, Sendable {
     case fixed
     case maximum
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptionsPurpose: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptionsPurpose: String, Codable, Sendable {
     case dependantSupport = "dependant_support"
     case government
     case loan
@@ -330,7 +330,7 @@ public enum SubscriptionPaymentSettingsPaymentMethodOptionsPaytoMandateOptionsPu
 }
 
 // MARK: Pix
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsPix: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsPix: Codable, Sendable {
     /// Determines the amount of time, in seconds, that the customer has to authorize the payment after the invoice is finalized.
     public var expiresAfterSeconds: Int?
     /// Additional fields for Mandate creation.
@@ -343,7 +343,7 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsPix: Codable {
     }
 }
 
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptions: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptions: Codable, Sendable {
     /// Amount to be charged for future payments.
     public var amount: Int?
     /// Determines if the amount includes the IOF tax.
@@ -364,14 +364,14 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptions: 
     }
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptionsAmountIncludesIof: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptionsAmountIncludesIof: String, Codable, Sendable {
     /// The amount includes the IOF tax.
     case always
     /// The amount does not include the IOF tax.
     case never
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptionsPaymentSchedule: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptionsPaymentSchedule: String, Codable, Sendable {
     case halfyearly
     case monthly
     case quarterly
@@ -380,12 +380,12 @@ public enum SubscriptionPaymentSettingsPaymentMethodOptionsPixMandateOptionsPaym
 }
 
 // MARK: SEPA Debit
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsSepaDebit: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsSepaDebit: Codable, Sendable {
     public init() {}
 }
 
 // MARK: UPI
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsUpi: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsUpi: Codable, Sendable {
     /// Additional fields for Mandate creation.
     public var mandateOptions: SubscriptionPaymentSettingsPaymentMethodOptionsUpiMandateOptions?
 
@@ -394,7 +394,7 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsUpi: Codable {
     }
 }
 
-public struct SubscriptionPaymentSettingsPaymentMethodOptionsUpiMandateOptions: Codable {
+public struct SubscriptionPaymentSettingsPaymentMethodOptionsUpiMandateOptions: Codable, Sendable {
     /// Amount to be charged for future payments.
     public var amount: Int?
     /// One of `fixed` or `maximum`. If `fixed`, the `amount` param refers to the exact amount to be charged in future payments. If `maximum`, the amount charged can be up to the value passed for the `amount` param.
@@ -415,7 +415,7 @@ public struct SubscriptionPaymentSettingsPaymentMethodOptionsUpiMandateOptions: 
     }
 }
 
-public enum SubscriptionPaymentSettingsPaymentMethodOptionsUpiMandateOptionsAmountType: String, Codable {
+public enum SubscriptionPaymentSettingsPaymentMethodOptionsUpiMandateOptionsAmountType: String, Codable, Sendable {
     case fixed
     case maximum
 }

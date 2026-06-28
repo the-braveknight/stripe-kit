@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct EphemeralKey: Codable {
+public struct EphemeralKey: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// String representing the object's type. Objects of the same type share the same value.
@@ -44,7 +44,7 @@ public struct EphemeralKey: Codable {
     }
 }
 
-public struct EphemeralKeyAssociatedObject: Codable {
+public struct EphemeralKeyAssociatedObject: Codable, Sendable {
     /// The ID of the object to which this ephemeral key grants access.
     public var id: String?
     /// The type of the object to which this ephemeral key grants access.

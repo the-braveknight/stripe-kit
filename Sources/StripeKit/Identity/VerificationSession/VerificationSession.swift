@@ -11,7 +11,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public struct VerificationSession: Codable {
+public struct VerificationSession: Codable, Sendable {
     /// Unique identifier for the object.
     public var id: String
     /// String representing the object’s type. Objects of the same type share the same value.
@@ -97,7 +97,7 @@ public struct VerificationSession: Codable {
     }
 }
 
-public struct VerificationSessionLastError: Codable {
+public struct VerificationSessionLastError: Codable, Sendable {
     /// A short machine-readable string giving the reason for the verification or user-session failure.
     public var code: VerificationSessionLastErrorCode?
     /// A message that explains the reason for verification or user-session failure.
@@ -110,7 +110,7 @@ public struct VerificationSessionLastError: Codable {
     }
 }
 
-public enum VerificationSessionLastErrorCode: String, Codable {
+public enum VerificationSessionLastErrorCode: String, Codable, Sendable {
     /// The user declined to be verified by Stripe. Check with your legal counsel to see if you have an obligation to offer an alternative, non-biometric means to verify, such as through a manual review.
     case consentDeclined = "consent_declined"
     /// The user’s device didn’t have a camera or they declined to grant Stripe permission to access it.
@@ -151,7 +151,7 @@ public enum VerificationSessionLastErrorCode: String, Codable {
     case phoneVerificationDeclined = "phone_verification_declined"
 }
 
-public struct VerificationSessionOptions: Codable {
+public struct VerificationSessionOptions: Codable, Sendable {
     /// Configuration options to apply to the `document` check.
     public var document: VerificationSessionOptionsDocument?
     /// Configuration options to apply to the `email` check.
@@ -176,7 +176,7 @@ public struct VerificationSessionOptions: Codable {
     }
 }
 
-public struct VerificationSessionOptionsEmail: Codable {
+public struct VerificationSessionOptionsEmail: Codable, Sendable {
     /// Request one time password verification of `provided_details.email`.
     public var requireVerification: Bool?
 
@@ -185,7 +185,7 @@ public struct VerificationSessionOptionsEmail: Codable {
     }
 }
 
-public struct VerificationSessionOptionsMatching: Codable {
+public struct VerificationSessionOptionsMatching: Codable, Sendable {
     /// Strictness of the DOB matching policy to apply.
     public var dob: VerificationSessionOptionsMatchingPolicy?
     /// Strictness of the name matching policy to apply.
@@ -198,14 +198,14 @@ public struct VerificationSessionOptionsMatching: Codable {
     }
 }
 
-public enum VerificationSessionOptionsMatchingPolicy: String, Codable {
+public enum VerificationSessionOptionsMatchingPolicy: String, Codable, Sendable {
     /// Do not require the data to match.
     case none
     /// Require the data to be similar.
     case similar
 }
 
-public struct VerificationSessionOptionsPhone: Codable {
+public struct VerificationSessionOptionsPhone: Codable, Sendable {
     /// Request one time password verification of `provided_details.phone`.
     public var requireVerification: Bool?
 
@@ -214,7 +214,7 @@ public struct VerificationSessionOptionsPhone: Codable {
     }
 }
 
-public struct VerificationSessionOptionsDocument: Codable {
+public struct VerificationSessionOptionsDocument: Codable, Sendable {
     /// Array of strings of allowed identity document types. If the provided identity document isn’t one of the allowed types, the verification check will fail with a `document_type_not_allowed` error code.
     public var allowedTypes: [VerificationSessionOptionsDocumentAllowedType]?
     /// Collect an ID number and perform an [ID number check](https://stripe.com/docs/identity/verification-checks?type=id-number) with the document’s extracted name and date of birth.
@@ -235,7 +235,7 @@ public struct VerificationSessionOptionsDocument: Codable {
     }
 }
 
-public enum VerificationSessionOptionsDocumentAllowedType: String, Codable {
+public enum VerificationSessionOptionsDocumentAllowedType: String, Codable, Sendable {
     /// Drivers license document type.
     case drivingLicense = "driving_license"
     /// Passport document type.
@@ -244,11 +244,11 @@ public enum VerificationSessionOptionsDocumentAllowedType: String, Codable {
     case idCard = "id_card"
 }
 
-public struct VerificationSessionOptionsIdNumber: Codable {
+public struct VerificationSessionOptionsIdNumber: Codable, Sendable {
     public init(){}
 }
 
-public struct VerificationSessionProvidedDetails: Codable {
+public struct VerificationSessionProvidedDetails: Codable, Sendable {
     /// Email of user being verified.
     public var email: String?
     /// Phone number of user being verified.
@@ -260,7 +260,7 @@ public struct VerificationSessionProvidedDetails: Codable {
     }
 }
 
-public struct VerificationSessionRelatedPerson: Codable {
+public struct VerificationSessionRelatedPerson: Codable, Sendable {
     /// Token referencing the associated Account of the related Person resource.
     public var account: String?
     /// Token referencing the related Person resource.
@@ -272,7 +272,7 @@ public struct VerificationSessionRelatedPerson: Codable {
     }
 }
 
-public struct VerificationSessionRedaction: Codable {
+public struct VerificationSessionRedaction: Codable, Sendable {
     /// Indicates whether this object and its related objects have been redacted or not.
     public var status: VerificationSessionRedactionStatus?
 
@@ -281,7 +281,7 @@ public struct VerificationSessionRedaction: Codable {
     }
 }
 
-public enum VerificationSessionRedactionStatus: String, Codable {
+public enum VerificationSessionRedactionStatus: String, Codable, Sendable {
     /// This object and its related objects have been redacted.
     case redacted
     /// This object has been redacted, and its related objects are in the process of being redacted. This process may take up to four days.
@@ -290,7 +290,7 @@ public enum VerificationSessionRedactionStatus: String, Codable {
     case validated
 }
 
-public enum VerificationSessionStatus: String, Codable {
+public enum VerificationSessionStatus: String, Codable, Sendable {
     /// Requires user input before processing can continue.
     case requiresInput = "requires_input"
     /// The session has been submitted and is being processed. Most [verification checks](https://stripe.com/docs/identity/verification-checks) take a few minutes to process.
@@ -301,7 +301,7 @@ public enum VerificationSessionStatus: String, Codable {
     case canceled
 }
 
-public enum VerificationSessionType: String, Codable {
+public enum VerificationSessionType: String, Codable, Sendable {
     /// [Document check](https://stripe.com/docs/identity/verification-checks?type=document)
     case document
     /// [ID number check](https://stripe.com/docs/identity/verification-checks?type=id-number).
@@ -310,7 +310,7 @@ public enum VerificationSessionType: String, Codable {
     case verificationFlow = "verification_flow"
 }
 
-public struct VerificationSessionVerifiedOutputs: Codable {
+public struct VerificationSessionVerifiedOutputs: Codable, Sendable {
     /// The user’s verified address.
     public var address: Address?
     /// The user’s verified date of birth.
@@ -364,7 +364,7 @@ public struct VerificationSessionVerifiedOutputs: Codable {
     }
 }
 
-public enum VerificationSessionVerifiedOutputsIdNumberType: String, Codable {
+public enum VerificationSessionVerifiedOutputsIdNumberType: String, Codable, Sendable {
     /// An individual CPF number from Brazil.
     case brCpf = "br_cpf"
     /// A national registration identity card number from Singapore.
@@ -373,7 +373,7 @@ public enum VerificationSessionVerifiedOutputsIdNumberType: String, Codable {
     case usSsn = "us_ssn"
 }
 
-public enum VerificationSessionVerifiedOutputsSex: String, Codable {
+public enum VerificationSessionVerifiedOutputsSex: String, Codable, Sendable {
     case redacted = "[redacted]"
     case female
     case male
@@ -381,7 +381,7 @@ public enum VerificationSessionVerifiedOutputsSex: String, Codable {
 }
 
 
-public struct VerificationSessionList: Codable {
+public struct VerificationSessionList: Codable, Sendable {
     public var object: String
     public var data: [VerificationSession]?
     public var hasMore: Bool?

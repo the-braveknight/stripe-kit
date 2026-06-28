@@ -1,5 +1,5 @@
 /// An error returned when verifying signatures
-public enum StripeSignatureError: Error, CustomStringConvertible {
+public enum StripeSignatureError: Error, CustomStringConvertible, Sendable {
     public var description: String {
         switch self {
         case .unableToParseHeader:
