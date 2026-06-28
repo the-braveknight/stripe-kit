@@ -165,24 +165,22 @@ print("New Stripe Connect account ID: \(connectAccount.id)")
 ```
 
 ## Authentication via the Stripe-Account header
-The first, preferred, authentication option is to use your (the platform account’s) secret key and pass a `Stripe-Account` header identifying the connected account for which the request is being made. The example request performs a refund of a  charge on behalf of a connected account using a builder style API. Because the route handlers on `StripeClient` are immutable (`let`) value types, copy the one you need into a local `var` before customizing its headers:
+The first, preferred, authentication option is to use your (the platform account’s) secret key and pass a `Stripe-Account` header identifying the connected account for which the request is being made. The example request performs a refund of a  charge on behalf of a connected account using a builder style API. `addHeaders` is non-mutating — it returns a copy of the route with the headers merged in, so you can call it directly on the client's route:
 ```swift
-   var refunds = stripe.refunds
-   try await refunds
+   try await stripe.refunds
     .addHeaders(["Stripe-Account": "acc_12345",
              "Authorization": "Bearer different_api_key",
              "Stripe-Version": "older-api-version"])
     .create(charge: "ch_12345", reason: .requestedByCustomer)
 ```
-**NOTE:** `addHeaders` mutates the local copy and returns it; it does **not** persist headers back onto the `StripeClient`'s stored route. Each customized request needs its own local copy.
+**NOTE:** `addHeaders` returns a new customized copy; it does **not** persist headers back onto the `StripeClient`'s shared route. Each customized request gets its own copy.
 
 ## Idempotent Requests
 Similar to the account header, you can use the same builder style API to attach Idempotency Keys to your requests.
 
 ```swift
     let key = UUID().uuidString
-    var refunds = stripe.refunds
-    try await refunds
+    try await stripe.refunds
     .addHeaders(["Idempotency-Key": key])
     .create(charge: "ch_12345", reason: .requestedByCustomer)
 ```

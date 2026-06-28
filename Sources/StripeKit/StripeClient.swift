@@ -14,12 +14,14 @@ import AsyncHTTPClient
 /// shared freely across tasks and actors. Its route handlers are immutable (`let`)
 /// value types, which makes the `Sendable` conformance fully checked and race-free.
 ///
-/// To customize headers for a request (e.g. an idempotency key), copy the route
-/// into a local `var` and use the `mutating` `addHeaders` on the copy:
+/// To customize headers for a request (e.g. an idempotency key), call the
+/// non-mutating `addHeaders` directly on the route; it returns a copy with the
+/// headers merged in, leaving the shared route untouched:
 ///
 /// ```swift
-/// var charges = client.charges
-/// let charge = try await charges.addHeaders(["Idempotency-Key": key]).create(...)
+/// let charge = try await client.charges
+///     .addHeaders(["Idempotency-Key": key])
+///     .create(...)
 /// ```
 public final class StripeClient: Sendable {
     // MARK: - CORE RESOURCES
