@@ -91,7 +91,7 @@ public struct StripePromotionCodesRoutes: PromotionCodesRoutes {
         }
         
         if let expiresAt {
-            body["expiresAt"] = Int(expiresAt.timeIntervalSince1970)
+            body["expires_at"] = Int(expiresAt.timeIntervalSince1970)
         }
         
         if let maxRedemptions {

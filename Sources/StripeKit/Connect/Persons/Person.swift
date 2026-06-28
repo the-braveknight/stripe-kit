@@ -66,7 +66,7 @@ public struct Person: Codable, Sendable {
     /// Indicates if the person or any of their representatives, family members, or other closely related persons, declares that they hold or have held an important public job or function, in any jurisdiction.
     public var politicalExposure: PersonPoliticalExposure?
     /// The person’s registered address.
-    public var registeredAddres: Address?
+    public var registeredAddress: Address?
     /// Whether the last 4 digits of this person’s SSN have been provided.
     public var ssnLast4Provided: Bool?
     /// The persons’s verification status.
@@ -104,7 +104,7 @@ public struct Person: Codable, Sendable {
                 maidenName: String? = nil,
                 nationality: String? = nil,
                 politicalExposure: PersonPoliticalExposure? = nil,
-                registeredAddres: Address? = nil,
+                registeredAddress: Address? = nil,
                 ssnLast4Provided: Bool? = nil,
                 verification: PersonVerification? = nil,
                 additionalTosAcceptances: PersonAdditionalTosAcceptances? = nil,
@@ -136,7 +136,7 @@ public struct Person: Codable, Sendable {
         self.maidenName = maidenName
         self.nationality = nationality
         self.politicalExposure = politicalExposure
-        self.registeredAddres = registeredAddres
+        self.registeredAddress = registeredAddress
         self.ssnLast4Provided = ssnLast4Provided
         self.verification = verification
         self.additionalTosAcceptances = additionalTosAcceptances

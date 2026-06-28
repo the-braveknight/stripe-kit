@@ -634,6 +634,8 @@ public enum InvoiceBillingReason: String, Codable, Sendable {
     case manual
     case upcoming
     case subscriptionThreshold = "subscription_threshold"
+    case automaticPendingInvoiceItemInvoice = "automatic_pending_invoice_item_invoice"
+    case quoteAccept = "quote_accept"
 }
 
 public struct InvoiceCustomField: Codable, Sendable {
@@ -806,18 +808,18 @@ public struct InvoiceStatusTransitions: Codable, Sendable {
     /// The time that the invoice draft was finalized.
     public var finalizedAt: Date?
     /// The time that the invoice was marked uncollectible.
-    public var markedUncollectableAt: Date?
+    public var markedUncollectibleAt: Date?
     /// The time that the invoice was paid.
     public var paidAt: Date?
     /// The time that the invoice was voided.
     public var voidedAt: Date?
     
     public init(finalizedAt: Date? = nil,
-                markedUncollectableAt: Date? = nil,
+                markedUncollectibleAt: Date? = nil,
                 paidAt: Date? = nil,
                 voidedAt: Date? = nil) {
         self.finalizedAt = finalizedAt
-        self.markedUncollectableAt = markedUncollectableAt
+        self.markedUncollectibleAt = markedUncollectibleAt
         self.paidAt = paidAt
         self.voidedAt = voidedAt
     }

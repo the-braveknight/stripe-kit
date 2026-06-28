@@ -110,7 +110,7 @@ public struct StripeTransferReversalRoutes: TransferReversalRoutes {
             queryParams = ["expand": expand].queryParameters
         }
         
-        return try await apiHandler.send(method: .GET, path: "\(transferreversals)/\(id)/reversals/\(id)", query: queryParams, headers: headers)
+        return try await apiHandler.send(method: .GET, path: "\(transferreversals)/\(transfer)/reversals/\(id)", query: queryParams, headers: headers)
     }
     
     public func update(id: String,
@@ -126,7 +126,7 @@ public struct StripeTransferReversalRoutes: TransferReversalRoutes {
             body["expand"] = expand
         }
         
-        return try await apiHandler.send(method: .POST, path: "\(transferreversals)/\(id)/reversals/\(id)", body: .string(body.queryParameters), headers: headers)
+        return try await apiHandler.send(method: .POST, path: "\(transferreversals)/\(transfer)/reversals/\(id)", body: .string(body.queryParameters), headers: headers)
     }
     
     public func listAll(id: String, filter: [String: Any]? = nil) async throws -> TransferReversalList {

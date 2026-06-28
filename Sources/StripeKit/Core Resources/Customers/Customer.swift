@@ -65,7 +65,7 @@ public struct Customer: Codable, Sendable {
     /// The suffix of the customer’s next invoice number, e.g., 0001.
     public var nextInvoiceSequence: Int?
     /// The customer’s preferred locales (languages), ordered by preference
-    public var preferredLocals: [String]?
+    public var preferredLocales: [String]?
     /// The customer’s payment sources, if any.
     public var sources: StripeSourcesList?
     /// The customer’s current subscriptions, if any.
@@ -101,7 +101,7 @@ public struct Customer: Codable, Sendable {
                 invoiceSettings: CustomerInvoiceSettings? = nil,
                 livemode: Bool? = nil,
                 nextInvoiceSequence: Int? = nil,
-                preferredLocals: [String]? = nil,
+                preferredLocales: [String]? = nil,
                 sources: StripeSourcesList? = nil,
                 subscriptions: SubscriptionList? = nil,
                 taxExempt: CustomerTaxExempt? = nil,
@@ -131,7 +131,7 @@ public struct Customer: Codable, Sendable {
         self.invoiceSettings = invoiceSettings
         self.livemode = livemode
         self.nextInvoiceSequence = nextInvoiceSequence
-        self.preferredLocals = preferredLocals
+        self.preferredLocales = preferredLocales
         self.sources = sources
         self.subscriptions = subscriptions
         self.taxExempt = taxExempt

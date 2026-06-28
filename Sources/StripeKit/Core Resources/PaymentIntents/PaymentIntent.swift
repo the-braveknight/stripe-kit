@@ -84,7 +84,7 @@ public struct PaymentIntent: Codable, Sendable {
     /// Has the value `true` if the object exists in live mode or the value `false` if the object exists in test mode.
     public var livemode: Bool?
     /// The account (if any) for which the funds of the PaymentIntent are intended. See the PaymentIntents Connect usage guide for details.
-    @Expandable<ConnectAccount> public var onBehalfOn: String?
+    @Expandable<ConnectAccount> public var onBehalfOf: String?
     /// Payment-method-specific configuration for this PaymentIntent.
     public var paymentMethodOptions: PaymentIntentPaymentMethodOptions?
     /// The list of payment method types (e.g. card) that this PaymentIntent is allowed to use.
@@ -135,7 +135,7 @@ public struct PaymentIntent: Codable, Sendable {
                 created: Date,
                 invoice: String? = nil,
                 livemode: Bool? = nil,
-                onBehalfOn: String? = nil,
+                onBehalfOf: String? = nil,
                 paymentMethodOptions: PaymentIntentPaymentMethodOptions? = nil,
                 paymentMethodTypes: [String]? = nil,
                 processing: PaymentIntentProcessing? = nil,
@@ -178,7 +178,7 @@ public struct PaymentIntent: Codable, Sendable {
         self.created = created
         self._invoice = Expandable(id: invoice)
         self.livemode = livemode
-        self._onBehalfOn = Expandable(id: onBehalfOn)
+        self._onBehalfOf = Expandable(id: onBehalfOf)
         self.paymentMethodOptions = paymentMethodOptions
         self.paymentMethodTypes = paymentMethodTypes
         self.processing = processing
