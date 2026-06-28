@@ -10,10 +10,12 @@
 Pinned Stripe API version: `2026-06-24.dahlia` (set as the `Stripe-Version` header in `StripeRequest.swift`).
 
 ## Installation
-To start using StripeKit, in your `Package.swift`, add the following
+To start using StripeKit, in your `Package.swift`, add the following.
+
+This fork is not tagged with releases yet, so pin it to a branch (or a specific commit):
 
 ```swift
-.package(url: "https://github.com/vapor-community/stripe-kit.git", from: "22.0.0")
+.package(url: "https://github.com/the-braveknight/stripe-kit.git", branch: "main")
 ```
 
 ## Using the API
