@@ -182,6 +182,8 @@ public struct Invoice: Codable, Sendable {
     public var issuer: InvoiceIssuer?
     /// The parent that generated this invoice.
     public var parent: InvoiceParent?
+    /// The payments associated with this invoice. This field is not included by default. To include it in the response, expand the `payments` field.
+    public var payments: InvoicePaymentList?
     /// The rendering-related settings that control how the invoice is displayed on customer-facing surfaces such as PDF and Hosted Invoice Page.
     public var rendering: InvoiceRendering?
     /// Shipping details for the invoice. The Invoice PDF will use the `shipping_details` value if it is set, otherwise the PDF will render the shipping address from the customer.
@@ -277,6 +279,7 @@ public struct Invoice: Codable, Sendable {
                 automaticallyFinalizesAt: Date? = nil,
                 issuer: InvoiceIssuer? = nil,
                 parent: InvoiceParent? = nil,
+                payments: InvoicePaymentList? = nil,
                 rendering: InvoiceRendering? = nil,
                 shippingDetails: ShippingLabel? = nil,
                 totalTaxes: [InvoiceTotalTax]? = nil,
@@ -366,6 +369,7 @@ public struct Invoice: Codable, Sendable {
         self.automaticallyFinalizesAt = automaticallyFinalizesAt
         self.issuer = issuer
         self.parent = parent
+        self.payments = payments
         self.rendering = rendering
         self.shippingDetails = shippingDetails
         self.totalTaxes = totalTaxes

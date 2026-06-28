@@ -54,6 +54,23 @@ public protocol PaymentMethodRoutes: StripeAPIRoute {
     ///   - usBankAccount: If this is an `us_bank_account` PaymentMethod, this hash contains details about the US bank account payment method.
     ///   - wechatPay: If this is a `wechat_pay` PaymentMethod, this hash contains details about the `wechat_pay` payment method.
     ///   - zip: If this is a `zip` PaymentMethod, this hash contains details about the Zip payment method.
+    ///   - billie: If this is a `billie` PaymentMethod, this hash contains details about the Billie payment method.
+    ///   - bizum: If this is a `bizum` PaymentMethod, this hash contains details about the Bizum payment method.
+    ///   - crypto: If this is a `crypto` PaymentMethod, this hash contains details about the Crypto payment method.
+    ///   - kakaoPay: If this is a `kakao_pay` PaymentMethod, this hash contains details about the Kakao Pay payment method.
+    ///   - krCard: If this is a `kr_card` PaymentMethod, this hash contains details about the Korean Card payment method.
+    ///   - multibanco: If this is a `multibanco` PaymentMethod, this hash contains details about the Multibanco payment method.
+    ///   - naverPay: If this is a `naver_pay` PaymentMethod, this hash contains details about the Naver Pay payment method.
+    ///   - nzBankAccount: If this is a `nz_bank_account` PaymentMethod, this hash contains details about the New Zealand bank account payment method.
+    ///   - payByBank: If this is a `pay_by_bank` PaymentMethod, this hash contains details about the Pay by Bank payment method.
+    ///   - payco: If this is a `payco` PaymentMethod, this hash contains details about the PAYCO payment method.
+    ///   - paypay: If this is a `paypay` PaymentMethod, this hash contains details about the PayPay payment method.
+    ///   - payto: If this is a `payto` PaymentMethod, this hash contains details about the PayTo payment method.
+    ///   - samsungPay: If this is a `samsung_pay` PaymentMethod, this hash contains details about the Samsung Pay payment method.
+    ///   - satispay: If this is a `satispay` PaymentMethod, this hash contains details about the Satispay payment method.
+    ///   - scalapay: If this is a `scalapay` PaymentMethod, this hash contains details about the Scalapay payment method.
+    ///   - sunbit: If this is a `sunbit` PaymentMethod, this hash contains details about the Sunbit payment method.
+    ///   - upi: If this is a `upi` PaymentMethod, this hash contains details about the UPI payment method.
     ///   - expand: Specifies which fields in the response should be expanded.
     /// - Returns: A `StripePaymentMethod`.
     func create(type: PaymentMethodType,
@@ -99,6 +116,23 @@ public protocol PaymentMethodRoutes: StripeAPIRoute {
                 usBankAccount: [String: Any]?,
                 wechatPay: [String: Any]?,
                 zip: [String: Any]?,
+                billie: [String: Any]?,
+                bizum: [String: Any]?,
+                crypto: [String: Any]?,
+                kakaoPay: [String: Any]?,
+                krCard: [String: Any]?,
+                multibanco: [String: Any]?,
+                naverPay: [String: Any]?,
+                nzBankAccount: [String: Any]?,
+                payByBank: [String: Any]?,
+                payco: [String: Any]?,
+                paypay: [String: Any]?,
+                payto: [String: Any]?,
+                samsungPay: [String: Any]?,
+                satispay: [String: Any]?,
+                scalapay: [String: Any]?,
+                sunbit: [String: Any]?,
+                upi: [String: Any]?,
                 expand: [String]?) async throws -> PaymentMethod
         
     /// Retrieves a PaymentMethod object.
@@ -215,6 +249,23 @@ public struct StripePaymentMethodRoutes: PaymentMethodRoutes {
                        usBankAccount: [String: Any]? = nil,
                        wechatPay: [String: Any]? = nil,
                        zip: [String: Any]? = nil,
+                       billie: [String: Any]? = nil,
+                       bizum: [String: Any]? = nil,
+                       crypto: [String: Any]? = nil,
+                       kakaoPay: [String: Any]? = nil,
+                       krCard: [String: Any]? = nil,
+                       multibanco: [String: Any]? = nil,
+                       naverPay: [String: Any]? = nil,
+                       nzBankAccount: [String: Any]? = nil,
+                       payByBank: [String: Any]? = nil,
+                       payco: [String: Any]? = nil,
+                       paypay: [String: Any]? = nil,
+                       payto: [String: Any]? = nil,
+                       samsungPay: [String: Any]? = nil,
+                       satispay: [String: Any]? = nil,
+                       scalapay: [String: Any]? = nil,
+                       sunbit: [String: Any]? = nil,
+                       upi: [String: Any]? = nil,
                        expand: [String]? = nil) async throws -> PaymentMethod {
         var body: [String: Any] = ["type": type.rawValue]
 
@@ -386,10 +437,78 @@ public struct StripePaymentMethodRoutes: PaymentMethodRoutes {
             zip.forEach { body["zip[\($0)]"] = $1 }
         }
 
+        if let billie {
+            billie.forEach { body["billie[\($0)]"] = $1 }
+        }
+
+        if let bizum {
+            bizum.forEach { body["bizum[\($0)]"] = $1 }
+        }
+
+        if let crypto {
+            crypto.forEach { body["crypto[\($0)]"] = $1 }
+        }
+
+        if let kakaoPay {
+            kakaoPay.forEach { body["kakao_pay[\($0)]"] = $1 }
+        }
+
+        if let krCard {
+            krCard.forEach { body["kr_card[\($0)]"] = $1 }
+        }
+
+        if let multibanco {
+            multibanco.forEach { body["multibanco[\($0)]"] = $1 }
+        }
+
+        if let naverPay {
+            naverPay.forEach { body["naver_pay[\($0)]"] = $1 }
+        }
+
+        if let nzBankAccount {
+            nzBankAccount.forEach { body["nz_bank_account[\($0)]"] = $1 }
+        }
+
+        if let payByBank {
+            payByBank.forEach { body["pay_by_bank[\($0)]"] = $1 }
+        }
+
+        if let payco {
+            payco.forEach { body["payco[\($0)]"] = $1 }
+        }
+
+        if let paypay {
+            paypay.forEach { body["paypay[\($0)]"] = $1 }
+        }
+
+        if let payto {
+            payto.forEach { body["payto[\($0)]"] = $1 }
+        }
+
+        if let samsungPay {
+            samsungPay.forEach { body["samsung_pay[\($0)]"] = $1 }
+        }
+
+        if let satispay {
+            satispay.forEach { body["satispay[\($0)]"] = $1 }
+        }
+
+        if let scalapay {
+            scalapay.forEach { body["scalapay[\($0)]"] = $1 }
+        }
+
+        if let sunbit {
+            sunbit.forEach { body["sunbit[\($0)]"] = $1 }
+        }
+
+        if let upi {
+            upi.forEach { body["upi[\($0)]"] = $1 }
+        }
+
         if let expand {
             body["expand"] = expand
         }
-        
+
         return try await apiHandler.send(method: .POST, path: paymentmethods, body: .string(body.queryParameters), headers: headers)
     }
     
